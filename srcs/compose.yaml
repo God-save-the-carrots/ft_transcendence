@@ -1,0 +1,31 @@
+services:
+  database:
+    user: ${UID}:${GID}
+    image: postgres:16.1-alpine3.19
+    container_name: ${DATABASE_CONTAINER_NAME}
+    restart: always
+    volumes:
+      - ${DATABASE_VOLUME}:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:4.8.1
+    profiles:
+      - debug
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
