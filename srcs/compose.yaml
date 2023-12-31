@@ -29,3 +29,15 @@ services:
       - 8080:8080
     depends_on:
       - database
+
+  backend:
+    build:
+      context: requirements/backend
+      dockerfile: Dockerfile
+    image: ${BACKEND_IMAGE_NAME}:${BACKEND_IMAGE_TAG}
+    pull_policy: never
+    container_name: ${BACKEND_CONTAINER_NAME}
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: always
+    ports:
+      - 8000:8000
