@@ -26,7 +26,7 @@ help:
 	@echo "\033[0;33mUsage\033[0m: make [target]"
 	@echo
 	@echo "targets:"
-	@grep -e '^.PHONY: .*#' -e '^#=' Makefile | sed -r -e 's|#=(.*)|\n\1:|' -e 's|\.PHONY: (.*) # (.*)|  \o033[0;36m\1\o033[0m	\2|' | expand -t30
+	@grep -e '^.PHONY: .*#' -e '^#=' Makefile | sed -E -e 's|#=(.*)|\n\1:|' -e 's|\.PHONY: (.*) # (.*)|  [0;36m \1 [0m	\2|' | expand -t30
 
 .PHONY: guide # Generate guide
 guide:
