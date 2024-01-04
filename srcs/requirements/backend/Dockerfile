@@ -15,7 +15,6 @@ FROM python:3.10-alpine as release
 RUN apk add libpq && adduser -D django
 COPY --from=build /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY --from=build /usr/local/bin /usr/local/bin
-COPY . .
 
 USER django
 WORKDIR /app
