@@ -44,5 +44,7 @@ services:
       - ./srcs/backend:/app:z
     env_file:
       - .env
+    environment:
+      - POSTGRES_HOST=${DATABASE_CONTAINER_NAME}
     ports:
       - 8000:8000
