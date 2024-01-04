@@ -33,7 +33,7 @@ services:
 
   backend:
     build:
-      context: requirements/backend
+      context: srcs/backend
       dockerfile: Dockerfile
     image: ${BACKEND_IMAGE_NAME}:${BACKEND_IMAGE_TAG}
     pull_policy: never
@@ -41,7 +41,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     restart: always
     volumes:
-      - ./requirements/backend/app:/app:z
+      - ./srcs/backend:/app:z
     env_file:
       - .env
     ports:

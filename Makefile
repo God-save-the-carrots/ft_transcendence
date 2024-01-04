@@ -1,17 +1,17 @@
 .DELETE_ON_ERROR:
 .DEFAULT_GOAL	:= help
 
-ifeq ($(wildcard srcs/.env),)
-$(error srcs/.env not found)
+ifeq ($(wildcard .env),)
+$(error .env not found)
 endif
-include srcs/.env
+include .env
 
 # **************************************************************************** #
 # pre-defined environment in docker-compose
 # **************************************************************************** #
 
 COMPOSE_PROJECT_NAME	:= ft_transcendence
-COMPOSE_FILE			:= srcs/compose.yaml
+COMPOSE_FILE			:= compose.yaml
 COMPOSE_PROFILES		:=
 
 export COMPOSE_PROJECT_NAME COMPOSE_FILE COMPOSE_PROFILES
