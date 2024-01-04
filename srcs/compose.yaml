@@ -1,14 +1,15 @@
 services:
   database:
-    user: ${UID}:${GID}
     image: postgres:16.1-alpine3.19
     container_name: ${DATABASE_CONTAINER_NAME}
     restart: always
     volumes:
-      - ${DATABASE_VOLUME}:/var/lib/postgresql/data
+      - ${DATABASE_VOLUME}:/var/lib/postgresql/data:z
     env_file:
       - .env
     environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - PGUSER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
