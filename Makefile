@@ -11,7 +11,7 @@ include .env
 # **************************************************************************** #
 
 COMPOSE_PROJECT_NAME	:= ft_transcendence
-COMPOSE_FILE			:= compose.yaml
+COMPOSE_FILE			:= compose-dev.yaml
 COMPOSE_PROFILES		:=
 
 export COMPOSE_PROJECT_NAME COMPOSE_FILE COMPOSE_PROFILES

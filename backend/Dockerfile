@@ -16,3 +16,5 @@ WORKDIR /src
 COPY . /src
 
 RUN chmod -R 777 /src
+
+CMD ["python3", "manage.py", "runserver"]

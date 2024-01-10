@@ -6,15 +6,15 @@ services:
     container_name: ${FRONTEND_CONTAINER_NAME}
     build:
       context: ./frontend
-    env_file:
-      - .env
     stdin_open: true
     tty: true
     working_dir: /src
     ports:
-      - 80:80
+      - "80:80"
     volumes:
       - ./frontend:/src
+    # command: >
+    #   sh -c "npm install -g npm@latest && npm install && npm run build && npm run start"
     depends_on:
       - db
       - backend
@@ -30,12 +30,17 @@ services:
     tty: true
     working_dir: /src
     ports:
-      - 8080:8080
+      - "8000:8000"
     volumes:
       - ./backend:/src
       - run_vol:/var/run
       - cache_vol:/var/cache
-    command: python manage.py runserver 0.0.0.0:8080
+    environment:
+      - DJANGO_DEBUG=False
+      - GUNICORN_WORKERS=5
+    command: python manage.py runserver 0.0.0.0:8000
+    # command: >
+    #   sh -c "sh migrations.sh && gunicorn -w 5 --reload -b 0.0.0.0:8000 --log-level info server.wsgi"
     depends_on:
       - db
 
