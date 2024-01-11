@@ -8,6 +8,8 @@ WORKDIR /src
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN pip install django-cors-headers djangorestframework
+
 # ---- Copy Files/Build ----
 FROM build
 
