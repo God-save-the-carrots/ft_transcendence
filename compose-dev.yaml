@@ -35,7 +35,10 @@ services:
       - ./backend:/src
       - run_vol:/var/run
       - cache_vol:/var/cache
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "sh migrations.sh && python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - POSTGRES_HOST=${DATABASE_CONTAINER_NAME}
     depends_on:
       - db
 

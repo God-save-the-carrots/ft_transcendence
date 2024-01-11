@@ -38,9 +38,10 @@ services:
     environment:
       - DJANGO_DEBUG=False
       - GUNICORN_WORKERS=5
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "sh migrations.sh && gunicorn -w 5 --reload -b 0.0.0.0:8000 --log-level info server.wsgi"
     # command: >
-    #   sh -c "sh migrations.sh && gunicorn -w 5 --reload -b 0.0.0.0:8000 --log-level info server.wsgi"
+      # sh -c "sh migrations.sh && python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
 
