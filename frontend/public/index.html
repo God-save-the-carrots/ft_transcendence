@@ -1,6 +1,23 @@
-<html>
-	<head></head>
-	<body>
-		<h1>hello tran!</h1>
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Page App</title>
+  </head>
+  <body>
+    <nav class="nav">  <!-- pages -  home / profile / game / stats -->
+      <a href="/" class="nav__link" data-link>home</a>
+      <a href="/profiles" class="nav__link" data-link>profile</a>
+      <a href="/game" class="nav__link" data-link>game</a>
+      <a href="/stats" class="nav__link" data-link>stats</a>
+      <!-- login or logout button -->
+      <input type="button" value="LOGIN" />
+    </nav>
+    
+    <div id="app"></div>
+    
+    <script type="module" src="../src/index.js"></script>
+  </body>
 </html>
