@@ -11,17 +11,17 @@ export default class Router {
         this.routes = routes;
 
         // event 
-        window.addEventListener("popstate", this.router);
-  
-        document.addEventListener("DOMContentLoaded", () => {
-        document.body.addEventListener("click", e => {
-            if (e.target.matches("[data-link]")) {
-                e.preventDefault();
-                this.navigateTo(e.target.href);
-             }
-           });
-           this.router();
-         });
+  //       window.addEventListener("popstate", this.router);
+  // 
+  //       document.addEventListener("DOMContentLoaded", () => {
+  //       document.body.addEventListener("click", e => {
+  //           if (e.target.matches("[data-link]")) {
+  //               e.preventDefault();
+  //               this.navigateTo(e.target.href);
+  //            }
+  //          });
+  //          this.router();
+  //        });
     }
     addRoutes(route) {
         this.routes.push(route);
@@ -62,7 +62,7 @@ export default class Router {
         }
         const view = new match.route.view(this.getParams(match));
         document.querySelector('#app').innerHTML = await view.getHtml();
-        view.render();
-        // return view;
+        // view.render();
+        return view;
     }
 }
