@@ -9,7 +9,7 @@ export default class Component {
     setup(){}
     setEvent(){}
     getHtml(){return ""}
-    render()  {
+    render() {
         document.querySelector(target) = this.getHtml();
     }
 }
