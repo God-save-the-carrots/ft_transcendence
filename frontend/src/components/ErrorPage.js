@@ -1,10 +1,10 @@
 import Component from "../core/Component.js";
 
-export default class Stats extends Component {
+export default class ErrorPage extends Component {
     params;
     constructor(params) {
         super ('#app');
-        this.setTitle("STATS");
+        this.setTitle("ERRORPAGE");
         this.params = params;
     }
     async getHtml() {

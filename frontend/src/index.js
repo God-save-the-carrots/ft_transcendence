@@ -6,23 +6,23 @@ import Router from "./core/Router.js";
 
 const routes = [
     { path: "/", view: Home },
-    { path: "/profile/:id/:something", view: Profiles },
-    { path: "/profile/:id", view: Profiles },
-    { path: "/profile", view: Profiles },
+    { path: "/profiles/:id/:something", view: Profiles },
+    { path: "/profiles/:id", view: Profiles },
+    { path: "/profiles", view: Profiles },
     { path: "/game", view: Game },
     { path: "/stats", view: Stats },
   ];
 
 let myRouter = new Router(routes);
-let view = router.router();
-window.addEventListener("popstate", view.render());
-  
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.addEventListener("click", e => {
-    if (e.target.matches("[data-link]")) {
-      e.preventDefault();
-      this.navigateTo(e.target.href);
-    }
-  });
-  myRouter.router().render();
-});
+// let view = myRouter.router();
+// window.addEventListener("popstate", view.render());
+//   
+// document.addEventListener("DOMContentLoaded", () => {
+//   document.body.addEventListener("click", e => {
+//     if (e.target.matches("[data-link]")) {
+//       e.preventDefault();
+//       myRouter.navigateTo(e.target.href);
+//     }
+//   });
+//   myRouter.router().render();
+// });
