@@ -14,9 +14,9 @@ const routes = [
   ];
 
 let myRouter = new Router(routes);
-let view = myRouter.router();
-
-window.addEventListener("popstate", view.render);
+let view = await myRouter.router();
+// console.log(view, view.render);
+window.addEventListener("popstate", () => myRouter.backNavi(location.pathname));
   
 document.addEventListener("DOMContentLoaded", () => {
   document.body.addEventListener("click", e => {
@@ -25,5 +25,5 @@ document.addEventListener("DOMContentLoaded", () => {
       myRouter.navigateTo(e.target.href);
     }
   });
-  myRouter.router().render;
+  // myRouter.router().render();
 });

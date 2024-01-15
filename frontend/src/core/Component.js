@@ -10,6 +10,12 @@ export default class Component {
     setEvent(){}
     getHtml(){return ""}
     render() {
-        document.querySelector(target) = this.getHtml();
+        const elem = document.querySelector(this.target);
+        const html = this.getHtml();
+        if (html instanceof Promise) {
+            html.then((e) => elem.innerHTML = e);
+        } else {
+            elem.innerHTML = html;
+        }
     }
 }

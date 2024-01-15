@@ -9,19 +9,6 @@ export default class Router {
         if (this.routes === null)
             this.router = this.errorPage;
         this.routes = routes;
-
-        // event 
-  //       window.addEventListener("popstate", this.router);
-  // 
-  //       document.addEventListener("DOMContentLoaded", () => {
-  //       document.body.addEventListener("click", e => {
-  //           if (e.target.matches("[data-link]")) {
-  //               e.preventDefault();
-  //               this.navigateTo(e.target.href);
-  //            }
-  //          });
-  //          this.router();
-  //        });
     }
     addRoutes(route) {
         this.routes.push(route);
@@ -44,6 +31,10 @@ export default class Router {
         console.log(url);
         await this.router();
     }
+    async backNavi(url) {
+        console.log(url);
+        await this.router();
+    }
 
     async router() {
         const potentialMatches = this.routes.map(route => {
@@ -61,8 +52,8 @@ export default class Router {
             };
         }
         const view = new match.route.view(this.getParams(match));
-        document.querySelector('#app').innerHTML = await view.getHtml();
-        // view.render();
-        return view;
+        //document.querySelector('#app').innerHTML = await view.getHtml();
+        view.render();
+        // return view;
     }
 }
