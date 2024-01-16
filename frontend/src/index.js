@@ -14,16 +14,30 @@ const routes = [
   ];
 
 let myRouter = new Router(routes);
-let view = await myRouter.router();
-// console.log(view, view.render);
-window.addEventListener("popstate", () => myRouter.backNavi(location.pathname));
-  
+
+// 페이지 초기화
+document.addEventListener("DOMContentLoaded", async (e) => {
+  const href = e.target.href;
+  const view = await myRouter.navigateTo(href);
+  view.render();
+});
+
+// 뒤로 가기 이벤트 핸들러
+// window.addEventListener("popstate", () => myRouter.backNavi(location.pathname));
+window.addEventListener("popstate", async (e) => {
+  const view =  await myRouter.backNavi(location.pathname);
+  view.render();
+});
+
+// 클릭 이벤트 핸들러
 document.addEventListener("DOMContentLoaded", () => {
-  document.body.addEventListener("click", e => {
+  document.body.addEventListener("click", async (e) => {
     if (e.target.matches("[data-link]")) {
       e.preventDefault();
-      myRouter.navigateTo(e.target.href);
+      const href = e.target.href;
+
+      const view = await myRouter.navigateTo(href);
+      view.render();
     }
   });
-  // myRouter.router().render();
 });

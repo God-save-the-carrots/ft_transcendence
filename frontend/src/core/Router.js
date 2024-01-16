@@ -26,14 +26,14 @@ export default class Router {
         }));
     }
 
-    async navigateTo(url) {
-        history.pushState(null, null, url);
-        console.log(url);
-        await this.router();
+    async navigateTo(url, title = null) {
+        history.pushState({}, title, url);
+        let view = await this.router();
+        return view;
     }
     async backNavi(url) {
-        console.log(url);
-        await this.router();
+        let view = await this.router();
+        return view;
     }
 
     async router() {
@@ -45,6 +45,7 @@ export default class Router {
         });
 
         let match = potentialMatches.find(potentialMatches => potentialMatches.result !== null);
+        console.log("match: ", match);
         if (!match) {
             match = {
                 route: this.errorPage,
@@ -52,8 +53,6 @@ export default class Router {
             };
         }
         const view = new match.route.view(this.getParams(match));
-        //document.querySelector('#app').innerHTML = await view.getHtml();
-        view.render();
-        // return view;
+        return view;
     }
 }
