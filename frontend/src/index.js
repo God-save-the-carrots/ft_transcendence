@@ -4,6 +4,10 @@ import Profiles from "./components/Profiles.js";
 import Stats from "./components/Stats.js";
 import Router from "./core/Router.js";
 
+// localhost:80/profiles/
+// localhost:80/profiles/1 {id: 1}
+// localhost:80/profiles/1/2 {id: 1, something : 2}
+
 const routes = [
     { path: "/", view: Home },
     { path: "/profiles/:id/:something", view: Profiles },
