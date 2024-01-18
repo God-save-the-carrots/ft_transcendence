@@ -36,7 +36,6 @@ services:
     environment:
       - DJANGO_DEBUG=False
       - GUNICORN_WORKERS=5
-    # TODO : daphne
     # command: >
     #   sh -c "sh migrations.sh && gunicorn -w 5 --reload -b 0.0.0.0:8000 --log-level info server.wsgi"
     command: >
