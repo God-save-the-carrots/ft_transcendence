@@ -13,8 +13,6 @@ services:
       - "80:80"
     volumes:
       - ./frontend:/src
-    # command: >
-    #   sh -c "npm install -g npm@latest && npm install && npm run build && npm run start"
     depends_on:
       - db
       - backend
@@ -38,10 +36,10 @@ services:
     environment:
       - DJANGO_DEBUG=False
       - GUNICORN_WORKERS=5
-    command: >
-      sh -c "sh migrations.sh && gunicorn -w 5 --reload -b 0.0.0.0:8000 --log-level info server.wsgi"
     # command: >
-      # sh -c "sh migrations.sh && python manage.py runserver 0.0.0.0:8000"
+    #   sh -c "sh migrations.sh && gunicorn -w 5 --reload -b 0.0.0.0:8000 --log-level info server.wsgi"
+    command: >
+      sh -c "sh migrations.sh && python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
 

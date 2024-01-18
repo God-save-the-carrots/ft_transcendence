@@ -137,7 +137,7 @@ up:
 
 .PHONY: down # Stop and remove containers, networks
 down:
-	docker compose down --rmi all --volumes
+	docker compose down --volumes
 
 .PHONY: rm # Removes stopped service containers
 rm:
@@ -149,7 +149,7 @@ rm:
 
 .PHONY: logs # View output from containers
 logs:
-	docker compose logs ${service}
+	docker compose logs ${service} -f
 
 .PHONY: stop # Stop services
 stop:
