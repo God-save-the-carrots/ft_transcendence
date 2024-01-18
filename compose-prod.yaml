@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  frontend:
+    image: ${FRONTEND_IMAGE_NAME}:${FRONTEND_IMAGE_TAG}
+    container_name: ${FRONTEND_CONTAINER_NAME}
+    build:
+      context: ./frontend
+    stdin_open: true
+    tty: true
+    working_dir: /src
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/src
+    depends_on:
+      - db
+      - backend
+
+  backend:
+    image: ${BACKEND_IMAGE_NAME}:${BACKEND_IMAGE_TAG}
+    container_name: ${BACKEND_CONTAINER_NAME}
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+    working_dir: /src
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/src
+      - run_vol:/var/run
+      - cache_vol:/var/cache
+    environment:
+      - DJANGO_DEBUG=False
+      - GUNICORN_WORKERS=5
+    # TODO : daphne
+    # command: >
+    #   sh -c "sh migrations.sh && gunicorn -w 5 --reload -b 0.0.0.0:8000 --log-level info server.wsgi"
+    command: >
+      sh -c "sh migrations.sh && python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16.1-alpine3.19
+    container_name: ${DATABASE_CONTAINER_NAME}
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - PGUSER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - ${DATABASE_VOLUME}:/var/lib/postgresql/data
+
+volumes:
+  run_vol:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+  cache_vol:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
