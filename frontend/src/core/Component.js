@@ -1,21 +1,33 @@
 export default class Component {
-    target;
-    constructor (target) {
-        this.target = target;
-    }
-    setTitle(title){
-        this.title = title;
-    }
-    setup(){}
-    setEvent(){}
-    getHtml(){return ""}
-    render() {
-        const elem = document.querySelector(this.target);
-        const html = this.getHtml();
-        if (html instanceof Promise) {
-            html.then((e) => elem.innerHTML = e);
-        } else {
-            elem.innerHTML = html;
-        }
-    }
+	$target;
+	//props;
+	state;
+	constructor($target) {
+		this.$target = $target;
+		//this.props = props;
+		this.setup();
+		this.setEvent();
+		//this.render();
+	}
+	setup() {}
+	mounted() {}
+	template() {
+		return "";
+	}
+	render() {
+		this.$target.innerHTML = this.template();
+		this.mounted();
+	}
+	setEvent() {}
+	setState(newState) {
+		this.state = { ...this.state, ...newState };
+		this.render();
+	}
+	addEvent(eventType, selector, callback) {
+		const children = [...this.$target.querySelectorAll(selector)];
+		this.$target.addEventListener(eventType, (event) => {
+			if (!event.target.closest(selector)) return false;
+			callback(event);
+		});
+	}
 }
