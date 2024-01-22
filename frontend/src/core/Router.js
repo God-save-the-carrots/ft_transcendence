@@ -36,7 +36,7 @@ class Router {
 	}
 
 	async navigateTo(url, title = null) {
-		history.pushState({}, title, url);
+		if (url !== location.href) history.pushState({}, title, url);
 		let view = await this.router();
 		return view;
 	}

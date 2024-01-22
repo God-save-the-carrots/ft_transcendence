@@ -5,7 +5,6 @@ export default class Test_app3 extends Component {
 	constructor(target) {
 		super(target);
 		this._title = "item3";
-		this.render();
 	}
 	initState() {
 		return {

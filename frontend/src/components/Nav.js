@@ -17,7 +17,10 @@ export default class Nav extends Component {
 				e.preventDefault();
 				const href = e.target.href;
 				const view = await Router.navigateTo(href);
+				view.clearEvent();
 				view.render();
+				view.setEvent();
+				view.mounted();
 			}
 		});
 	}

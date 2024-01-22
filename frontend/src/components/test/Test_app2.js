@@ -5,7 +5,6 @@ export default class Test_app2 extends Component {
 	constructor(target) {
 		super(target);
 		this._title = "item2";
-		this.render();
 	}
 	template() {
 		return `

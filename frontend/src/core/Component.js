@@ -16,6 +16,7 @@ export default class Component {
 		// this.state = observable(this.initState());
 		this.state = observable(this.initState());
 		observe(() => {
+			this.clearEvent();
 			this.render();
 			this.setEvent();
 			this.mounted();
@@ -32,10 +33,7 @@ export default class Component {
 	}
 
 	render() {
-		this.clearEvent();
 		this.$target.innerHTML = this.template();
-		this.setEvent();
-		this.mounted();
 	}
 
 	setEvent() {}
