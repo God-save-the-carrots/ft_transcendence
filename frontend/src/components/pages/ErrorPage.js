@@ -7,7 +7,7 @@ export default class ErrorPage extends Component {
 		super(document.querySelector("#app"));
 		this._title = "Error";
 	}
-	template() {
+	async template() {
 		return `
       <h1> This is errorPage </h1>
     `;

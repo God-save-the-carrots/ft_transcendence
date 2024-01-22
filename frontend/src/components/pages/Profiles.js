@@ -7,7 +7,7 @@ export default class Profiles extends Component {
 		super(document.querySelector("#app"));
 		this._title = "Profiles";
 	}
-	template() {
+	async template() {
 		return `
         <h1> ${this._title}</h1>
       `;

@@ -6,7 +6,7 @@ export default class Test_app2 extends Component {
 		super(target);
 		this._title = "item2";
 	}
-	template() {
+	async template() {
 		return `
       <h1> HI!! This is TEST 2 </h1>
     `;

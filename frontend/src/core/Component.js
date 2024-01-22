@@ -9,31 +9,30 @@ export default class Component {
 		// this.props = props;
 		this.setup();
 		// this.setEvent();
-		// this.render();
 	}
 
-	setup() {
+	async setup() {
 		// this.state = observable(this.initState());
-		this.state = observable(this.initState());
-		observe(() => {
+		this.state = observable(await this.initState());
+		observe(async () => {
 			this.clearEvent();
-			this.render();
+			await this.render();
 			this.setEvent();
-			this.mounted();
+			await this.mounted();
 		});
 	}
 
-	initState() {
+	async initState() {
 		return {};
 	}
-	mounted() {}
+	async mounted() {}
 
-	template() {
+	async template() {
 		return "";
 	}
 
-	render() {
-		this.$target.innerHTML = this.template();
+	async render() {
+		this.$target.innerHTML = await this.template();
 	}
 
 	setEvent() {}

@@ -12,7 +12,7 @@ export default class Test_app3 extends Component {
 			b: 20,
 		};
 	}
-	template() {
+	async template() {
 		const { a, b } = this.state;
 		return `
       <input id="stateA" value = "${a}" size="5" />

@@ -6,14 +6,14 @@ export default class Test_app1 extends Component {
 		super(target);
 		this._title = "item1";
 	}
-	template() {
+	async template() {
 		return `
       <h1> HI!! This is TEST 1 </h1>
     `;
 	}
 
-	render() {
+	async render() {
 		console.log(this);
-		this.$target.innerHTML = this.template();
+		this.$target.innerHTML = await this.template();
 	}
 }

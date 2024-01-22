@@ -2,7 +2,7 @@ import Component from "../core/Component.js";
 import Router from "../core/Router.js";
 
 export default class Nav extends Component {
-	template() {
+	async template() {
 		return `
 			<a href="/" class="nav__link" data-link>home</a>
 			<a href="/profiles" class="nav__link" data-link>profile</a>
@@ -17,10 +17,10 @@ export default class Nav extends Component {
 				e.preventDefault();
 				const href = e.target.href;
 				const view = await Router.navigateTo(href);
-				view.clearEvent();
-				view.render();
-				view.setEvent();
-				view.mounted();
+				// view.clearEvent();
+				// await view.render();
+				// view.setEvent();
+				// await view.mounted();
 			}
 		});
 	}

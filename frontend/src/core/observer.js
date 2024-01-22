@@ -8,9 +8,9 @@ function debounceFrame(callback) {
 	};
 }
 
-export function observe(fn) {
+export async function observe(fn) {
 	currentObserver = debounceFrame(fn);
-	fn();
+	await fn();
 	currentObserver = null;
 }
 

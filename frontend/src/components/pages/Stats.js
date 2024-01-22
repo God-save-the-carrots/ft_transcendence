@@ -7,7 +7,7 @@ export default class Stats extends Component {
 		super(document.querySelector("#app"));
 		this._title = "Stats";
 	}
-	template() {
+	async template() {
 		return `
         <h1> ${this._title}</h1>
       `;

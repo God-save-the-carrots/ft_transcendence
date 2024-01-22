@@ -7,7 +7,7 @@ export default class Game extends Component {
 		super(document.querySelector("#app"));
 		this._title = "Game";
 	}
-	template() {
+	async template() {
 		return `
         <h1> ${this._title}</h1>
       `;

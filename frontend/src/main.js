@@ -9,19 +9,19 @@ async function main() {
 	document.addEventListener("DOMContentLoaded", async (e) => {
 		const href = e.target.href;
 		const view = await Router.navigateTo(href);
-		view.clearEvent();
-		view.render();
-		view.setEvent();
-		view.mounted();
+		// view.clearEvent();
+		// await view.render();
+		// view.setEvent();
+		// await view.mounted();
 	});
 
 	// 뒤로 가기
 	window.addEventListener("popstate", async (e) => {
 		const view = await Router.backNavi(location.pathname);
-		view.clearEvent();
-		view.render();
-		view.setEvent();
-		view.mounted();
+		// view.clearEvent();
+		// await view.render();
+		// view.setEvent();
+		// await view.mounted();
 	});
 }
 
