@@ -1,7 +1,6 @@
-from engine.Game import Game
-from engine.GameObject import GameObject, Vector2, Line
-import phong.logic
-import phong.map
+from game.Game import Game
+from game.GameObject import GameObject, Vector2, Line
+from game.phong import logic, map as phong_map
 import json
 import math
 
@@ -10,7 +9,7 @@ class PhongGame(Game):
         Game.__init__(self, users, "phong_" + str(len(users)))
         self.users = users
 
-        self.object_list = phong.map.select_map(len(users))
+        self.object_list = phong_map.select_map(len(users))
         self.object_wall: list[GameObject] = list(
             filter(lambda x: x.tag == "wall", self.object_list)
         )
@@ -67,11 +66,11 @@ class PhongGame(Game):
             for rect in self.rect_objs:
                 current_position = ball.transform.position
                 ray = Line(old_position, current_position)
-                point = phong.logic.pass_through(ray, rect)
+                point = logic.pass_through(ray, rect)
                 if point is not None:
                     if ball.acc.position.dot(rect.transform.rotation) > 0:
                         continue
-                    new_acc = phong.logic.reflect(ball, rect, self.min_ball_speed)
+                    new_acc = logic.reflect(ball, rect, self.min_ball_speed)
                     ball.set_acc(position=new_acc)
                     ball.transform.position = point + new_acc * 0.0001
                     self.min_ball_speed = min(self.min_ball_speed + 1, self.max_ball_speed)

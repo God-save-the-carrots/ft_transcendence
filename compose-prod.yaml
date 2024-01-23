@@ -29,6 +29,7 @@ services:
     working_dir: /src
     ports:
       - "8000:8000"
+      - "4444:4444"
     volumes:
       - ./backend:/src
       - run_vol:/var/run
@@ -58,23 +59,6 @@ services:
       - 5432:5432
     volumes:
       - ${DATABASE_VOLUME}:/var/lib/postgresql/data
-
-  game:
-    build:
-      context: game
-      dockerfile: Dockerfile
-    image: ${GAME_IMAGE_NAME}:${GAME_IMAGE_TAG}
-    pull_policy: never
-    container_name: ${GAME_CONTAINER_NAME}
-    command: python3 manage.py runserver 0.0.0.0:4444 --nothreading
-    restart: always
-    volumes:
-      - ./game:/src:z
-    env_file:
-      - .env
-    ports:
-      - 4444:4444
-      - 5555:5555
 
 volumes:
   run_vol:

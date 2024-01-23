@@ -1,4 +1,4 @@
-from engine.GameObject import GameObject, Vector2, Line
+from game.GameObject import GameObject, Vector2, Line
 
 def rect_line(rect:GameObject) -> Line:
     up = rect.transform.rotation

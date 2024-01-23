@@ -1,5 +1,5 @@
-from engine.GameObject import GameObject
-from engine.GameObject import Vector2
+from game.GameObject import GameObject
+from game.GameObject import Vector2
 import math
 
 def select_map(player_cnt):

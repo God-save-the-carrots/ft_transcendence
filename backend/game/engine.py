@@ -3,9 +3,9 @@
 import json
 import asyncio
 from websockets.server import serve, WebSocketServerProtocol
-from engine.User import User
-from phong.PhongGame import PhongGame
-from engine.util import now
+from game.User import User
+from game.phong.PhongGame import PhongGame
+from game.util import now
 
 lobby = {"phong":[]}
 
@@ -46,7 +46,7 @@ async def leave_lobby(user):
 
 async def listen_port(port):
     global lobby
-    async with serve(accept, "game", port):
+    async with serve(accept, "backend", port):
         print(f"open game server port:{port}")
         while True:
             await asyncio.sleep(1)

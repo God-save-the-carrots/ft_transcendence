@@ -1,7 +1,7 @@
 import json
 import asyncio
-from engine import util
-from engine.User import User
+from game import util
+from game.User import User
 
 class VirtualException(BaseException):
     def __init__(self):

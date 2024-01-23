@@ -1,6 +1,6 @@
 from websockets.server import WebSocketServerProtocol
 from types import SimpleNamespace
-from engine.util import now
+from game.util import now
 import json
 
 class User:

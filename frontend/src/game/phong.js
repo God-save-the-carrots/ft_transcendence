@@ -1,5 +1,4 @@
-import * as THREE from "./three.js"; // path for vscode
-import client from "./client.js"
+import * as THREE from "/src/three.js"; // path for vscode
 
 /**
  * @type {Map<String, THREE.Mesh>}
@@ -39,7 +38,7 @@ window.addEventListener('keyup', (e) => {
     key[e.key] = false;
 });
 
-const socket = new WebSocket(`ws://${window.location.hostname}:5555`);
+const socket = new WebSocket(`ws://${window.location.hostname}:4444`);
 const tempIntraId = Math.random().toString(36).substring(2,7);
 socket.onopen = function (e) {
     socket.send(JSON.stringify({
