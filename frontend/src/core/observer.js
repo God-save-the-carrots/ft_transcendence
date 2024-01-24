@@ -3,9 +3,15 @@ let currentObserver = null;
 function debounceFrame(callback) {
 	let currentCallback = -1;
 	return () => {
-		cancelAnimationFrame(currentCallback);
+		// cancelAnimationFrame(currentCallback);
+		console.log("sakdas");
 		currentCallback = requestAnimationFrame(callback);
 	};
+}
+
+function isSameObject(obj1, obj2) {
+	if (obj1 instanceof Set || obj2 instanceof Set) return false;
+	if (JSON.stringify(obj1) === JSON.stringify(obj2)) return true;
 }
 
 export async function observe(fn) {

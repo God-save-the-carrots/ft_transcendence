@@ -1,9 +1,9 @@
 import ErrorPage from "../components/pages/ErrorPage.js";
-import Home from "../components/pages/Home.js";
-import Game from "../components/pages/Game.js";
-import Profiles from "../components/pages/Profiles.js";
-import Stats from "../components/pages/Stats.js";
-import Test from "../components/pages/Test.js";
+// import Home from "../components/pages/Home.js";
+// import Game from "../components/pages/Game.js";
+// import Profiles from "../components/pages/Profiles.js";
+// import Stats from "../components/pages/Stats.js";
+// import Test from "../components/pages/Test.js";
 
 class Router {
 	#routes;
@@ -11,13 +11,13 @@ class Router {
 	constructor() {
 		this.#errorPage = { path: "/404", view: ErrorPage };
 		this.#routes = [
-			{ path: "/", view: Home },
-			{ path: "/profiles/:id/:something", view: Profiles },
-			{ path: "/profiles/:id", view: Profiles },
-			{ path: "/profiles", view: Profiles },
-			{ path: "/game", view: Game },
-			{ path: "/stats", view: Stats },
-			{ path: "/test", view: Test },
+			{ path: "/", view: "Home" },
+			{ path: "/profiles/:id/:something", view: "Profiles" },
+			{ path: "/profiles/:id", view: "Profiles" },
+			{ path: "/profiles", view: "Profiles" },
+			{ path: "/game", view: "Game" },
+			{ path: "/stats", view: "Stats" },
+			{ path: "/test", view: "Test" },
 		];
 	}
 	pathToRegex(path) {
@@ -64,8 +64,11 @@ class Router {
 				result: [location.pathname],
 			};
 		}
-		let view = new match.route.view(this.getParams(match));
-		return view;
+		import(`../components/pages/${match.route.view}.js`).then(
+			async ({ default: page }) => {
+				return new page(this.getParams(match));
+			}
+		);
 	}
 }
 

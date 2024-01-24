@@ -14,8 +14,10 @@ export default class Test_app5 extends Component {
 	}
 	async template() {
 		const data = this.state;
+		data.id = 0;
+		console.log(data.id);
 		setTimeout(() => {
-			data.id = 33333333;
+			data.id = 0;
 			console.log(data.id);
 		}, 1000);
 		return `<div>${JSON.stringify(data)}</div>`;
