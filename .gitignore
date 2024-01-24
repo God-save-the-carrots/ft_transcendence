@@ -1,3 +1,4 @@
 .env
 pgdata/
 .DS_Store
+.clang-format
