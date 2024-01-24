@@ -8,6 +8,7 @@ export default class Nav extends Component {
 			<a href="/profiles" class="nav__link" data-link>profile</a>
 			<a href="/game" class="nav__link" data-link>game</a>
 			<a href="/stats" class="nav__link" data-link>stats</a>
+			<a href="/test" class="nav__link" data-link>test</a>
 			<input type="button" value="login" />
 			`;
 	}
@@ -17,10 +18,6 @@ export default class Nav extends Component {
 				e.preventDefault();
 				const href = e.target.href;
 				const view = await Router.navigateTo(href);
-				// view.clearEvent();
-				// await view.render();
-				// view.setEvent();
-				// await view.mounted();
 			}
 		});
 	}

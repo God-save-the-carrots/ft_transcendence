@@ -6,13 +6,10 @@ export default class Component {
 	state = {};
 	constructor($target) {
 		this.$target = $target;
-		// this.props = props;
 		this.setup();
-		// this.setEvent();
 	}
 
 	async setup() {
-		// this.state = observable(this.initState());
 		this.state = observable(await this.initState());
 		observe(async () => {
 			this.clearEvent();
@@ -36,15 +33,10 @@ export default class Component {
 	}
 
 	setEvent() {}
-	// setState(newState) {
-	// 	this.state = { ...this.state, ...newState };
-	// 	this.render();
-	// }
-	//
+
 	clearEvent() {}
 
 	addEvent(eventType, selector, callback) {
-		//const children = [...this.$target.querySelectorAll(selector)]
 		this.$target.addEventListener(eventType, (event) => {
 			if (!event.target.closest(selector)) return false;
 			callback(event);

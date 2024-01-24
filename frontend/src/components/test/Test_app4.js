@@ -15,7 +15,7 @@ export default class Test_app4 extends Component {
 	async template() {
 		const data = this.state;
 		setTimeout(() => {
-			data.rating = { ...data.rating, rate: 3.9 };
+			data.rating = { ...data.rating, rate: 333333 };
 		}, 2000);
 		return `<div>${JSON.stringify(data)}</div>`;
 	}

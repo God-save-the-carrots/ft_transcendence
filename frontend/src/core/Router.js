@@ -3,6 +3,7 @@ import Home from "../components/pages/Home.js";
 import Game from "../components/pages/Game.js";
 import Profiles from "../components/pages/Profiles.js";
 import Stats from "../components/pages/Stats.js";
+import Test from "../components/pages/Test.js";
 
 class Router {
 	#routes;
@@ -16,6 +17,7 @@ class Router {
 			{ path: "/profiles", view: Profiles },
 			{ path: "/game", view: Game },
 			{ path: "/stats", view: Stats },
+			{ path: "/test", view: Test },
 		];
 	}
 	pathToRegex(path) {
