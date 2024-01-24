@@ -32,6 +32,7 @@ services:
     working_dir: /src
     ports:
       - 8000:8000
+      - 4444:4444
     volumes:
       - ./backend:/src
       - run_vol:/var/run
