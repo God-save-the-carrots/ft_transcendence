@@ -135,7 +135,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:80",  # Frontend 주소에 맞게 수정
+    "http://localhost",  # Fend 주소에 맞게 수정
 ]
 
 REST_FRAMEWORK = {
