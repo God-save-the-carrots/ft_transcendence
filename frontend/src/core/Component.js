@@ -2,7 +2,7 @@ import { observable, observe } from "./observer.js";
 
 export default class Component {
 	$target;
-	// props;
+	props;
 	state = {};
 	constructor($target) {
 		this.$target = $target;

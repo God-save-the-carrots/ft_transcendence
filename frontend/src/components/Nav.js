@@ -5,10 +5,11 @@ export default class Nav extends Component {
 	async template() {
 		return `
 			<a href="/" class="nav__link" data-link>home</a>
-			<a href="/profiles" class="nav__link" data-link>profile</a>
+			<a href="/user/dummy1" class="nav__link" data-link>user-dummy</a>
 			<a href="/game" class="nav__link" data-link>game</a>
-			<a href="/stats" class="nav__link" data-link>stats</a>
+			<a href="/rank" class="nav__link" data-link>ranks</a>
 			<a href="/test" class="nav__link" data-link>test</a>
+			<a href="/login" class="nav__link" data-link>login-test</a>
 			<input type="button" value="login" />
 			`;
 	}
