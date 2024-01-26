@@ -12,28 +12,28 @@ class Router {
 		this.#errorPage = { path: "/404", view: ErrorPage };
 		this.#routes = [
 			{ path: "/", view: "Home" },
-			{ path: "/profiles/:id/:something", view: "Profiles" },
-			{ path: "/profiles/:id", view: "Profiles" },
-			{ path: "/profiles", view: "Profiles" },
+			{ path: "/user/:intra_id", view: "User" },
 			{ path: "/game", view: "Game" },
-			{ path: "/stats", view: "Stats" },
+			{ path: "/rank", view: "Rank" },
+			{ path: "/login", view: "Login" },
+			{ path: "/auth/ft/redirection", view: "Auth" },
 			{ path: "/test", view: "Test" },
 		];
 	}
 	pathToRegex(path) {
 		return new RegExp(
-			"^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$"
+			"^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$",
 		);
 	}
 	getParams(match) {
 		const values = match.result.slice(1);
 		const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(
-			(result) => result[1]
+			(result) => result[1],
 		);
 		return Object.fromEntries(
 			keys.map((key, i) => {
 				return [key, values[i]];
-			})
+			}),
 		);
 	}
 
@@ -56,7 +56,7 @@ class Router {
 			};
 		});
 		let match = potentialMatches.find(
-			(potentialMatches) => potentialMatches.result !== null
+			(potentialMatches) => potentialMatches.result !== null,
 		);
 		if (!match) {
 			match = {
@@ -67,7 +67,7 @@ class Router {
 		import(`../components/pages/${match.route.view}.js`).then(
 			async ({ default: page }) => {
 				return new page(this.getParams(match));
-			}
+			},
 		);
 	}
 }

@@ -1,11 +1,11 @@
 import Component from "../../core/Component.js";
 
-export default class Stats extends Component {
+export default class Rank extends Component {
 	_title;
 	_params;
 	constructor() {
 		super(document.querySelector("#app"));
-		this._title = "Stats";
+		this._title = "Rank";
 	}
 	async template() {
 		return `
