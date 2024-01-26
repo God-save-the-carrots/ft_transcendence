@@ -15,7 +15,7 @@ export default class UserProfile extends Component {
 	}
 	async template() {
 		this.state.data = await fetch(
-			`http://localhost:8000/api/user/${this._intra_id}`
+			`http://localhost/api/user/${this._intra_id}`
 		).then((x) => x.json());
 		const data = this.state.data;
 		return `<div>${JSON.stringify(data)}</div>
