@@ -2,3 +2,4 @@
 pgdata/
 .DS_Store
 .clang-format
+jsconfig.json
