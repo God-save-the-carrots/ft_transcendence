@@ -1,13 +1,14 @@
 from game.Game import Game
 from game.GameObject import GameObject, Vector2, Line
 from game.phong import logic, map as phong_map
+from game.User import User
 import json
 import math
 
 class PhongGame(Game):
     def __init__(self, users):
         Game.__init__(self, users, "phong_" + str(len(users)))
-        self.users = users
+        self.users: list[User] = users
 
         self.object_list = phong_map.select_map(len(users))
         self.object_wall: list[GameObject] = list(
@@ -120,13 +121,3 @@ class PhongGame(Game):
     async def onclose(self, user):
         self.users.remove(user)
         print("close", user)
-
-    @staticmethod
-    async def phong_match(users: list):
-        if len(users) < 2 or users[0].age < 5:
-            return None
-        player_cnt = min(4, len(users))
-        players = users[0:player_cnt]
-        for player in players:
-            users.remove(player)
-        return PhongGame(players)
