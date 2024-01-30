@@ -18,7 +18,7 @@ export default class Nav extends Component {
 			if (e.target.matches("[data-link]")) {
 				e.preventDefault();
 				const href = e.target.href;
-				const view = await Router.navigateTo(href);
+				await Router.navigateTo(href);
 			}
 		});
 	}
