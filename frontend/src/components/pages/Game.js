@@ -6,6 +6,7 @@ export default class Game extends Component {
 	_params;
 	constructor() {
 		super(document.querySelector("#app"));
+        this.game = null;
 		this._title = "Game";
 	}
 	async template() {
@@ -16,8 +17,13 @@ export default class Game extends Component {
         const ratio = 1 / 2;
         const width = window.innerWidth - 100;
         const height = width * ratio;
-        const game = new PhongGame(width, height, randomUserToken);
+        this.game = new PhongGame(width, height, randomUserToken);
         const $target = document.getElementById("game-content");
-        $target.appendChild(game.getRenderer().domElement);
+        $target.appendChild(this.game.getRenderer().domElement);
+    }
+    async unmounted() {
+        if (this.game) {
+            this.game.destroy();
+        }
     }
 }
