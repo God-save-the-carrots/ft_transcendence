@@ -3,7 +3,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import LoginSerializer
+from .serializers import UserSerializer,ProfileSerializer
+from .models import User, Profile
 
 # Create your views here.
 
@@ -26,44 +27,57 @@ class LogoutAPIView(APIView):
     def post(self, request):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# TODO : UserAPIView 추가적인 작업필요.
 class UserAPIView(APIView):
-    dummy = []
-    def __init__(self):
-        
-        if not self.dummy:
-            for i in range(43):
-                self.dummy.append({
-                    "id": i,
-                    "intra_id": "dummy" + str(i),
-                    "photo_id": i % 8,
-                    "message": "dummy message" + str(i)
-                })
-    
     def get(self, request, intra_id):
-        response_data = next((item for item in self.dummy if item['intra_id'] == intra_id), None)
-        if not response_data:
-            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
-        return Response(response_data, status=status.HTTP_200_OK)
+        try:
+            if intra_id.isdigit():
+                user_model = User.objects.get(pk=intra_id)
+            else:
+                user_model = User.objects.get(intra_id=intra_id)
+            serializer = UserSerializer(user_model)
+            return Response(serializer, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response(serializer, status=status.HTTP_404_NOT_FOUND)
     
-    def patch(self, request, intra_id):
-        response_data = next((item for item in self.dummy if item['intra_id'] == intra_id), None)
-        if not response_data:
-            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+# class UserAPIView(APIView):
+#     dummy = []
+#     def __init__(self):
         
-        request_data = request.data
+#         if not self.dummy:
+#             for i in range(43):
+#                 self.dummy.append({
+#                     "id": i,
+#                     "intra_id": "dummy" + str(i),
+#                     "photo_id": i % 8,
+#                     "message": "dummy message" + str(i)
+#                 })
+    
+#     def get(self, request, intra_id):
+#         response_data = next((item for item in self.dummy if item['intra_id'] == intra_id), None)
+#         if not response_data:
+#             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+#         return Response(response_data, status=status.HTTP_200_OK)
+    
+#     def patch(self, request, intra_id):
+#         response_data = next((item for item in self.dummy if item['intra_id'] == intra_id), None)
+#         if not response_data:
+#             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
         
-        # Check id
-        if 'id' not in request_data:
-            return Response({"error": "Missing id"}, status=status.HTTP_400_BAD_REQUEST)
-        if request_data['id'] != response_data['id']:
-            return Response({"error": "Invalid id"}, status=status.HTTP_403_FORBIDDEN)
+#         request_data = request.data
+        
+#         # Check id
+#         if 'id' not in request_data:
+#             return Response({"error": "Missing id"}, status=status.HTTP_400_BAD_REQUEST)
+#         if request_data['id'] != response_data['id']:
+#             return Response({"error": "Invalid id"}, status=status.HTTP_403_FORBIDDEN)
        
-        # Update data
-        if 'photo_id' in request_data:
-            response_data['photo_id'] = request_data['photo_id']
-        if 'message' in request_data:
-            response_data['message'] = request_data['message']
-        return Response(response_data, status=status.HTTP_200_OK)
+#         # Update data
+#         if 'photo_id' in request_data:
+#             response_data['photo_id'] = request_data['photo_id']
+#         if 'message' in request_data:
+#             response_data['message'] = request_data['message']
+#         return Response(response_data, status=status.HTTP_200_OK)
 
 class SocreAPIView(APIView):
     dummy = {
