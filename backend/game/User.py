@@ -43,7 +43,10 @@ class User:
         await self.socket.send(data)
 
     async def send_json(self, json_data):
-        await self.socket.send(json.dumps(json_data))
+        try:
+            await self.socket.send(json.dumps(json_data))
+        except:
+            print(self.socket.id, "send error:", json_data)
 
     async def recv_json(self, json_data):
         for event in reversed(self.onmessage):
