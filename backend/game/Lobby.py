@@ -22,8 +22,8 @@ class Lobby:
         if q == None:
             raise "err"
         q.append(user)
-        user.onclose = self.leave_lobby
-        user.onmessage = self.request_leave_lobby
+        user.push_onclose_event(self.leave_lobby)
+        user.push_onmessage_event(self.request_leave_lobby)
         print(user.socket.id, "join", user.game_type)
 
     def is_valid_game_type(self, game_type):
@@ -72,6 +72,9 @@ class Lobby:
         if all(player.opened for player in players):
             rule_constructor = self.qmatch.get(game_type).get("rule")
             game_constructor = self.qmatch.get(game_type).get("game")
+            for player in players:
+                player.pop_onclose_event()
+                player.pop_onmessage_event()
             session = rule_constructor(players, game_constructor)
             asyncio.create_task(session.start())
             print("matched:", game_type)

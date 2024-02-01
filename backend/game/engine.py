@@ -21,15 +21,7 @@ async def accept(websocket: WebSocketServerProtocol):
     except:
         print(websocket.id, "invalid")
         return
-    async for message in websocket:
-        try:
-            await user.recv_json(json.loads(message))
-        except Exception as e:
-            print(e)
-            break
-    if user.onclose is not None:
-        print(websocket.id, "close")
-        await user.onclose(user)
+    await user.loop()
 
 async def auth(websocket):
     raw_info = await asyncio.wait_for(websocket.recv(), timeout=10)

@@ -6,7 +6,7 @@ import json
 import math
 
 class PhongGame(Game):
-    def __init__(self, users):
+    def __init__(self, users: 'list[User]'):
         Game.__init__(self, users, "phong_" + str(len(users)))
         self.users: list[User] = users
 
@@ -32,8 +32,8 @@ class PhongGame(Game):
 
         i = 0
         for user in users:
-            user.onclose = lambda user: self.onclose(user)
-            user.onmessage = lambda user, msg: self.onmessage(user, msg)
+            user.push_onclose_event(self.onclose)
+            user.push_onmessage_event(self.onmessage)
             user.data.unit_id = self.player_objs[i].id
             user.data.move = 0
             i += 1
