@@ -6,11 +6,11 @@ import json
 import math
 
 class PhongGame(Game):
-    def __init__(self, users: 'list[User]'):
-        Game.__init__(self, users, "phong_" + str(len(users)))
-        self.users: list[User] = users
+    def __init__(self, players: 'list[User]'):
+        Game.__init__(self, players, "phong_" + str(len(players)))
+        self.players: list[User] = players
 
-        self.object_list = phong_map.select_map(len(users))
+        self.object_list = phong_map.select_map(len(players))
         self.object_wall: list[GameObject] = list(
             filter(lambda x: x.tag == "wall", self.object_list)
         )
@@ -31,7 +31,7 @@ class PhongGame(Game):
             self.object_dict[obj.id] = obj
 
         i = 0
-        for user in users:
+        for user in players:
             user.push_onclose_event(self.onclose)
             user.push_onmessage_event(self.onmessage)
             user.data.unit_id = self.player_objs[i].id
@@ -51,10 +51,10 @@ class PhongGame(Game):
     async def start_first_frame(self):
         objects = list(map(lambda x: x.json(), self.object_list))
         players = []
-        for user in self.users:
+        for user in self.players:
             players.append({"intra_id": user.intra_id,"unit_id": user.data.unit_id})
         send_data = json.dumps({"type": "init", "objects": objects, "players": players})
-        for user in self.users:
+        for user in self.players:
             await user.send(send_data)
 
     async def update(self, frame, delta):
@@ -99,7 +99,7 @@ class PhongGame(Game):
                 send_data["debug"]["detected_wall_id"] = test_detected_wall.id
             await self.broadcast(send_data)
 
-        if len(self.users) == 0:
+        if len(self.players) == 0:
             return False
         return True
     
@@ -119,5 +119,5 @@ class PhongGame(Game):
                 unit.set_acc(position=right*self.player_speed)
 
     async def onclose(self, user):
-        self.users.remove(user)
+        self.players.remove(user)
         print("close", user)
