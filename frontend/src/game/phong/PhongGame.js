@@ -19,6 +19,7 @@ export default class PhongGame extends NetworkScene {
         }
         this.setOnmessage("init", this.#netInit.bind(this))
         this.setOnmessage("update", this.#netUpdate.bind(this))
+        this.setOnmessage("end", this.#netEnd.bind(this))
         this.initKeyEvent();
         this.loadMenu();
         this.camera.position.z = 30;
@@ -83,6 +84,12 @@ export default class PhongGame extends NetworkScene {
             touchedWall.material.color.b = 1
             touchedWall.material.color.g = 1
         }
+    }
+
+    #netEnd(data) {
+        console.log(data.result); // TODO: show result
+        this.socket.close();
+        alert("TODO: restart game"); // TODO: return to main menu
     }
 
     initKeyEvent() {

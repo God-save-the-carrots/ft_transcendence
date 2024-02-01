@@ -10,4 +10,9 @@ class SingleGame:
     async def start(self):
         self.game = self.game_constructor(self.players)
         result = await self.game.start()
+        for player in self.players:
+            await player.send_json({
+                "type": "end",
+                "result": {} # TODO: send result
+            })
         print("single game result: ", result)
