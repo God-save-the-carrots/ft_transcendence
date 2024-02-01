@@ -1,5 +1,8 @@
 import asyncio
 from game.User import User
+from game.SingleGame import SingleGame
+from game.Tournament import Tournament
+
 from game.phong.PhongGame import PhongGame
 from websockets.exceptions import ConnectionClosedOK
 
@@ -10,8 +13,8 @@ class Lobby:
             "phong_4": [],
         }
         self.qmatch = {
-            "phong": {"cap":(2, 3), "game": PhongGame} ,
-            "phong_4": {"cap":(4, 4), "game": PhongGame},
+            "phong": {"cap":(2, 3), "rule":SingleGame, "game":PhongGame} ,
+            "phong_4": {"cap":(4, 4), "rule":Tournament, "game":PhongGame},
         }
 
     def join_lobby(self, user: User):
@@ -58,18 +61,20 @@ class Lobby:
                 users.remove(player)
             asyncio.create_task(self.game_ready(players, game_type))
 
-    async def game_ready(self, players: list[User], game_type):
-        game_constructor = self.qmatch.get(game_type).get("game")
+    async def game_ready(self, players: 'list[User]', game_type):
+        timer = 5
         for player in players:
             try:
-                await player.send_json({"type":"ready","timer":5})
+                await player.send_json({"type":"ready","timer":timer})
             except ConnectionClosedOK:
                 pass
-        await asyncio.sleep(5)
+        await asyncio.sleep(timer)
         if all(player.opened for player in players):
+            rule_constructor = self.qmatch.get(game_type).get("rule")
+            game_constructor = self.qmatch.get(game_type).get("game")
+            session = rule_constructor(players, game_constructor)
+            asyncio.create_task(session.start())
             print("matched:", game_type)
-            matched_game = game_constructor(players)
-            asyncio.create_task(matched_game.loop())
         else:
             users = self.qlist.get(game_type)
             for player in players:
