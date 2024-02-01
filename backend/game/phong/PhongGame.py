@@ -102,7 +102,16 @@ class PhongGame(Game):
         if len(self.players) == 0:
             return False
         return True
-    
+
+    async def finish(self):
+        for player in self.players:
+            player.pop_onclose_event()
+            player.pop_onmessage_event()
+
+        return {
+            "grade": self.players
+        }
+
     async def onmessage(self, user, json_data):
         if json_data["type"] == "move":
             user.data.move = json_data["data"]["move"] # 0, 1, -1

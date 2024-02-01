@@ -28,6 +28,7 @@ class Game:
             next_sleep = max(0, delta_time - update_time)
             await asyncio.sleep(next_sleep)
             self.frame = self.frame + 1
+        return await self.finish()
 
     async def start_first_frame(self):
         raise VirtualException()
@@ -35,11 +36,8 @@ class Game:
     async def update(self, frame, delta):
         raise VirtualException()
     
-    async def onmessage(self, user, json_data):
-        pass
-
-    async def onclose(self, user):
-        pass
+    async def finish(self):
+        raise VirtualException()
 
     async def broadcast(self, json_data):
         data = json.dumps(json_data)

@@ -9,4 +9,5 @@ class SingleGame:
         
     async def start(self):
         self.game = self.game_constructor(self.players)
-        await self.game.start()
+        result = await self.game.start()
+        print("single game result: ", result)
