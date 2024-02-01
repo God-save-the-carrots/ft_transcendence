@@ -9,4 +9,4 @@ class SingleGame:
         
     async def start(self):
         self.game = self.game_constructor(self.players)
-        await self.game.loop()
+        await self.game.start()

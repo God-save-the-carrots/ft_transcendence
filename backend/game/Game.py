@@ -14,11 +14,11 @@ class Game:
         self.game_type = name
         self.target_frame = 60
 
-    async def loop(self):
+    async def start(self):
         delta_time = 1.0 / self.target_frame
         self.frame = 0
         start = util.now()
-        await self.start()
+        await self.start_first_frame()
         while True:
             delta = util.now() - start
             start = util.now()
@@ -29,7 +29,7 @@ class Game:
             await asyncio.sleep(next_sleep)
             self.frame = self.frame + 1
 
-    async def start(self):
+    async def start_first_frame(self):
         raise VirtualException()
 
     async def update(self, frame, delta):

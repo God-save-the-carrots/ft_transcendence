@@ -48,7 +48,7 @@ class PhongGame(Game):
             ball.set_acc(position=Vector2(math.cos(rad), math.sin(rad))*self.min_ball_speed)
             i += 1
 
-    async def start(self):
+    async def start_first_frame(self):
         objects = list(map(lambda x: x.json(), self.object_list))
         players = []
         for user in self.users:
