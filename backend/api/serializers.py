@@ -15,3 +15,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    photo_id = serializers.IntegerField(source='profile.photo_id')
+    message = serializers.CharField(source='profile.message')
+
+    class Meta:
+        model = User
+        fields = ['id', 'intra_id', 'photo_id', 'message']

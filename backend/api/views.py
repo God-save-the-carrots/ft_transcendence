@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer,ProfileSerializer
+from .serializers import *
 from .models import User, Profile
 
 # Create your views here.
@@ -31,14 +31,11 @@ class LogoutAPIView(APIView):
 class UserAPIView(APIView):
     def get(self, request, intra_id):
         try:
-            if intra_id.isdigit():
-                user_model = User.objects.get(pk=intra_id)
-            else:
-                user_model = User.objects.get(intra_id=intra_id)
-            serializer = UserSerializer(user_model)
-            return Response(serializer, status=status.HTTP_200_OK)
+            user_model = User.objects.get(intra_id=intra_id)
+            serializer = CustomUserSerializer(user_model)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response(serializer, status=status.HTTP_404_NOT_FOUND)
+            return Response(serializer.data, status=status.HTTP_404_NOT_FOUND)
     
 # class UserAPIView(APIView):
 #     dummy = []

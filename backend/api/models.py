@@ -21,7 +21,7 @@ class User(models.Model):
 # profile : User와 1대1로 매칭이되는 정보 (변하는 정보)
 class Profile(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo_type = models.IntegerField(default=0)
+    photo_id = models.IntegerField(default=1)
     rating = models.IntegerField(default=1024)
     message = models.CharField(max_length=30, blank=True, null=True)
 
