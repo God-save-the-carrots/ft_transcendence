@@ -1,5 +1,3 @@
-# models.py
-
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -11,12 +9,7 @@ class User(models.Model):
 
     def __str__(self):
         return f"{self.intra_id} ({self.pk})"
-    
-    def save(self, *args, **kwargs):
-        super(User, self).save(*args, **kwargs)
 
-        if not hasattr(self, 'profile'):
-            Profile.objects.create(user_id=self)
 
 # profile : User와 1대1로 매칭이되는 정보 (변하는 정보)
 class Profile(models.Model):
@@ -25,15 +18,31 @@ class Profile(models.Model):
     rating = models.IntegerField(default=1024)
     message = models.CharField(max_length=30, blank=True, null=True)
 
-# # GameSession : 매 판마다 생성이되는 게임의 종류 및 정보
-# class GameSession(models.Model):
-#     game_type = models.CharField()
-#     start_time = models.DateTimeField()
-#     end_time = models.DateTimeField()
+# Tournament :
+class Tournament(models.Model):
+    PONG_4 = 'pong_4'
 
-# # Pong : GameSession에 따라 유저마다 생성이될 각 게임정보.
-# class Pong(models.Model):
-#     user_id = models.ForeignKey(User)
-#     game_session_id = models.ForeignKey(GameSession)
-#     is_win = models.BooleanField(default=False)
-#     ball_touch = models.IntegerField(default=0)
+    GAME_TYPE_CHOICES = [
+        (PONG_4, 'pong 4'),
+    ]
+    # Tournament의 type이 생길 수 있으니 일단 보류.
+    game_type = models.CharField(max_length=10, choices=GAME_TYPE_CHOICES)
+
+# GameSession : 매 판마다 생성이되는 게임의 종류 및 정보
+class GameSession(models.Model):
+    tournament_id = models.ForeignKey(Tournament, on_delete=models.SET_NULL, null=True)
+    start_time = models.DateTimeField(blank=True, null=True)
+    end_time = models.DateTimeField(blank=True, null=True)
+
+    def is_valid_session(self):
+        return self.start_time <= self.end_time
+
+
+# Pong : GameSession에 따라 유저마다 생성이될 각 게임정보.
+class Pong(models.Model):
+    game_session_id = models.ForeignKey(GameSession, on_delete=models.SET_NULL, null=True)
+    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    rank = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
+
+
