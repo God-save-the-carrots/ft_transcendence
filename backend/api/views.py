@@ -8,6 +8,7 @@ from .models import User, Profile
 
 # Create your views here.
 
+# login
 class LoginAPIView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -23,11 +24,13 @@ class LoginAPIView(APIView):
         }
         return Response(response_data, status=status.HTTP_200_OK)
 
+# logout
 class LogoutAPIView(APIView):
     def post(self, request):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# TODO : UserAPIView 추가적인 작업필요.
+
+# user/<str:intra_id>/
 class UserAPIView(APIView):
     def get(self, request, intra_id):
         try:
@@ -53,7 +56,14 @@ class UserAPIView(APIView):
         serializer = ProfileSerializer(profile_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class SocreAPIView(APIView):
+
+# game/pong/rank/
+class RankAPIView(APIView):
+    pass
+
+
+# game/pong/score/<str:intra_id>/
+class ScoreAPIView(APIView):
     dummy = {
         'page': None,
         'page_size': None,
@@ -61,12 +71,12 @@ class SocreAPIView(APIView):
         'content_length': 20,
         'data': []
     }
-    defult_dummy = []
+    default_dummy = []
 
     for i in range(11):
         dummy_entry = {
             'match_id': i + 1,
-            'game_type': 'phong_4',
+            'game_type': 'Pong_4',
             'score': [
                 { 'user': {'id': (i * 3 + 1), 'intra_id': f'main_dummy', 'photo_id': i % 9},  'value': 100 },
                 { 'user': {'id': (i * 3 + 4), 'intra_id': f'dummy-{i * 3 + 1}', 'photo_id': (i + 1) % 9}, 'value': -60 },
@@ -74,8 +84,8 @@ class SocreAPIView(APIView):
                 { 'user': {'id': (i * 3 + 5), 'intra_id': f'dummy-{i * 3 + 3}', 'photo_id': (i + 3) % 9}, 'value': -20 },
             ]
         }
-        defult_dummy.append(dummy_entry)
-    dummy['data'] = defult_dummy
+        default_dummy.append(dummy_entry)
+    dummy['data'] = default_dummy
 
 
     def get(self, request, intra_id):
@@ -89,6 +99,8 @@ class SocreAPIView(APIView):
         response_data['page_size'] = page_size
         return Response(response_data, status=status.HTTP_200_OK)
     
+
+# game/pong/matches/<int:match_id>/
 class MatchesAPIView(APIView):
     dummy = []
     def __init__(self):
@@ -96,7 +108,7 @@ class MatchesAPIView(APIView):
             for i in range(11):
                 self.dummy.append({
                     "match_id": i + 1,
-                    "game_type": "phong_4",
+                    "game_type": "Pong_4",
                     "score": [
                         {
                             "user": { "id": 1, "intra_id": "main_dummy-" + str(i), "photo_id": 0 },

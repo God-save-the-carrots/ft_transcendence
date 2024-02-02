@@ -31,8 +31,8 @@ class Profile(models.Model):
 #     start_time = models.DateTimeField()
 #     end_time = models.DateTimeField()
 
-# # Phong : GameSession에 따라 유저마다 생성이될 각 게임정보.
-# class Phong(models.Model):
+# # Pong : GameSession에 따라 유저마다 생성이될 각 게임정보.
+# class Pong(models.Model):
 #     user_id = models.ForeignKey(User)
 #     game_session_id = models.ForeignKey(GameSession)
 #     is_win = models.BooleanField(default=False)
