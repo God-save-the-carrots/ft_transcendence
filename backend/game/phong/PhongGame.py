@@ -9,6 +9,7 @@ class PhongGame(Game):
     def __init__(self, players: 'list[User]'):
         Game.__init__(self, players, "phong_" + str(len(players)))
         self.players: list[User] = players
+        self.onfinish = None
 
         self.object_list = phong_map.select_map(len(players))
         self.object_wall: list[GameObject] = list(
@@ -104,6 +105,9 @@ class PhongGame(Game):
         return True
 
     async def finish(self):
+        if self.onfinish is not None:
+            await self.onfinish(self, self.players)
+
         for player in self.players:
             player.pop_onclose_event()
             player.pop_onmessage_event()
