@@ -1,4 +1,4 @@
-import * as THREE from "../../three.js";
+import * as THREE from "../../threejs/three.js";
 import Button from "../common/Button.js";
 import PointLight from "../common/PointLight.js";
 import { NetworkScene } from "../Scene.js";
@@ -64,6 +64,8 @@ export default class PhongGame extends NetworkScene {
 
     loadPhong() {
         this.loadDefaultScene();
+        new THREE.Text
+        this.#waitQ();
     }
 
     #getMouseWorldPosition(screenX, screenY) {
@@ -147,8 +149,7 @@ export default class PhongGame extends NetworkScene {
             this.loadMenu();
         }
         if (data?.level === "end round") {
-            this.destroyRenderer();
-            this.loadDefaultScene();
+            this.loadMenu();
         }
     }
 

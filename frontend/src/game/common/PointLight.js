@@ -1,4 +1,4 @@
-import * as THREE from "../../three.js";
+import * as THREE from "../../threejs/three.js";
 import { GameObject } from "../GameObject.js";
 
 export default class PointLight extends GameObject {

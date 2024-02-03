@@ -1,4 +1,4 @@
-import * as THREE from "../three.js";
+import * as THREE from "../threejs/three.js";
 import { zaxis } from "./preset.js";
 
 export class GameObject extends THREE.Mesh {
