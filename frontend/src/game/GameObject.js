@@ -27,15 +27,6 @@ export class GameObject extends THREE.Mesh {
 export class NetworkObject extends GameObject {
 
     /**
-     * @typedef {{
-     *  position:{x:number,y:number},
-     *  rotation:{x:number,y:number},
-     *  scale:{x:number,y:number},
-     *  color:{r:number,g:number,z:number},
-     * }} TransformValue
-     */
-
-    /**
      * @param {{id, tag, type}} net
      */
     constructor(geometry, material, params, net) {
