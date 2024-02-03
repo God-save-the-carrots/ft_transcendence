@@ -37620,21 +37620,21 @@ class DodecahedronGeometry extends PolyhedronGeometry {
 
 		const vertices = [
 
-			// (±1, ±1, ±1)
+			// (Â±1, Â±1, Â±1)
 			- 1, - 1, - 1,	- 1, - 1, 1,
 			- 1, 1, - 1, - 1, 1, 1,
 			1, - 1, - 1, 1, - 1, 1,
 			1, 1, - 1, 1, 1, 1,
 
-			// (0, ±1/φ, ±φ)
+			// (0, Â±1/Ï†, Â±Ï†)
 			0, - r, - t, 0, - r, t,
 			0, r, - t, 0, r, t,
 
-			// (±1/φ, ±φ, 0)
+			// (Â±1/Ï†, Â±Ï†, 0)
 			- r, - t, 0, - r, t, 0,
 			r, - t, 0, r, t, 0,
 
-			// (±φ, 0, ±1/φ)
+			// (Â±Ï†, 0, Â±1/Ï†)
 			- t, 0, - r, t, 0, - r,
 			- t, 0, r, t, 0, r
 		];
@@ -44749,7 +44749,7 @@ class SpotLight extends Light {
 	get power() {
 
 		// compute the light's luminous power (in lumens) from its intensity (in candela)
-		// by convention for a spotlight, luminous power (lm) = π * luminous intensity (cd)
+		// by convention for a spotlight, luminous power (lm) = Ï€ * luminous intensity (cd)
 		return this.intensity * Math.PI;
 
 	}
@@ -44894,7 +44894,7 @@ class PointLight extends Light {
 	get power() {
 
 		// compute the light's luminous power (in lumens) from its intensity (in candela)
-		// for an isotropic light source, luminous power (lm) = 4 π luminous intensity (cd)
+		// for an isotropic light source, luminous power (lm) = 4 Ï€ luminous intensity (cd)
 		return this.intensity * 4 * Math.PI;
 
 	}
@@ -45135,19 +45135,19 @@ class SphericalHarmonics3 {
 		const coeff = this.coefficients;
 
 		// band 0
-		target.copy( coeff[ 0 ] ).multiplyScalar( 0.886227 ); // π * 0.282095
+		target.copy( coeff[ 0 ] ).multiplyScalar( 0.886227 ); // Ï€ * 0.282095
 
 		// band 1
-		target.addScaledVector( coeff[ 1 ], 2.0 * 0.511664 * y ); // ( 2 * π / 3 ) * 0.488603
+		target.addScaledVector( coeff[ 1 ], 2.0 * 0.511664 * y ); // ( 2 * Ï€ / 3 ) * 0.488603
 		target.addScaledVector( coeff[ 2 ], 2.0 * 0.511664 * z );
 		target.addScaledVector( coeff[ 3 ], 2.0 * 0.511664 * x );
 
 		// band 2
-		target.addScaledVector( coeff[ 4 ], 2.0 * 0.429043 * x * y ); // ( π / 4 ) * 1.092548
+		target.addScaledVector( coeff[ 4 ], 2.0 * 0.429043 * x * y ); // ( Ï€ / 4 ) * 1.092548
 		target.addScaledVector( coeff[ 5 ], 2.0 * 0.429043 * y * z );
-		target.addScaledVector( coeff[ 6 ], 0.743125 * z * z - 0.247708 ); // ( π / 4 ) * 0.315392 * 3
+		target.addScaledVector( coeff[ 6 ], 0.743125 * z * z - 0.247708 ); // ( Ï€ / 4 ) * 0.315392 * 3
 		target.addScaledVector( coeff[ 7 ], 2.0 * 0.429043 * x * z );
-		target.addScaledVector( coeff[ 8 ], 0.429043 * ( x * x - y * y ) ); // ( π / 4 ) * 0.546274
+		target.addScaledVector( coeff[ 8 ], 0.429043 * ( x * x - y * y ) ); // ( Ï€ / 4 ) * 0.546274
 
 		return target;
 

@@ -6,6 +6,7 @@ import Ball from "./Ball.js";
 import Player from "./Player.js";
 import Wall from "./Wall.js";
 import { zaxis } from "../preset.js";
+import Text from "../common/Text.js";
 
 export default class PhongGame extends NetworkScene {
     static STATE_MENU = 0;
@@ -21,6 +22,7 @@ export default class PhongGame extends NetworkScene {
             "ball": Ball,
             "button": Button,
             "light": PointLight,
+            "text": Text,
         }
         this.#initKeyEvent();
         this.selectedButton = null;
@@ -64,7 +66,9 @@ export default class PhongGame extends NetworkScene {
 
     loadPhong() {
         this.loadDefaultScene();
-        new THREE.Text
+        this.addGameObject(this.#createObject("text", {
+            position: { x: 0, y: 0, z: 0 },
+        }));
         this.#waitQ();
     }
 
