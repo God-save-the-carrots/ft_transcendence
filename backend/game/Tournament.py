@@ -9,14 +9,14 @@ class Tournament(Rule):
         self.game_constructor = game_constructor
         
     async def start(self):
-        self.step("start game", timer=1)
+        await self.step("start game", timer=1)
         winners = self.players
         while len(winners) > 1:
-            self.step("start round", timer=1)
+            await self.step("start round", timer=1)
             winners = await self.start_round(winners)
-            self.step("end round", timer=3)
-        self.step("end game", timer=1)
-        self.disconnect(self.players)
+            await self.step("end round", timer=3)
+        await self.step("end game", timer=1)
+        await self.disconnect(self.players)
 
     async def start_round(self, players: 'list[User]') -> 'list[User]':
         matchs = zip(*[iter(players)]*2)
@@ -29,7 +29,6 @@ class Tournament(Rule):
 
         losers = [result.get("grade")[1] for result in results]
         await self.broadcast(losers, {"type": "result", "result": "lose"})
-        await self.disconnect(losers)
 
         winners = [result.get("grade")[0] for result in results]
         await self.broadcast(winners, {"type": "result", "result": "win"})
