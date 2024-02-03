@@ -10,6 +10,7 @@ export class GameObject extends THREE.Mesh {
         if (position != null) {
             this.position.x = position.x;
             this.position.y = position.y;
+            this.position.z = position.z;
         }
         if (rotation != null) {
             const rad = Math.acos(rotation.x) * (rotation.y > 0 ? 1 : -1);
