@@ -1,5 +1,6 @@
 import * as THREE from "../../three.js";
 import Button from "../common/Button.js";
+import PointLight from "../common/PointLight.js";
 import { NetworkScene } from "../Scene.js";
 import Ball from "./Ball.js";
 import Player from "./Player.js";
@@ -19,6 +20,7 @@ export default class PhongGame extends NetworkScene {
             "wall": Wall,
             "ball": Ball,
             "button": Button,
+            "light": PointLight,
         }
         this.#initKeyEvent();
         this.selectedButton = null;
@@ -32,22 +34,24 @@ export default class PhongGame extends NetworkScene {
 
     loadMenu() {
         this.loadDefaultScene();
-        const commonGame = this.#createObject("button", {
+        this.addGameObject(this.#createObject("button", {
             position: { x: -10, y: 0, z: 0 },
             color: 0xffff00,
             callback: this.loadPhong.bind(this),
-        });
-        this.addGameObject(commonGame);
-        const tournamentGame = this.#createObject("button", {
+        }));
+        this.addGameObject(this.#createObject("button", {
             position: { x: 10, y: 0, z: 0 },
             color: 0x0000ff,
             callback: this.loadPhong.bind(this),
-        });
-        this.addGameObject(tournamentGame);
-        const globalLight = new THREE.PointLight(0xffffff, 500);
-        this.add(globalLight);
-        globalLight.position.set(0, 0, 20);
-        const light = new THREE.PointLight(0xffffff, 200);
+        }));
+        this.addGameObject(this.#createObject("light", {
+            position: { x: 0, y: 0, z: 20 },
+            intensity: 500,
+        }));
+        const light = this.addGameObject(this.#createObject("light", {
+            position: { x: 9999, y: 9999, z: 10 },
+            intensity: 200,
+        }));
         this.renderer.domElement.addEventListener("mousemove", e => {
             const pos = this.#getMouseWorldPosition(e.offsetX, e.offsetY);
             light.position.set(pos.x, pos.y, light.position.z);
@@ -56,8 +60,6 @@ export default class PhongGame extends NetworkScene {
         this.renderer.domElement.addEventListener("click", _ => {
             if (this.selectedButton != null) this.selectedButton.invoke();
         });
-        light.position.set(9999, 9999, 10);
-        this.add(light);
     }
 
     loadPhong() {

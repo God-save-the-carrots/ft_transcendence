@@ -104,6 +104,7 @@ export class Scene extends THREE.Scene {
         }
         this.objects.set(gameObject.uuid, gameObject);
         this.add(gameObject);
+        return gameObject;
     }
 
     getNetworkObject(id) {
