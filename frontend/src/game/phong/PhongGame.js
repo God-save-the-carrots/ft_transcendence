@@ -8,6 +8,7 @@ import Wall from "./Wall.js";
 import { zaxis } from "../preset.js";
 import Text from "../common/Text.js";
 import Icon from "../common/Icon.js";
+import LoadingCircle from "../common/LoadingCircle.js"
 
 export default class PhongGame extends NetworkScene {
     static STATE_MENU = 0;
@@ -26,32 +27,41 @@ export default class PhongGame extends NetworkScene {
             "light": PointLight,
             "text": Text,
             "icon": Icon,
+            "timer": LoadingCircle,
         }
         this.#initKeyEvent();
         this.selectedButton = null;
         this.raycaster = new THREE.Raycaster();
         this.loadMenu();
-        this.setOnmessage("init", this.#netInit.bind(this))
-        this.setOnmessage("update", this.#netUpdate.bind(this))
-        this.setOnmessage("step", this.#netStep.bind(this))
+        this.setOnmessage("ready", this.#netReady.bind(this));
+        this.setOnmessage("match", this.#netMatch.bind(this));
+        this.setOnmessage("init", this.#netInit.bind(this));
+        this.setOnmessage("update", this.#netUpdate.bind(this));
+        this.setOnmessage("step", this.#netStep.bind(this));
     }
 
     loadMenu() {
         this.state = PhongGame.STATE_MENU;
         this.loadDefaultScene();
-        this.addGameObject(this.#createObject("button", {
-            position: { x: 7, y: 0, z: 0 },
-            size: { width: 12, height: 12 },
-            color: "lightpink",
-            icon: "normal-game.png",
-            callback: this.loadPhong.bind(this),
-        }));
+        const ready = type => {
+            this.loadReady();
+            this.waitQ(this.token, type);
+        }
         this.addGameObject(this.#createObject("button", {
             position: { x: -7, y: 0, z: 0 },
             size: { width: 12, height: 12 },
+            color: "lightpink",
+            icon: "normal-game.png",
+            buttonParam: "phong",
+            callback: ready,
+        }));
+        this.addGameObject(this.#createObject("button", {
+            position: { x: 7, y: 0, z: 0 },
+            size: { width: 12, height: 12 },
             color: "skyblue",
             icon: "tournament.png",
-            callback: this.loadPhong.bind(this),
+            buttonParam: "phong_4",
+            callback: ready,
         }));
         this.addGameObject(this.#createObject("light", {
             position: { x: 0, y: 0, z: 20 },
@@ -61,11 +71,11 @@ export default class PhongGame extends NetworkScene {
         this.#addButtonEvents();
     }
 
-    loadPhong() {
+    loadReady() {
         this.state = PhongGame.STATE_WAIT;
         this.loadDefaultScene();
         this.addGameObject(this.#createObject("button", {
-            position: { x: 0, y: -15, z: 0 },
+            position: { x: 0, y: 0, z: 0 },
             color: "gray",
             icon: "close.png",
             size: { width: 12, height: 12 },
@@ -80,7 +90,6 @@ export default class PhongGame extends NetworkScene {
         }));
         this.#addTrackingMouseLight();
         this.#addButtonEvents();
-        this.#waitQ();
     }
 
     #addTrackingMouseLight() {
@@ -131,16 +140,24 @@ export default class PhongGame extends NetworkScene {
             .filter(x => x instanceof Button)[0];
     }
 
-    async #waitQ() {
-        super.waitQ(this.token, "phong");
-    }
-
     #createObject(type, params) {
         if (this.factory[type] == null) throw new Error("receive unknown tag object");
         return new this.factory[type](params);
     }
 
+    #netReady(data) {
+        const { timer } = data;
+        this.addGameObject(this.#createObject("timer", { timer }));
+    }
+
+    #netMatch(data) {
+        const { status } = data;
+        if (status === "fail") this.loadReady();
+        if (status === "success") this.loadDefaultScene(); // TODO:
+    }
+
     #netInit(data) {
+        this.loadDefaultScene();
 
         // create objects
         for (const rawObject of data.objects) {
@@ -182,10 +199,16 @@ export default class PhongGame extends NetworkScene {
     }
 
     #netStep(data) {
-        if (data?.level === "end game") {
-            this.loadMenu();
+        if (data?.level === "start game") {
+            this.loadDefaultScene();
+        }
+        if (data?.level === "start round") {
+
         }
         if (data?.level === "end round") {
+            
+        }
+        if (data?.level === "end game") {
             this.loadMenu();
         }
     }

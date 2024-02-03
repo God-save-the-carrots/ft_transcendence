@@ -39,11 +39,9 @@ class Lobby:
         q = self.qlist.get(user.game_type)
         if q == None:
             return
-        if user not in q:
-            await user.send_json({"type":"close","status":"fail"})
-            print(user.socket.id, "leave lobby cancel")
         else:
-            q.remove(user)
+            if user in q:
+                q.remove(user)
             await user.send_json({"type":"close","status":"success"})
             await user.socket.close()
             print(user.socket.id, "leave lobby")
@@ -73,12 +71,18 @@ class Lobby:
             rule_constructor = self.qmatch.get(game_type).get("rule")
             game_constructor = self.qmatch.get(game_type).get("game")
             for player in players:
-                player.pop_onclose_event()
-                player.pop_onmessage_event()
+                try:
+                    await player.send_json({"type":"match","status":"success"})
+                    player.pop_onclose_event()
+                    player.pop_onmessage_event()
+                except:
+                    pass
             session = rule_constructor(players, game_constructor)
             asyncio.create_task(session.start())
             print("matched:", game_type)
         else:
             users = self.qlist.get(game_type)
             for player in players:
-                users.insert(0, player)
+                if player.opened:
+                    await player.send_json({"type":"match","status":"fail"})
+                    users.insert(0, player)

@@ -9,6 +9,7 @@ export default class Button extends GameObject {
             color: 0xff0000,
             textColor: 0xffffff,
             size: { width: 10, height: 10 },
+            buttonParam: null,
             ...params,
         }
         const geometry = new THREE.BoxGeometry(params.size.width, params.size.height, 2);
@@ -34,6 +35,7 @@ export default class Button extends GameObject {
         }
         
         this.callback = params.callback;
+        this.buttonParam = params.buttonParam;
 
         this.hoverPosition = 0;
         this.lastInvokeTime = new Date();
@@ -51,7 +53,7 @@ export default class Button extends GameObject {
         if (this.callback == null) return;
         const current = new Date();
         if (current - this.lastInvokeTime > 200) { // 0.2 sec
-            this.callback();
+            this.callback(this.buttonParam);
             this.lastInvokeTime = current;
         }
     }
