@@ -42,4 +42,6 @@ export default class Component {
 			callback(event);
 		});
 	}
+
+    async unmounted() {}
 }

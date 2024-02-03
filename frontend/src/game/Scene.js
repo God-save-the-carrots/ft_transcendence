@@ -43,10 +43,11 @@ export class Scene extends THREE.Scene {
 
         // external event
         this.renderHooks = [];
+        this.renderHandleEvent = 0;
 
         const scene = this;
         function animate() {
-            requestAnimationFrame(animate);
+            scene.renderHandleEvent = requestAnimationFrame(animate);
             scene.render();
         }
         animate();
@@ -89,6 +90,32 @@ export class Scene extends THREE.Scene {
     getNetworkObject(id) {
         return this.networkObjects.get(id);
     }
+
+    static cleanMaterial(material) {
+        if (material.map) material.map.dispose();
+        if (material.lightMap) material.lightMap.dispose();
+        if (material.bumpMap) material.bumpMap.dispose();
+        if (material.normalMap) material.normalMap.dispose();
+        if (material.specularMap) material.specularMap.dispose();
+        if (material.envMap) material.envMap.dispose();
+        material.dispose();
+    }
+
+    destroy() {
+        cancelAnimationFrame(this.renderHandleEvent);
+        this.traverse(function (object) {
+            if (object.isMesh) {
+                object.geometry.dispose();
+                if (object.material.isMaterial) {
+                    Scene.cleanMaterial(object.material);
+                } else if (Array.isArray(object.material)) {
+                    object.material.forEach(Scene.cleanMaterial);
+                }
+            }
+        });
+        this.renderer.dispose();
+        delete this.renderer;
+    }
 };
 
 export class NetworkScene extends Scene {
@@ -124,7 +151,7 @@ export class NetworkScene extends Scene {
             console.error(e);
             return false;
         } finally {
-            this.#initSocketEvent();
+this.#initSocketEvent();
             this.waitingServer = false;
         }
         return true;
@@ -201,5 +228,12 @@ export class NetworkScene extends Scene {
             throw new Error("socket not open");
         }
         this.socket.send(JSON.stringify(data));
+    }
+
+    destroy() {
+        super.destroy();
+        try {
+            this.socket.close();
+        } catch(e) {}
     }
 }
