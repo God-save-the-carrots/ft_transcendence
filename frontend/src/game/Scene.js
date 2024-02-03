@@ -7,9 +7,11 @@ const url = `ws://${window.location.hostname}:4444`;
 export class Scene extends THREE.Scene {
     constructor(width, height) {
         super()
+        this.width = width;
+        this.height = height;
         /**
          * key is threejs uuid
-         * @type {Map<String, GameObject>}
+         * @type {Map<String, Object3D>}
          */
         this.objects = new Map();
         /**
@@ -17,11 +19,33 @@ export class Scene extends THREE.Scene {
          * @type {Map<String, NetworkObject>}
          */
         this.networkObjects = new Map();
+
+        // set backgound color
         this.background = new THREE.Color("lightblue");
-        this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-        this.camera.position.z = 42
+
+        // for delta time
+        this.clock = new THREE.Clock();
+
+        // external event
+        this.renderHooks = [];
+        this.renderHandleEvent = 0;
+
         this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize(width, height);
+    }
+
+    loadDefaultScene() {
+        // delete old objects
+        const deleteList = [];
+        this.traverse(x => deleteList.push(x));
+        deleteList.forEach(x => this.remove(x));
+        this.objects = new Map();
+        this.networkObjects = new Map();
+
+        // init render camera
+        const aspect = this.width / this.height;
+        this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+        this.camera.position.z = 42
+        this.renderer.setSize(this.width, this.height);
         this.renderer.shadowMap.enabled = true;
 
         // add background
@@ -35,16 +59,13 @@ export class Scene extends THREE.Scene {
         this.add(background);
 
         // add ambient light
-        const ambient = new THREE.AmbientLight(0xffffff, 0.2);
-        this.add(ambient);
+        this.ambient = new THREE.AmbientLight(0xffffff, 0.2);
+        this.add(this.ambient);
+        this.#startAnimate();
+    }
 
-        // for delta time
-        this.clock = new THREE.Clock();
-
-        // external event
-        this.renderHooks = [];
-        this.renderHandleEvent = 0;
-
+    #startAnimate() {
+        cancelAnimationFrame(this.renderHandleEvent);
         const scene = this;
         function animate() {
             scene.renderHandleEvent = requestAnimationFrame(animate);
@@ -81,9 +102,7 @@ export class Scene extends THREE.Scene {
         if (gameObject instanceof NetworkObject) {
             this.networkObjects.set(gameObject.net.id, gameObject);
         }
-        if (gameObject instanceof GameObject) {
-            this.objects.set(gameObject.uuid, gameObject);
-        }
+        this.objects.set(gameObject.uuid, gameObject);
         this.add(gameObject);
     }
 
@@ -101,7 +120,7 @@ export class Scene extends THREE.Scene {
         material.dispose();
     }
 
-    destroy() {
+    destroyRenderer() {
         cancelAnimationFrame(this.renderHandleEvent);
         this.traverse(function (object) {
             if (object.isMesh) {
@@ -113,8 +132,14 @@ export class Scene extends THREE.Scene {
                 }
             }
         });
+        this.objects = new Map();
+        this.networkObjects = new Map();
         this.renderer.dispose();
         delete this.renderer;
+    }
+
+    destroy() {
+        this.destroyRenderer();
     }
 };
 

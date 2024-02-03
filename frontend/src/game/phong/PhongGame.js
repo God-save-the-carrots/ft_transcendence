@@ -7,6 +7,9 @@ import Wall from "./Wall.js";
 import { zaxis } from "../preset.js";
 
 export default class PhongGame extends NetworkScene {
+    static STATE_MENU = 0;
+    static STATE_PHONG = 1;
+    static STATE_PHONG_TOURNAMENT = 2;
     constructor(width, height, token) {
         super(width, height)
         this.token = token;
@@ -17,23 +20,74 @@ export default class PhongGame extends NetworkScene {
             "ball": Ball,
             "button": Button,
         }
+        this.#initKeyEvent();
+        this.selectedButton = null;
+        this.raycaster = new THREE.Raycaster();
+        this.state = PhongGame.STATE_MENU;
+        this.loadMenu();
         this.setOnmessage("init", this.#netInit.bind(this))
         this.setOnmessage("update", this.#netUpdate.bind(this))
-        this.setOnmessage("end", this.#netEnd.bind(this))
-        this.initKeyEvent();
-        this.loadMenu();
-        this.camera.position.z = 30;
+        this.setOnmessage("step", this.#netStep.bind(this))
     }
 
-    // TODO
     loadMenu() {
-        // this.addGameObject(this.#createObject("button", {
-        // }));
-        // const light = new THREE.PointLight(0xffffff, 200);
-        // light.position.set(0, 0, 10);
-        // this.add(light);
+        this.loadDefaultScene();
+        const commonGame = this.#createObject("button", {
+            position: { x: -10, y: 0, z: 0 },
+            color: 0xffff00,
+            callback: this.loadPhong.bind(this),
+        });
+        this.addGameObject(commonGame);
+        const tournamentGame = this.#createObject("button", {
+            position: { x: 10, y: 0, z: 0 },
+            color: 0x0000ff,
+            callback: this.loadPhong.bind(this),
+        });
+        this.addGameObject(tournamentGame);
+        const globalLight = new THREE.PointLight(0xffffff, 500);
+        this.add(globalLight);
+        globalLight.position.set(0, 0, 20);
+        const light = new THREE.PointLight(0xffffff, 200);
+        this.renderer.domElement.addEventListener("mousemove", e => {
+            const pos = this.#getMouseWorldPosition(e.offsetX, e.offsetY);
+            light.position.set(pos.x, pos.y, light.position.z);
+            this.selectedButton = this.#selectButton(e.offsetX, e.offsetY);
+        });
+        this.renderer.domElement.addEventListener("click", _ => {
+            if (this.selectedButton != null) this.selectedButton.invoke();
+        });
+        light.position.set(9999, 9999, 10);
+        this.add(light);
+    }
 
-        this.#waitQ();
+    loadPhong() {
+        this.loadDefaultScene();
+    }
+
+    #getMouseWorldPosition(screenX, screenY) {
+        const rect = new THREE.Vector2();
+        this.camera.getViewSize(this.camera.position.z, rect);
+        const ratio = {
+            x: screenX / this.renderer.domElement.width,
+            y: screenY / this.renderer.domElement.height,
+        }
+        return new THREE.Vector2(
+            ratio.x * rect.x - rect.x * .5,
+            ratio.y * -rect.y + rect.y * .5
+        )
+    }
+
+    #selectButton(screenX, screenY) {
+        const mouse = new THREE.Vector2();
+        mouse.x = (screenX / this.renderer.domElement.clientWidth) * 2 - 1;
+        mouse.y = -(screenY / this.renderer.domElement.clientHeight) * 2 + 1;
+
+        this.raycaster.setFromCamera(mouse, this.camera);
+
+        return this.raycaster
+            .intersectObjects(this.children, false)
+            .map(x => x.object)
+            .filter(x => x instanceof Button)[0];
     }
 
     async #waitQ() {
@@ -86,13 +140,17 @@ export default class PhongGame extends NetworkScene {
         }
     }
 
-    #netEnd(data) {
-        console.log(data.result); // TODO: show result
-        this.socket.close();
-        alert("TODO: restart game"); // TODO: return to main menu
+    #netStep(data) {
+        if (data?.level === "end game") {
+            this.loadMenu();
+        }
+        if (data?.level === "end round") {
+            this.destroyRenderer();
+            this.loadDefaultScene();
+        }
     }
 
-    initKeyEvent() {
+    #initKeyEvent() {
         this.key = {};
         window.addEventListener('keydown', (e) => this.key[e.key] = true);
         window.addEventListener('keyup', (e) => this.key[e.key] = false);
@@ -104,7 +162,9 @@ export default class PhongGame extends NetworkScene {
 
             if (action.move != move && this.socket.readyState == this.socket.OPEN) {
                 action.move = move;
-                this.send({type: "move", data: action});
+                if (this.socket.readyState == this.socket.OPEN) {
+                    this.send({type: "move", data: action});
+                }
             }
         });
     }

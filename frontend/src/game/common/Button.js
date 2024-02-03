@@ -10,8 +10,14 @@ export default class Button extends GameObject {
         const geometry = new THREE.BoxGeometry(10, 10, 10);
         const material = new THREE.MeshPhongMaterial({ color: params.color });
         super(geometry, material, params);
+
+        this.callback = params.callback;
     }
 
     update() {
+    }
+
+    invoke() {
+        if (this.callback != null) this.callback();
     }
 };
