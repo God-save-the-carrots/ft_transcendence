@@ -177,7 +177,7 @@ export class NetworkScene extends Scene {
             console.error(e);
             return false;
         } finally {
-this.#initSocketEvent();
+            this.#initSocketEvent();
             this.waitingServer = false;
         }
         return true;
