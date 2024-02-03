@@ -7,6 +7,7 @@ import Player from "./Player.js";
 import Wall from "./Wall.js";
 import { zaxis } from "../preset.js";
 import Text from "../common/Text.js";
+import Icon from "../common/Icon.js";
 
 export default class PhongGame extends NetworkScene {
     static STATE_MENU = 0;
@@ -24,6 +25,7 @@ export default class PhongGame extends NetworkScene {
             "button": Button,
             "light": PointLight,
             "text": Text,
+            "icon": Icon,
         }
         this.#initKeyEvent();
         this.selectedButton = null;
@@ -38,17 +40,17 @@ export default class PhongGame extends NetworkScene {
         this.state = PhongGame.STATE_MENU;
         this.loadDefaultScene();
         this.addGameObject(this.#createObject("button", {
-            position: { x: 0, y: 6, z: 0 },
-            color: 0xff0000,
-            text: "Normal Game",
-            width: 50,
+            position: { x: 7, y: 0, z: 0 },
+            size: { width: 12, height: 12 },
+            color: "lightpink",
+            icon: "normal-game.png",
             callback: this.loadPhong.bind(this),
         }));
         this.addGameObject(this.#createObject("button", {
-            position: { x: 0, y: -6, z: 0 },
-            color: 0x0000ff,
-            text: "Tournament",
-            width: 50,
+            position: { x: -7, y: 0, z: 0 },
+            size: { width: 12, height: 12 },
+            color: "skyblue",
+            icon: "tournament.png",
             callback: this.loadPhong.bind(this),
         }));
         this.addGameObject(this.#createObject("light", {
@@ -62,14 +64,11 @@ export default class PhongGame extends NetworkScene {
     loadPhong() {
         this.state = PhongGame.STATE_WAIT;
         this.loadDefaultScene();
-        this.addGameObject(this.#createObject("text", {
-            position: { x: 0, y: 0, z: 0 },
-            text: "waiting ... "
-        }));
         this.addGameObject(this.#createObject("button", {
             position: { x: 0, y: -15, z: 0 },
             color: "gray",
-            text: "cancel",
+            icon: "close.png",
+            size: { width: 12, height: 12 },
             callback: async () => {
                 const success = await this.cancelWaitQ();
                 if (success) this.loadMenu();

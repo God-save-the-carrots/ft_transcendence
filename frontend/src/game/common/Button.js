@@ -1,27 +1,38 @@
 import * as THREE from "../../threejs/three.js";
 import { GameObject } from "../GameObject.js";
 import Text from "./Text.js";
+import Icon from "./Icon.js"
 
 export default class Button extends GameObject {
     constructor(params) {
         params = {
             color: 0xff0000,
             textColor: 0xffffff,
-            text: "",
-            width: 10,
+            size: { width: 10, height: 10 },
             ...params,
         }
-        const geometry = new THREE.BoxGeometry(params.width, 10, 2);
+        const geometry = new THREE.BoxGeometry(params.size.width, params.size.height, 2);
         const material = new THREE.MeshPhongMaterial({ color: params.color });
         super(geometry, material, params);
 
-        this.text = new Text({
-            position: { x: 0, y: 0, z: 1 },
-            text: params.text,
-            color: params.textColor,
-            refreshCallback: this.resize.bind(this),
-        });;
-        this.add(this.text);
+        if (params.text) {
+            this.text = new Text({
+                position: { x: 0, y: 0, z: 1 },
+                text: params.text,
+                color: params.textColor,
+                refreshCallback: this.resize.bind(this),
+            });
+            this.add(this.text);
+        }
+        if (params.icon) {
+            this.icon = new Icon({
+                position: { x: 0, y: 0, z: 2 },
+                size: { width: params.size.width - 2, height: params.size.height - 2 },
+                path: params.icon,
+            });
+            this.add(this.icon);
+        }
+        
         this.callback = params.callback;
 
         this.hoverPosition = 0;
@@ -29,7 +40,8 @@ export default class Button extends GameObject {
     }
 
     update() {
-        this.text.update();
+        if (this.text) this.text.update();
+        if (this.icon) this.icon.update();
         const DENSE = 0.2;
         const z = this.position.z * (1 - DENSE) + this.hoverPosition * DENSE;
         this.position.set(this.position.x, this.position.y, z);
@@ -54,6 +66,6 @@ export default class Button extends GameObject {
     }
 
     hover(active) {
-        this.hoverPosition = active ? 1 : 0;
+        this.hoverPosition = active ? 2 : 0;
     }
 };
