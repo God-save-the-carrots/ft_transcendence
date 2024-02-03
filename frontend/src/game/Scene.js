@@ -27,9 +27,9 @@ export class Scene extends THREE.Scene {
         this.clock = new THREE.Clock();
 
         // external event
+        this.domEvents = {};
         this.renderHooks = [];
         this.renderHandleEvent = 0;
-
         this.renderer = new THREE.WebGLRenderer();
     }
 
@@ -40,6 +40,9 @@ export class Scene extends THREE.Scene {
         deleteList.forEach(x => this.remove(x));
         this.objects = new Map();
         this.networkObjects = new Map();
+
+        // delete old events
+        this.removeAllDomEventListener();
 
         // init render camera
         const aspect = this.width / this.height;
@@ -142,6 +145,26 @@ export class Scene extends THREE.Scene {
     destroy() {
         this.destroyRenderer();
     }
+
+    addDomEventListener(type, callback) {
+        if (this.domEvents[type] == null) {
+            const domEvent = {
+                delegator: e => domEvent.events.forEach(func => func(e)),
+                events: [],
+            }
+            this.domEvents[type] = domEvent;
+            this.renderer.domElement.addEventListener(type, domEvent.delegator);
+        }
+        this.domEvents[type].events.push(callback);
+    }
+
+    removeAllDomEventListener() {
+        for (const type in this.domEvents) {
+            const delegator = this.domEvents[type].delegator;
+            this.renderer.domElement.removeEventListener(type, delegator);
+            delete this.domEvents[type];
+        }
+    }
 };
 
 export class NetworkScene extends Scene {
@@ -211,7 +234,7 @@ export class NetworkScene extends Scene {
 
     cancelWaitQ() {
         return new Promise((res, rej) => {
-            if (this.socket?.OPEN == false) {
+            if (this.socket == null || this.socket.readyState != this.socket.OPEN) {
                 res(true);
                 return;
             }

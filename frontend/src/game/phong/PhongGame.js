@@ -10,8 +10,9 @@ import Text from "../common/Text.js";
 
 export default class PhongGame extends NetworkScene {
     static STATE_MENU = 0;
-    static STATE_PHONG = 1;
-    static STATE_PHONG_TOURNAMENT = 2;
+    static STATE_WAIT = 1;
+    static STATE_PHONG = 2;
+    static STATE_PHONG_TOURNAMENT = 3;
     constructor(width, height, token) {
         super(width, height)
         this.token = token;
@@ -27,7 +28,6 @@ export default class PhongGame extends NetworkScene {
         this.#initKeyEvent();
         this.selectedButton = null;
         this.raycaster = new THREE.Raycaster();
-        this.state = PhongGame.STATE_MENU;
         this.loadMenu();
         this.setOnmessage("init", this.#netInit.bind(this))
         this.setOnmessage("update", this.#netUpdate.bind(this))
@@ -35,6 +35,7 @@ export default class PhongGame extends NetworkScene {
     }
 
     loadMenu() {
+        this.state = PhongGame.STATE_MENU;
         this.loadDefaultScene();
         this.addGameObject(this.#createObject("button", {
             position: { x: 0, y: 6, z: 0 },
@@ -54,23 +55,12 @@ export default class PhongGame extends NetworkScene {
             position: { x: 0, y: 0, z: 20 },
             intensity: 500,
         }));
-        const light = this.addGameObject(this.#createObject("light", {
-            position: { x: 9999, y: 9999, z: 10 },
-            intensity: 200,
-        }));
-        this.renderer.domElement.addEventListener("mousemove", e => {
-            const pos = this.#getMouseWorldPosition(e.offsetX, e.offsetY);
-            light.position.set(pos.x, pos.y, light.position.z);
-            if (this.selectedButton) this.selectedButton.hover(false);
-            this.selectedButton = this.#selectButton(e.offsetX, e.offsetY);
-            if (this.selectedButton) this.selectedButton.hover(true);
-        });
-        this.renderer.domElement.addEventListener("click", _ => {
-            if (this.selectedButton != null) this.selectedButton.invoke();
-        });
+        this.#addTrackingMouseLight();
+        this.#addButtonEvents();
     }
 
     loadPhong() {
+        this.state = PhongGame.STATE_WAIT;
         this.loadDefaultScene();
         this.addGameObject(this.#createObject("text", {
             position: { x: 0, y: 0, z: 0 },
@@ -89,7 +79,31 @@ export default class PhongGame extends NetworkScene {
             position: { x: 0, y: 0, z: 20 },
             intensity: 500,
         }));
+        this.#addTrackingMouseLight();
+        this.#addButtonEvents();
         this.#waitQ();
+    }
+
+    #addTrackingMouseLight() {
+        const light = this.addGameObject(this.#createObject("light", {
+            position: { x: 9999, y: 9999, z: 15 },
+            intensity: 400,
+        }));
+        this.addDomEventListener("mousemove", e => {
+            const pos = this.#getMouseWorldPosition(e.offsetX, e.offsetY);
+            light.position.set(pos.x, pos.y, light.position.z);
+        });
+    }
+
+    #addButtonEvents() {
+        this.addDomEventListener("mousemove", e => {
+            if (this.selectedButton) this.selectedButton.hover(false);
+            this.selectedButton = this.#selectButton(e.offsetX, e.offsetY);
+            if (this.selectedButton) this.selectedButton.hover(true);
+        });
+        this.addDomEventListener("click", _ => {
+            if (this.selectedButton != null) this.selectedButton.invoke();
+        });
     }
 
     #getMouseWorldPosition(screenX, screenY) {
