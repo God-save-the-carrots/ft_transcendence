@@ -1,6 +1,10 @@
 import * as THREE from "../threejs/three.js";
-import { GameObject } from "./GameObject.js";
 import { NetworkObject } from "./GameObject.js";
+
+import { EffectComposer } from "../threejs/postprocessing/EffectComposer.js";
+import { RenderPass } from "../threejs/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "../threejs/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "../threejs/postprocessing/OutputPass.js";
 
 const url = `ws://${window.location.hostname}:4444`;
 
@@ -31,6 +35,22 @@ export class Scene extends THREE.Scene {
         this.renderHooks = [];
         this.renderHandleEvent = 0;
         this.renderer = new THREE.WebGLRenderer();
+
+        this.composer = new EffectComposer(this.renderer);
+
+        const renderScene = new RenderPass(this, this.camera);
+        this.composer.addPass(renderScene);
+
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(width, height), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0;
+        bloomPass.strength = 0;
+        bloomPass.radius = 0;
+        this.composer.addPass(bloomPass);
+
+        const outputPass = new OutputPass();
+        this.composer.addPass(outputPass);
+
+        this.composer.setSize(width, height);
     }
 
     loadDefaultScene() {
@@ -50,6 +70,7 @@ export class Scene extends THREE.Scene {
         this.camera.position.z = 42
         this.renderer.setSize(this.width, this.height);
         this.renderer.shadowMap.enabled = true;
+        this.composer.passes[0].camera = this.camera;
 
         // add background
         const background = new THREE.Mesh(
@@ -86,7 +107,8 @@ export class Scene extends THREE.Scene {
     }
 
     render() {
-        this.renderer.render(this, this.camera);
+        if (this.composer) this.composer.render();
+        else this.renderer.render(this, this.camera);
         const delta = this.clock.getDelta();
 
         this.update(delta);
