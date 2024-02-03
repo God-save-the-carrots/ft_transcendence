@@ -1,6 +1,7 @@
 import * as THREE from "../../three.js";
+import { GameObject } from "../GameObject.js";
 
-export default class Button extends THREE.PointLight {
+export default class PointLight extends GameObject {
     constructor(params) {
         params = {
             color: 0xffffff,
@@ -9,10 +10,8 @@ export default class Button extends THREE.PointLight {
             position: { x: 0, y: 0, z: 0 },
             ...params,
         }
-        super(params.color, params.intensity, params.distance);
+        super(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial());
         this.position.set(params.position.x, params.position.y, params.position.z);
-    }
-
-    update() {
+        this.add(new THREE.PointLight(params.color, params.intensity, params.distance))
     }
 }
