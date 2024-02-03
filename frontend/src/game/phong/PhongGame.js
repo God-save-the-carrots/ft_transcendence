@@ -37,13 +37,17 @@ export default class PhongGame extends NetworkScene {
     loadMenu() {
         this.loadDefaultScene();
         this.addGameObject(this.#createObject("button", {
-            position: { x: -10, y: 0, z: 0 },
-            color: 0xffff00,
+            position: { x: 0, y: 6, z: 0 },
+            color: 0xff0000,
+            text: "Normal Game",
+            width: 50,
             callback: this.loadPhong.bind(this),
         }));
         this.addGameObject(this.#createObject("button", {
-            position: { x: 10, y: 0, z: 0 },
+            position: { x: 0, y: -6, z: 0 },
             color: 0x0000ff,
+            text: "Tournament",
+            width: 50,
             callback: this.loadPhong.bind(this),
         }));
         this.addGameObject(this.#createObject("light", {
@@ -57,7 +61,9 @@ export default class PhongGame extends NetworkScene {
         this.renderer.domElement.addEventListener("mousemove", e => {
             const pos = this.#getMouseWorldPosition(e.offsetX, e.offsetY);
             light.position.set(pos.x, pos.y, light.position.z);
+            if (this.selectedButton) this.selectedButton.hover(false);
             this.selectedButton = this.#selectButton(e.offsetX, e.offsetY);
+            if (this.selectedButton) this.selectedButton.hover(true);
         });
         this.renderer.domElement.addEventListener("click", _ => {
             if (this.selectedButton != null) this.selectedButton.invoke();
@@ -68,6 +74,20 @@ export default class PhongGame extends NetworkScene {
         this.loadDefaultScene();
         this.addGameObject(this.#createObject("text", {
             position: { x: 0, y: 0, z: 0 },
+            text: "waiting ... "
+        }));
+        this.addGameObject(this.#createObject("button", {
+            position: { x: 0, y: -15, z: 0 },
+            color: "gray",
+            text: "cancel",
+            callback: async () => {
+                const success = await this.cancelWaitQ();
+                if (success) this.loadMenu();
+            },
+        }))
+        this.addGameObject(this.#createObject("light", {
+            position: { x: 0, y: 0, z: 20 },
+            intensity: 500,
         }));
         this.#waitQ();
     }
