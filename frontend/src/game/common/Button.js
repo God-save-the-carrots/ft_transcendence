@@ -25,6 +25,7 @@ export default class Button extends GameObject {
         this.callback = params.callback;
 
         this.hoverPosition = 0;
+        this.lastInvokeTime = new Date();
     }
 
     update() {
@@ -35,7 +36,12 @@ export default class Button extends GameObject {
     }
 
     invoke() {
-        if (this.callback != null) this.callback();
+        if (this.callback == null) return;
+        const current = new Date();
+        if (current - this.lastInvokeTime > 200) { // 0.2 sec
+            this.callback();
+            this.lastInvokeTime = current;
+        }
     }
 
     resize(size) {
@@ -43,7 +49,7 @@ export default class Button extends GameObject {
         const targetWidth = max.x - min.x;
         if (this.geometry.parameters.width < targetWidth) {
             this.geometry.dispose();
-            this.geometry = new THREE.BoxGeometry(targetWidth + 2, 10, 2);
+            this.geometry = new THREE.BoxGeometry(targetWidth + 5, 10, 2);
         }
     }
 
