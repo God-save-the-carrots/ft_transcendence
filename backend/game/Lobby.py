@@ -1,6 +1,6 @@
 import asyncio
 from game.User import User
-from game.SingleGame import SingleGame
+from game.NormalGame import NormalGame
 from game.Tournament import Tournament
 
 from game.phong.PhongGame import PhongGame
@@ -13,7 +13,7 @@ class Lobby:
             "phong_4": [],
         }
         self.qmatch = {
-            "phong": {"cap":(2, 3), "rule":SingleGame, "game":PhongGame} ,
+            "phong": {"cap":(2, 3), "rule":NormalGame, "game":PhongGame} ,
             "phong_4": {"cap":(4, 4), "rule":Tournament, "game":PhongGame},
         }
 

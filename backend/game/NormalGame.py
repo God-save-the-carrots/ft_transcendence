@@ -2,7 +2,7 @@ from game.Rule import Rule
 from game.User import User
 from game.Game import Game
 
-class SingleGame(Rule):
+class NormalGame(Rule):
     def __init__(self, players: 'list[User]', game_constructor: Game) -> None:
         self.players = players
         self.game_constructor = game_constructor
