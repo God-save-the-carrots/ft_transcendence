@@ -94,8 +94,8 @@ export default class PhongGame extends NetworkScene {
 
     #addTrackingMouseLight() {
         const light = this.addGameObject(this.#createObject("light", {
-            position: { x: 9999, y: 9999, z: 15 },
-            intensity: 400,
+            position: { x: 0, y: 0, z: 50 },
+            intensity: 1000,
         }));
         this.addDomEventListener("mousemove", e => {
             const pos = this.#getMouseWorldPosition(e.offsetX, e.offsetY);
