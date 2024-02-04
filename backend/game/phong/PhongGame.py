@@ -68,6 +68,8 @@ class PhongGame(Game):
                     self.min_ball_speed = min(self.min_ball_speed + 1, self.max_ball_speed)
                     if rect.tag == "wall":
                         test_detected_wall = rect
+                    if rect.tag == "player":
+                        test_detected_wall = None
 
         changed = []
         for obj in self.dynamic_objs:
