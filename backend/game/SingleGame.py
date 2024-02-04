@@ -9,10 +9,10 @@ class SingleGame(Rule):
         self.game = None
         
     async def start(self):
-        self.step("start game")
+        await self.step("start game", timer=1)
         self.game = self.game_constructor(self.players)
         result = await self.game.start()
-        self.step("end game")
+        await self.step("end game", timer=1)
 
         losers = result.get("grade")[1:]
         await self.broadcast(losers, {"type": "result", "result": "lose"})
