@@ -1,3 +1,4 @@
+import asyncio
 from game.Rule import Rule
 from game.User import User
 from game.Game import Game
@@ -11,6 +12,7 @@ class NormalGame(Rule):
     async def start(self):
         await self.step("start game", timer=1)
         self.game = self.game_constructor(self.players)
+        self.game.onfinish = self.endsession
         result = await self.game.start()
         await self.step("end game", timer=1)
 
@@ -22,3 +24,6 @@ class NormalGame(Rule):
         await self.broadcast(winners, {"type": "result", "result": "win"})
 
         self.disconnect(self.players)
+
+    async def endsession(self, game, players):
+        await asyncio.sleep(1)

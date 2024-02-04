@@ -24,6 +24,7 @@ class Tournament(Rule):
         for match in matchs:
             players = [*match]
             game = self.game_constructor(players)
+            game.onfinish = self.endsession
             tasks.append(asyncio.create_task(game.start()))
         results = await asyncio.gather(*tasks)
 
@@ -34,3 +35,6 @@ class Tournament(Rule):
         await self.broadcast(winners, {"type": "result", "result": "win"})
 
         return winners
+
+    async def endsession(self, game, players):
+        await asyncio.sleep(1)
