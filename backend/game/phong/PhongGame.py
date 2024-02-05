@@ -32,6 +32,7 @@ class PhongGame(Game):
         self.player_speed = 20
         self.min_ball_speed = 10
         self.max_ball_speed = 25
+        self.last_touch_player = None
         
         i = 0
         for ball in self.ball_objs:
@@ -49,48 +50,23 @@ class PhongGame(Game):
             await user.send(send_data)
 
     async def update(self, frame, delta):
-        test_detected_wall = None
-        for player in self.player_objs:
-            player.apply_acc(delta)
+        self.move_player(delta)
+        collided_objs = self.move_ball(delta)
+        debug = {}
+        if len(collided_objs) != 0:
+            debug["detected_wall_id"] = collided_objs[0].id
 
-        for ball in self.ball_objs:
-            old_position, old_rotation, old_scale = ball.apply_acc(delta)
-            for rect in self.rect_objs:
-                current_position = ball.transform.position
-                ray = Line(old_position, current_position)
-                point = logic.pass_through(ray, rect)
-                if point is not None:
-                    if ball.acc.position.dot(rect.transform.rotation) > 0:
-                        continue
-                    new_acc = logic.reflect(ball, rect, self.min_ball_speed)
-                    ball.set_acc(position=new_acc)
-                    ball.transform.position = point + new_acc * 0.0001
-                    self.min_ball_speed = min(self.min_ball_speed + 1, self.max_ball_speed)
-                    if rect.tag == "wall":
-                        test_detected_wall = rect
-                    if rect.tag == "player":
-                        test_detected_wall = None
-
-        changed = []
-        for obj in self.dynamic_objs:
-            acc_json = obj.get_changed_acc_json()
-            if acc_json is None:
-                continue
-            changed.append({
-                "id":obj.id,
-                "to": obj.transform.json(),
-                "acc": acc_json,
-            })
+        changed = [(obj, obj.get_changed_acc_json()) for obj in self.dynamic_objs]
+        changed = filter(lambda x: x[1] is not None, changed)
+        changed = map(lambda x: {"id":x[0].id,"to":x[0].transform.json(),"acc":x[1]}, changed)
+        changed = list(changed)
 
         if len(changed) != 0:
-            send_data = {
+            await self.broadcast({
                 "type": "update",
                 "changed": changed,
-                "debug": {}
-            }
-            if test_detected_wall is not None:
-                send_data["debug"]["detected_wall_id"] = test_detected_wall.id
-            await self.broadcast(send_data)
+                "debug": debug,
+            })
 
         if len(self.players) == 0:
             return False
@@ -129,3 +105,33 @@ class PhongGame(Game):
 
     def filter_object(self, test_func) -> 'list[GameObject]':
         return list(filter(test_func, self.object_list))
+
+    def move_player(self, delta):
+        for player in self.player_objs:
+            player.apply_acc(delta)
+
+    def move_ball(self, delta):
+        collided_objs = []
+        ball = self.ball_objs[0]
+        old_position, old_rotation, old_scale = ball.apply_acc(delta)
+        for rect in self.rect_objs:
+            current_position = ball.transform.position
+            ray = Line(old_position, current_position)
+            point = logic.pass_through(ray, rect)
+            if point is None:
+                continue
+            if ball.acc.position.dot(rect.transform.rotation) > 0:
+                continue
+            if rect.tag == "player":
+                self.min_ball_speed = min(self.min_ball_speed + 1, self.max_ball_speed)
+                self.last_touch_player = self.get_owner(rect)
+            new_acc_pos = logic.reflect(ball, rect, self.min_ball_speed)
+            ball.set_acc(position=new_acc_pos)
+            ball.transform.position = point + new_acc_pos * 0.0001
+            collided_objs.append(rect)
+        return collided_objs
+
+    def get_owner(self, rect):
+        func = lambda x: x.data.unit_id == rect.id
+        owner = next(player for player in self.players if func(player))
+        return owner
