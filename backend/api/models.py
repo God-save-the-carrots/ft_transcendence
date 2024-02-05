@@ -25,12 +25,22 @@ class Tournament(models.Model):
     GAME_TYPE_CHOICES = [
         (PONG_4, 'pong 4'),
     ]
+
     # Tournament의 type이 생길 수 있으니 일단 보류.
     game_type = models.CharField(max_length=10, choices=GAME_TYPE_CHOICES)
 
 # GameSession : 매 판마다 생성이되는 게임의 종류 및 정보
 class GameSession(models.Model):
+    ROUND_1 = 'round_1'
+    ROUND_2 = 'round_2'
+    
+    MATCH_TYPE_CHOICES = [
+        (ROUND_1, 'round 1'),
+        (ROUND_2, 'round 2'),
+    ]
+
     tournament_id = models.ForeignKey(Tournament, on_delete=models.SET_NULL, null=True)
+    match_type = models.CharField(max_length=10, choices=MATCH_TYPE_CHOICES, blank=True)
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
 

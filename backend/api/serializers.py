@@ -46,3 +46,45 @@ class CustomRankSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['user', 'rating']
+
+# =================================================================
+
+class CustomPongSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer(source='user_id')
+
+    class Meta:
+        model = Pong
+        fields = ['user', 'rank']
+
+class CustomGameSessionSerializer(serializers.ModelSerializer):
+    pong = serializers.SerializerMethodField()
+
+    def get_pong(self, instance):
+        if instance.match_type == 'round_2':
+            pongs = instance.pong_set.all()
+        elif instance.match_type == 'round_1':
+            pongs = [max(instance.pong_set.all(), key=lambda x: x.rank)]
+        return CustomPongSerializer(pongs, many=True).data
+    
+    class Meta:
+        model = GameSession
+        fields = ['pong']
+
+
+# TODO : 어떤 식으로 api를 보낼건지 수정필요.
+class CustomScoreSerializer(serializers.ModelSerializer):
+    match_id = serializers.IntegerField(source='id')
+    score = serializers.SerializerMethodField()
+
+    class Meta: 
+        model = Tournament
+        fields = ['match_id', 'score']
+
+    # TODO : 1개의 객체로 나오도록 수정 필요.
+    def get_score(self, instance):
+        all_matches = []
+        for match in instance.gamesession_set.all():
+            match_data = CustomGameSessionSerializer(match).data
+            all_matches.extend(match_data['pong'])
+
+        return all_matches

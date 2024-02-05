@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import *
 from .models import User, Profile
+import math
 
 # Create your views here.
 
@@ -58,6 +59,7 @@ class UserAPIView(APIView):
 
 
 # game/pong/rank/
+# TODO : page에 따라 연산에 맞는 컨텐츠를 반환해주는 함수필요.
 class RankAPIView(APIView):
     def get(self, request):
         game_type = request.GET.get('game_type')
@@ -66,9 +68,12 @@ class RankAPIView(APIView):
 
         all_users = User.objects.all()
         serializer = CustomRankSerializer(all_users, many=True)
+        content_length = len(serializer.data)
         response_data = {
             'page': page,
             'page_size': page_size,
+            'last_page_index': math.ceil(content_length / page_size),
+            'content_length': content_length,
             'data' : serializer.data,
         }
         return Response(response_data, status=status.HTTP_200_OK)
@@ -76,40 +81,66 @@ class RankAPIView(APIView):
 
 # game/pong/score/<str:intra_id>/
 class ScoreAPIView(APIView):
-    dummy = {
-        'page': None,
-        'page_size': None,
-        'last_page_index': 2,
-        'content_length': 20,
-        'data': []
-    }
-    default_dummy = []
-
-    for i in range(11):
-        dummy_entry = {
-            'match_id': i + 1,
-            'game_type': 'Pong_4',
-            'score': [
-                { 'user': {'id': (i * 3 + 1), 'intra_id': f'main_dummy', 'photo_id': i % 9},  'value': 100 },
-                { 'user': {'id': (i * 3 + 4), 'intra_id': f'dummy-{i * 3 + 1}', 'photo_id': (i + 1) % 9}, 'value': -60 },
-                { 'user': {'id': (i * 3 + 3), 'intra_id': f'dummy-{i * 3 + 2}', 'photo_id': (i + 2) % 9}, 'value': -40 },
-                { 'user': {'id': (i * 3 + 5), 'intra_id': f'dummy-{i * 3 + 3}', 'photo_id': (i + 3) % 9}, 'value': -20 },
-            ]
-        }
-        default_dummy.append(dummy_entry)
-    dummy['data'] = default_dummy
-
-
     def get(self, request, intra_id):
-        game_type = request.query_params.get('game_type', None)
-        intra_id = request.query_params.get('intra_id', None)
-        page = int(request.query_params.get('page', 0))
-        page_size = int(request.query_params.get('page_size', 10))
+        game_type = request.GET.get('game_type')
+        page = request.GET.get('page', 0)
+        page_size = request.GET.get('page_size', 20)
 
-        response_data = self.dummy
-        response_data['page'] = page
-        response_data['page_size'] = page_size
+        # TODO : 쿼리문 더 알아보기
+        user = User.objects.get(intra_id=intra_id)
+        user_tournaments = Tournament.objects.filter(
+            gamesession__pong__user_id=user
+        ).distinct()
+        # game_sessions_ids_list = GameSession.objects.filter(tournament_id__in=user_tournament_ids).values_list('id', flat=True)
+        # pong_for_tournament = Pong.objects.filter(game_session_id__in=game_sessions_ids_list)
+        serializer = CustomScoreSerializer(user_tournaments, many=True)
+        content_length = len(serializer.data)
+        response_data = {
+            'page': page,
+            'page_size': page_size,
+            'last_page_index': math.ceil(content_length / page_size),
+            'content_length': content_length,
+            'data' : serializer.data,
+        }
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+# # game/pong/score/<str:intra_id>/
+# class ScoreAPIView(APIView):
+#     dummy = {
+#         'page': None,
+#         'page_size': None,
+#         'last_page_index': 2,
+#         'content_length': 20,
+#         'data': []
+#     }
+#     default_dummy = []
+
+#     for i in range(11):
+#         dummy_entry = {
+#             'match_id': i + 1,
+#             'game_type': 'Pong_4',
+#             'score': [
+#                 { 'user': {'id': (i * 3 + 1), 'intra_id': f'main_dummy', 'photo_id': i % 9},  'value': 100 },
+#                 { 'user': {'id': (i * 3 + 4), 'intra_id': f'dummy-{i * 3 + 1}', 'photo_id': (i + 1) % 9}, 'value': -60 },
+#                 { 'user': {'id': (i * 3 + 3), 'intra_id': f'dummy-{i * 3 + 2}', 'photo_id': (i + 2) % 9}, 'value': -40 },
+#                 { 'user': {'id': (i * 3 + 5), 'intra_id': f'dummy-{i * 3 + 3}', 'photo_id': (i + 3) % 9}, 'value': -20 },
+#             ]
+#         }
+#         default_dummy.append(dummy_entry)
+#     dummy['data'] = default_dummy
+
+
+#     def get(self, request, intra_id):
+#         game_type = request.query_params.get('game_type', None)
+#         intra_id = request.query_params.get('intra_id', None)
+#         page = int(request.query_params.get('page', 0))
+#         page_size = int(request.query_params.get('page_size', 10))
+
+#         response_data = self.dummy
+#         response_data['page'] = page
+#         response_data['page_size'] = page_size
+#         return Response(response_data, status=status.HTTP_200_OK)
     
 
 # game/pong/matches/<int:match_id>/
