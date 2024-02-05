@@ -29,8 +29,7 @@ def pass_through(ray:Line, rect:GameObject) -> Vector2:
 def reflect(ball:GameObject, rect:GameObject, speed:float) -> Vector2:
     if rect.tag == "player":
         temp1 = (ball.transform.position - rect.transform.position).normalized()
-        temp2 = (rect.transform.rotation - ball.transform.position).normalized()
-        direction = (temp1 * 2 + temp2).normalized()
+        direction = (temp1 + rect.transform.rotation * 1.1).normalized()
         return direction * speed
 
     if rect.tag == "wall":
