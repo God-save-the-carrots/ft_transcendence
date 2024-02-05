@@ -39,4 +39,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'intra_id', 'photo_id', 'message']
 
+class CustomRankSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer(source='profile.user_id', read_only=True)
+    rating = serializers.IntegerField(source='profile.rating')
 
+    class Meta:
+        model = Profile
+        fields = ['user', 'rating']

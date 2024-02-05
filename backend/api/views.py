@@ -59,7 +59,19 @@ class UserAPIView(APIView):
 
 # game/pong/rank/
 class RankAPIView(APIView):
-    pass
+    def get(self, request):
+        game_type = request.GET.get('game_type')
+        page = request.GET.get('page', 0)
+        page_size = request.GET.get('page_size', 20)
+
+        all_users = User.objects.all()
+        serializer = CustomRankSerializer(all_users, many=True)
+        response_data = {
+            'page': page,
+            'page_size': page_size,
+            'data' : serializer.data,
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 # game/pong/score/<str:intra_id>/
