@@ -38,6 +38,7 @@ export default class PhongGame extends NetworkScene {
         this.setOnmessage("init", this.#netInit.bind(this));
         this.setOnmessage("update", this.#netUpdate.bind(this));
         this.setOnmessage("step", this.#netStep.bind(this));
+        this.setOnmessage("sync", this.#netSync.bind(this));
     }
 
     loadMenu() {
@@ -210,6 +211,17 @@ export default class PhongGame extends NetworkScene {
         }
         if (data?.level === "end game") {
             this.loadMenu();
+        }
+    }
+
+    #netSync(data) {
+        for (const ob of data.objects) {
+            const obj = this.networkObjects.get(ob.id);
+            obj.position.x = ob.transform.position.x;
+            obj.position.y = ob.transform.position.y;
+            obj.transformTo({
+                position: {x: obj.position.x, y: obj.position.y}
+            })
         }
     }
 

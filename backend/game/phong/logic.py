@@ -37,3 +37,17 @@ def reflect(ball:GameObject, rect:GameObject, speed:float) -> Vector2:
         vect = ball.acc.position
         return vect - norm * vect.dot(norm) * 2
     return None
+
+def select_player_side_wall(player_objs:'list[GameObject]', walls:'list[GameObject]') -> GameObject:
+    for wall in walls:
+        for player_obj in player_objs:
+            wall_normal = wall.transform.rotation
+            player_normal = player_obj.transform.rotation
+            if wall_normal.dot(player_normal) > 0.9:
+                return player_obj
+    return None
+
+def get_owner(players, rect):
+    func = lambda x: x.data.unit_id == rect.id
+    owner = next((player for player in players if func(player)), None)
+    return owner
