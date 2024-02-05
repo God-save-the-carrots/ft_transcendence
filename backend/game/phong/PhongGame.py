@@ -14,10 +14,10 @@ class PhongGame(Game):
         self.onfinish = None
 
         self.object_list = phong_map.select_map(len(players))
-        self.object_wall = self.filter_object(lambda x: x.tag == "wall")
-        self.player_objs = self.filter_object(lambda x: x.tag == "player")
-        self.dynamic_objs = self.filter_object(lambda x: x.tag == "player" or x.tag == "ball")
-        self.rect_objs = self.filter_object(lambda x: x.type == "rect")
+        self.object_wall = self.filter_objects(lambda x: x.tag == "wall")
+        self.player_objs = self.filter_objects(lambda x: x.tag == "player")
+        self.dynamic_objs = self.filter_objects(lambda x: x.tag == "player" or x.tag == "ball")
+        self.rect_objs = self.filter_objects(lambda x: x.type == "rect")
         self.object_dict: dict[str, GameObject] = {}
         for obj in self.object_list:
             self.object_dict[obj.id] = obj
@@ -111,7 +111,7 @@ class PhongGame(Game):
         self.players.remove(user)
         print("close", user)
 
-    def filter_object(self, test_func) -> 'list[GameObject]':
+    def filter_objects(self, test_func) -> 'list[GameObject]':
         return list(filter(test_func, self.object_list))
 
     def move_player(self, delta):
