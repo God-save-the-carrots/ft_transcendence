@@ -3,3 +3,4 @@ pgdata/
 .DS_Store
 .clang-format
 jsconfig.json
+node_modules
