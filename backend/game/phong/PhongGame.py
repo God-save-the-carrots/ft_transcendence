@@ -1,9 +1,9 @@
+import json
+from operator import attrgetter
 from game.Game import Game
 from game.GameObject import GameObject, Vector2, Line
 from game.phong import logic, map as phong_map
 from game.User import User
-import json
-import math
 
 class PhongGame(Game):
     def __init__(self, players: 'list[User]'):
@@ -30,6 +30,7 @@ class PhongGame(Game):
             user.data.unit_id = self.player_objs[i].id
             user.data.move = 0
             user.data.score = 0
+            user.data.timer = 0
             i += 1
 
         self.player_speed = 20
@@ -88,8 +89,11 @@ class PhongGame(Game):
             player.pop_onclose_event()
             player.pop_onmessage_event()
 
+        sort_key = attrgetter("data.score", "data.timer")
+        grade = sorted(iter(self.players), key=sort_key, reverse=True)
+        print(grade[0].intra_id, grade[0].data.score, grade[1].intra_id, grade[1].data.score)
         return {
-            "grade": self.players
+            "grade": grade
         }
 
     async def onmessage(self, user, json_data):
