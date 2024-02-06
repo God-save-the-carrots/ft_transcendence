@@ -140,10 +140,22 @@ export default class PhongGame extends NetworkScene {
             .map(x => x.object)
             .filter(x => x instanceof Button)[0];
     }
+    return new this.factory[type](params);
+  }
 
-    #createObject(type, params) {
-        if (this.factory[type] == null) throw new Error("receive unknown tag object");
-        return new this.factory[type](params);
+  #netInit(data) {
+    // create objects
+    for (const rawObject of data.objects) {
+      let mesh = null;
+      const {position, rotation, scale} = rawObject.transform;
+      const net = {id: rawObject.id, tag: rawObject.tag, type: rawObject.type};
+      if (net.tag == 'player') {
+        mesh = new Player(net, {position, rotation, scale});
+      }
+      if (net.tag == 'wall') mesh = new Wall(net, {position, rotation, scale});
+      if (net.tag == 'ball') mesh = new Ball(net, {position, rotation, scale});
+      if (mesh == null) throw new Error('receive unknown tag object');
+      this.addGameObject(mesh);
     }
 
     #netReady(data) {
@@ -160,44 +172,19 @@ export default class PhongGame extends NetworkScene {
     #netInit(data) {
         this.loadDefaultScene();
 
-        // create objects
-        for (const rawObject of data.objects) {
-            let mesh = null;
-            const { position, rotation, scale } = rawObject.transform;
-            const net = {id: rawObject.id, tag: rawObject.tag, type: rawObject.type };
-            if (net.tag == "player") mesh = new Player(net, {position, rotation, scale});
-            if (net.tag == "wall") mesh = new Wall(net, {position, rotation, scale});
-            if (net.tag == "ball") mesh = new Ball(net, {position, rotation, scale});
-            if (mesh == null) throw new Error("receive unknown tag object");
-            this.addGameObject(mesh);
-        }
-    
-        // rotate camera angle for player
-        for (const player of data.players) {
-            if (player.intra_id != this.intraId) continue
-            const unit = this.getNetworkObject(player.unit_id);
-            const rawUnit = data.objects.filter(x => x.id == unit.net.id)[0]
-            const rad = Math.acos(rawUnit.transform.rotation.x) * (rawUnit.transform.rotation.y > 0 ? 1 : -1);
-            const { camera } = this;
-            camera.position.set(unit.position.x, unit.position.y, camera.position.z);
-            camera.setRotationFromAxisAngle(zaxis, rad - Math.PI * 0.5);
-            camera.rotateX(Math.PI / 12);
-        }
+  #netUpdate(data) {
+    for (const i in data.changed) {
+      const item = data.changed[i];
+      const mesh = this.getNetworkObject(item.id);
+      if (item.to != null) mesh.to = {...mesh.to, ...item.to};
+      if (item.acc != null) mesh.acc = {...mesh.acc, ...item.acc};
     }
-    
-    #netUpdate(data) {
-        for (const i in data.changed) {
-            const item = data.changed[i]
-            const mesh = this.getNetworkObject(item.id);
-            if (item.to != null) mesh.to = {...mesh.to, ...item.to}
-            if (item.acc != null) mesh.acc = {...mesh.acc, ...item.acc}
-        }
-        if (data.debug.detected_wall_id != null) {
-            const touchedWall = this.getNetworkObject(data.debug.detected_wall_id);
-            touchedWall.material.color.b = 1
-            touchedWall.material.color.g = 1
-        }
+    if (data.debug.detected_wall_id != null) {
+      const touchedWall = this.getNetworkObject(data.debug.detected_wall_id);
+      touchedWall.material.color.b = 1;
+      touchedWall.material.color.g = 1;
     }
+  }
 
     #netStep(data) {
         if (data?.level === "start game") {
