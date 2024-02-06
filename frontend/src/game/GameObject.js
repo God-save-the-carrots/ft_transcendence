@@ -1,4 +1,4 @@
-import * as THREE from "../three.js";
+import * as THREE from "../threejs/three.js";
 import { zaxis } from "./preset.js";
 
 export class GameObject extends THREE.Mesh {
@@ -10,6 +10,7 @@ export class GameObject extends THREE.Mesh {
         if (position != null) {
             this.position.x = position.x;
             this.position.y = position.y;
+            this.position.z = position.z;
         }
         if (rotation != null) {
             const rad = Math.acos(rotation.x) * (rotation.y > 0 ? 1 : -1);
@@ -25,15 +26,6 @@ export class GameObject extends THREE.Mesh {
 };
 
 export class NetworkObject extends GameObject {
-
-    /**
-     * @typedef {{
-     *  position:{x:number,y:number},
-     *  rotation:{x:number,y:number},
-     *  scale:{x:number,y:number},
-     *  color:{r:number,g:number,z:number},
-     * }} TransformValue
-     */
 
     /**
      * @param {{id, tag, type}} net

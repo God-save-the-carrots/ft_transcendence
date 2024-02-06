@@ -1,4 +1,4 @@
-import * as THREE from "../../three.js";
+import * as THREE from "../../threejs/three.js";
 import { NetworkObject } from "../GameObject.js";
 
 export default class Player extends NetworkObject {

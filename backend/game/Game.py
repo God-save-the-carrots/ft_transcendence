@@ -14,11 +14,11 @@ class Game:
         self.game_type = name
         self.target_frame = 60
 
-    async def loop(self):
+    async def start(self):
         delta_time = 1.0 / self.target_frame
         self.frame = 0
         start = util.now()
-        await self.start()
+        await self.start_first_frame()
         while True:
             delta = util.now() - start
             start = util.now()
@@ -28,18 +28,16 @@ class Game:
             next_sleep = max(0, delta_time - update_time)
             await asyncio.sleep(next_sleep)
             self.frame = self.frame + 1
+        return await self.finish()
 
-    async def start(self):
+    async def start_first_frame(self):
         raise VirtualException()
 
     async def update(self, frame, delta):
         raise VirtualException()
     
-    async def onmessage(self, user, json_data):
-        pass
-
-    async def onclose(self, user):
-        pass
+    async def finish(self):
+        raise VirtualException()
 
     async def broadcast(self, json_data):
         data = json.dumps(json_data)

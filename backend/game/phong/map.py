@@ -22,18 +22,6 @@ def player_2_map():
         o.transform.scale = Vector2(1, 1)
         object_list.append(o)
 
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(-player_distance, 0)
-    o.transform.rotation = Vector2(1, 0)
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
-
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(player_distance, 0)
-    o.transform.rotation = Vector2(-1, 0)
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
-
     o = GameObject("wall", "rect") # left
     o.transform.position = Vector2(-(player_distance + 2), 0)
     o.transform.rotation = Vector2(1, 0)
@@ -58,6 +46,18 @@ def player_2_map():
     o.transform.scale = Vector2((player_distance + 2) * 2 + 1, 1)
     object_list.append(o)
 
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(-player_distance, 0)
+    o.transform.rotation = Vector2(1, 0)
+    o.transform.scale = Vector2(5, 1)
+    object_list.append(o)
+
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(player_distance, 0)
+    o.transform.rotation = Vector2(-1, 0)
+    o.transform.scale = Vector2(5, 1)
+    object_list.append(o)
+
     return object_list
 
 def player_3_map():
@@ -72,24 +72,6 @@ def player_3_map():
         o.transform.rotation = Vector2(1, 0)
         o.transform.scale = Vector2(1, 1)
         object_list.append(o)
-
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(math.cos(deg30 * 9), math.sin(deg30 * 9)) * player_distance
-    o.transform.rotation = (-o.transform.position).normalized()
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
-
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(math.cos(deg30 * 5), math.sin(deg30 * 5)) * player_distance
-    o.transform.rotation = (-o.transform.position).normalized()
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
-
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(math.cos(deg30 * 1), math.sin(deg30 * 1)) * player_distance
-    o.transform.rotation = (-o.transform.position).normalized()
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
 
     o = GameObject("wall", "rect") # left
     o.transform.position = Vector2(math.cos(deg30 * 5), math.sin(deg30 * 5)) * (player_distance + 2)
@@ -127,6 +109,24 @@ def player_3_map():
     o.transform.scale = Vector2(11.5, 1)
     object_list.append(o)
 
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(math.cos(deg30 * 9), math.sin(deg30 * 9)) * player_distance
+    o.transform.rotation = (-o.transform.position).normalized()
+    o.transform.scale = Vector2(5, 1)
+    object_list.append(o)
+
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(math.cos(deg30 * 5), math.sin(deg30 * 5)) * player_distance
+    o.transform.rotation = (-o.transform.position).normalized()
+    o.transform.scale = Vector2(5, 1)
+    object_list.append(o)
+
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(math.cos(deg30 * 1), math.sin(deg30 * 1)) * player_distance
+    o.transform.rotation = (-o.transform.position).normalized()
+    o.transform.scale = Vector2(5, 1)
+    object_list.append(o)
+
     return object_list
 
 def player_4_map():
@@ -139,30 +139,6 @@ def player_4_map():
         o.transform.rotation = Vector2(1, 0)
         o.transform.scale = Vector2(1, 1)
         object_list.append(o)
-
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(-player_distance, 0)
-    o.transform.rotation = Vector2(1, 0)
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
-
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(player_distance, 0)
-    o.transform.rotation = Vector2(-1, 0)
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
-
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(0, -player_distance)
-    o.transform.rotation = Vector2(0, 1)
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
-
-    o = GameObject("player", "rect")
-    o.transform.position = Vector2(0, player_distance)
-    o.transform.rotation = Vector2(0, -1)
-    o.transform.scale = Vector2(5, 1)
-    object_list.append(o)
 
     o = GameObject("wall", "rect") # left
     o.transform.position = Vector2(-(player_distance + 2), 0)
@@ -186,6 +162,30 @@ def player_4_map():
     o.transform.position = Vector2(0, -(player_distance + 2))
     o.transform.rotation = Vector2(0, 1)
     o.transform.scale = Vector2((player_distance + 2) * 2 + 1, 1)
+    object_list.append(o)
+
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(-player_distance, 0)
+    o.transform.rotation = Vector2(1, 0)
+    o.transform.scale = Vector2(5, 1)
+    object_list.append(o)
+
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(player_distance, 0)
+    o.transform.rotation = Vector2(-1, 0)
+    o.transform.scale = Vector2(5, 1)
+    object_list.append(o)
+
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(0, -player_distance)
+    o.transform.rotation = Vector2(0, 1)
+    o.transform.scale = Vector2(5, 1)
+    object_list.append(o)
+
+    o = GameObject("player", "rect")
+    o.transform.position = Vector2(0, player_distance)
+    o.transform.rotation = Vector2(0, -1)
+    o.transform.scale = Vector2(5, 1)
     object_list.append(o)
 
     return object_list

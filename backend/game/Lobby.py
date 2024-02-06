@@ -1,5 +1,8 @@
 import asyncio
 from game.User import User
+from game.NormalGame import NormalGame
+from game.Tournament import Tournament
+
 from game.phong.PhongGame import PhongGame
 from websockets.exceptions import ConnectionClosedOK
 
@@ -10,8 +13,8 @@ class Lobby:
             "phong_4": [],
         }
         self.qmatch = {
-            "phong": {"cap":(2, 3), "game": PhongGame} ,
-            "phong_4": {"cap":(4, 4), "game": PhongGame},
+            "phong": {"cap":(2, 3), "rule":NormalGame, "game":PhongGame} ,
+            "phong_4": {"cap":(4, 4), "rule":Tournament, "game":PhongGame},
         }
 
     def join_lobby(self, user: User):
@@ -19,8 +22,8 @@ class Lobby:
         if q == None:
             raise "err"
         q.append(user)
-        user.onclose = self.leave_lobby
-        user.onmessage = self.request_leave_lobby
+        user.push_onclose_event(self.leave_lobby)
+        user.push_onmessage_event(self.request_leave_lobby)
         print(user.socket.id, "join", user.game_type)
 
     def is_valid_game_type(self, game_type):
@@ -36,11 +39,9 @@ class Lobby:
         q = self.qlist.get(user.game_type)
         if q == None:
             return
-        if user not in q:
-            await user.send_json({"type":"close","status":"fail"})
-            print(user.socket.id, "leave lobby cancel")
         else:
-            q.remove(user)
+            if user in q:
+                q.remove(user)
             await user.send_json({"type":"close","status":"success"})
             await user.socket.close()
             print(user.socket.id, "leave lobby")
@@ -58,19 +59,30 @@ class Lobby:
                 users.remove(player)
             asyncio.create_task(self.game_ready(players, game_type))
 
-    async def game_ready(self, players: list[User], game_type):
-        game_constructor = self.qmatch.get(game_type).get("game")
+    async def game_ready(self, players: 'list[User]', game_type):
+        timer = 5
         for player in players:
             try:
-                await player.send_json({"type":"ready","timer":5})
+                await player.send_json({"type":"ready","timer":timer})
             except ConnectionClosedOK:
                 pass
-        await asyncio.sleep(5)
+        await asyncio.sleep(timer)
         if all(player.opened for player in players):
+            rule_constructor = self.qmatch.get(game_type).get("rule")
+            game_constructor = self.qmatch.get(game_type).get("game")
+            for player in players:
+                try:
+                    await player.send_json({"type":"match","status":"success"})
+                    player.pop_onclose_event()
+                    player.pop_onmessage_event()
+                except:
+                    pass
+            session = rule_constructor(players, game_constructor)
+            asyncio.create_task(session.start())
             print("matched:", game_type)
-            matched_game = game_constructor(players)
-            asyncio.create_task(matched_game.loop())
         else:
             users = self.qlist.get(game_type)
             for player in players:
-                users.insert(0, player)
+                if player.opened:
+                    await player.send_json({"type":"match","status":"fail"})
+                    users.insert(0, player)

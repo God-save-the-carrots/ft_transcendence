@@ -1,15 +1,21 @@
-import * as THREE from "../three.js";
-import { GameObject } from "./GameObject.js";
+import * as THREE from "../threejs/three.js";
 import { NetworkObject } from "./GameObject.js";
+
+import { EffectComposer } from "../threejs/postprocessing/EffectComposer.js";
+import { RenderPass } from "../threejs/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "../threejs/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "../threejs/postprocessing/OutputPass.js";
 
 const url = `ws://${window.location.hostname}:4444`;
 
 export class Scene extends THREE.Scene {
     constructor(width, height) {
         super()
+        this.width = width;
+        this.height = height;
         /**
          * key is threejs uuid
-         * @type {Map<String, GameObject>}
+         * @type {Map<String, Object3D>}
          */
         this.objects = new Map();
         /**
@@ -17,12 +23,54 @@ export class Scene extends THREE.Scene {
          * @type {Map<String, NetworkObject>}
          */
         this.networkObjects = new Map();
+
+        // set backgound color
         this.background = new THREE.Color("lightblue");
-        this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-        this.camera.position.z = 42
+
+        // for delta time
+        this.clock = new THREE.Clock();
+
+        // external event
+        this.domEvents = {};
+        this.renderHooks = [];
+        this.renderHandleEvent = 0;
         this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize(width, height);
+
+        this.composer = new EffectComposer(this.renderer);
+
+        const renderScene = new RenderPass(this, this.camera);
+        this.composer.addPass(renderScene);
+
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(width, height), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0;
+        bloomPass.strength = 0;
+        bloomPass.radius = 0;
+        this.composer.addPass(bloomPass);
+
+        const outputPass = new OutputPass();
+        this.composer.addPass(outputPass);
+
+        this.composer.setSize(width, height);
+    }
+
+    loadDefaultScene() {
+        // delete old objects
+        const deleteList = [];
+        this.traverse(x => deleteList.push(x));
+        deleteList.forEach(x => this.remove(x));
+        this.objects = new Map();
+        this.networkObjects = new Map();
+
+        // delete old events
+        this.removeAllDomEventListener();
+
+        // init render camera
+        const aspect = this.width / this.height;
+        this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
+        this.camera.position.z = 42
+        this.renderer.setSize(this.width, this.height);
         this.renderer.shadowMap.enabled = true;
+        this.composer.passes[0].camera = this.camera;
 
         // add background
         const background = new THREE.Mesh(
@@ -35,16 +83,13 @@ export class Scene extends THREE.Scene {
         this.add(background);
 
         // add ambient light
-        const ambient = new THREE.AmbientLight(0xffffff, 0.2);
-        this.add(ambient);
+        this.ambient = new THREE.AmbientLight(0xffffff, 0.2);
+        this.add(this.ambient);
+        this.#startAnimate();
+    }
 
-        // for delta time
-        this.clock = new THREE.Clock();
-
-        // external event
-        this.renderHooks = [];
-        this.renderHandleEvent = 0;
-
+    #startAnimate() {
+        cancelAnimationFrame(this.renderHandleEvent);
         const scene = this;
         function animate() {
             scene.renderHandleEvent = requestAnimationFrame(animate);
@@ -62,7 +107,8 @@ export class Scene extends THREE.Scene {
     }
 
     render() {
-        this.renderer.render(this, this.camera);
+        if (this.composer) this.composer.render();
+        else this.renderer.render(this, this.camera);
         const delta = this.clock.getDelta();
 
         this.update(delta);
@@ -81,10 +127,9 @@ export class Scene extends THREE.Scene {
         if (gameObject instanceof NetworkObject) {
             this.networkObjects.set(gameObject.net.id, gameObject);
         }
-        if (gameObject instanceof GameObject) {
-            this.objects.set(gameObject.uuid, gameObject);
-        }
+        this.objects.set(gameObject.uuid, gameObject);
         this.add(gameObject);
+        return gameObject;
     }
 
     getNetworkObject(id) {
@@ -101,7 +146,7 @@ export class Scene extends THREE.Scene {
         material.dispose();
     }
 
-    destroy() {
+    destroyRenderer() {
         cancelAnimationFrame(this.renderHandleEvent);
         this.traverse(function (object) {
             if (object.isMesh) {
@@ -113,8 +158,34 @@ export class Scene extends THREE.Scene {
                 }
             }
         });
+        this.objects = new Map();
+        this.networkObjects = new Map();
         this.renderer.dispose();
         delete this.renderer;
+    }
+
+    destroy() {
+        this.destroyRenderer();
+    }
+
+    addDomEventListener(type, callback) {
+        if (this.domEvents[type] == null) {
+            const domEvent = {
+                delegator: e => domEvent.events.forEach(func => func(e)),
+                events: [],
+            }
+            this.domEvents[type] = domEvent;
+            this.renderer.domElement.addEventListener(type, domEvent.delegator);
+        }
+        this.domEvents[type].events.push(callback);
+    }
+
+    removeAllDomEventListener() {
+        for (const type in this.domEvents) {
+            const delegator = this.domEvents[type].delegator;
+            this.renderer.domElement.removeEventListener(type, delegator);
+            delete this.domEvents[type];
+        }
     }
 };
 
@@ -151,7 +222,7 @@ export class NetworkScene extends Scene {
             console.error(e);
             return false;
         } finally {
-this.#initSocketEvent();
+            this.#initSocketEvent();
             this.waitingServer = false;
         }
         return true;
@@ -185,7 +256,7 @@ this.#initSocketEvent();
 
     cancelWaitQ() {
         return new Promise((res, rej) => {
-            if (this.socket?.OPEN == false) {
+            if (this.socket == null || this.socket.readyState != this.socket.OPEN) {
                 res(true);
                 return;
             }
