@@ -18,7 +18,6 @@ class NormalGame(Rule):
 
         losers = result.get("grade")[1:]
         await self.broadcast(losers, {"type": "result", "result": "lose"})
-        await self.disconnect(losers)
 
         winners = result.get("grade")[:1]
         await self.broadcast(winners, {"type": "result", "result": "win"})

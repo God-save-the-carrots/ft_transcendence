@@ -91,7 +91,6 @@ class PhongGame(Game):
 
         sort_key = attrgetter("data.score", "data.timer")
         grade = sorted(iter(self.players), key=sort_key, reverse=True)
-        print(grade[0].intra_id, grade[0].data.score, grade[1].intra_id, grade[1].data.score)
         return {
             "grade": grade
         }
