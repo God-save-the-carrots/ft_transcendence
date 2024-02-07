@@ -20,10 +20,12 @@ export default class Game extends Component {
     this.game = new PongGame(width, height, randomUserToken);
     const $target = document.getElementById('game-content');
     $target.appendChild(this.game.getRenderer().domElement);
+    this.game.subscribeInfo(console.log);
   }
   async unmounted() {
     if (this.game) {
       this.game.destroy();
+      this.game.unsubscribeInfoAll();
     }
   }
 }
