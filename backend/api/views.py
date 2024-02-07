@@ -111,43 +111,9 @@ class ScoreAPIView(APIView):
 # game/pong/matches/<int:match_id>/
 class MatchesAPIView(APIView):
     def get(self, request, match_id):
-        pass
-
-# # game/pong/matches/<int:match_id>/
-# class MatchesAPIView(APIView):
-#     dummy = []
-#     def __init__(self):
-#         if not self.dummy:
-#             for i in range(11):
-#                 self.dummy.append({
-#                     "match_id": i + 1,
-#                     "game_type": "Pong_4",
-#                     "score": [
-#                         {
-#                             "user": { "id": 1, "intra_id": "main_dummy-" + str(i), "photo_id": 0 },
-#                             "rating": 1024,
-#                             "value": 100
-#                         },
-#                         {
-#                             "user": { "id": 4, "intra_id": "dummy", "photo_id": 0 },
-#                             "rating": 900,
-#                             "value": -20
-#                         },
-#                         {
-#                             "user": { "id": 3, "intra_id": "dummy", "photo_id": 0 },
-#                             "rating": 1100,
-#                             "value": -40
-#                         },
-#                         {
-#                             "user": { "id": 2, "intra_id": "dummy", "photo_id": 0 },
-#                             "rating": 1032,
-#                             "value": -60
-#                         },
-#                     ],
-#                 })
-
-#     def get(self, request, match_id):
-#         response_data = next((item for item in self.dummy if item['match_id'] == match_id), None)
-#         if not response_data:
-#             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
-#         return Response(response_data, status=status.HTTP_200_OK)
+        try:
+            tournament = Tournament.objects.get(id=match_id)
+            serializer = CustomMatchesSerializer(tournament)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Tournament.DoesNotExist:
+            return Response(serializer.data, status=status.HTTP_404_NOT_FOUND)

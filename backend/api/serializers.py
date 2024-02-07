@@ -68,7 +68,7 @@ class CustomPongSerializer(serializers.ModelSerializer):
         model = Pong
         fields = ['user', 'value', 'rank']
 
-class CustomGameSessionSerializer(serializers.ModelSerializer):
+class CustomScoreGameSessionSerializer(serializers.ModelSerializer):
     pong = serializers.SerializerMethodField()
 
     def get_pong(self, instance):
@@ -82,8 +82,6 @@ class CustomGameSessionSerializer(serializers.ModelSerializer):
         model = GameSession
         fields = ['pong']
 
-
-# TODO : 어떤 식으로 api를 보낼건지 수정필요.
 class CustomScoreSerializer(serializers.ModelSerializer):
     match_id = serializers.IntegerField(source='id')
     score = serializers.SerializerMethodField()
@@ -92,11 +90,26 @@ class CustomScoreSerializer(serializers.ModelSerializer):
         model = Tournament
         fields = ['match_id', 'score']
 
-    # TODO : 1개의 객체로 나오도록 수정 필요.
     def get_score(self, instance):
         all_matches = []
         for match in instance.gamesession_set.all():
-            match_data = CustomGameSessionSerializer(match).data
+            match_data = CustomScoreGameSessionSerializer(match).data
             all_matches.extend(match_data['pong'])
-
         return all_matches
+    
+# ========================================================================================
+
+class CustomMatchGameSessionSerializer(serializers.ModelSerializer):
+    round = CustomPongSerializer(source='pong_set', many=True)
+
+    class Meta:
+        model = GameSession
+        fields = ['match_type', 'round']
+
+class CustomMatchesSerializer(serializers.ModelSerializer):
+    match_id = serializers.IntegerField(source='id')
+    game = CustomMatchGameSessionSerializer(source='gamesession_set', many=True)
+
+    class Meta:
+        model = Tournament
+        fields = ['match_id', 'game_type', 'game']
