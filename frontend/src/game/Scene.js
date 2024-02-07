@@ -17,8 +17,8 @@ export class Scene extends THREE.Scene {
          * key is threejs uuid
          * @type {Map<String, Object3D>}
          */
-    this.objects = new Map();
-    /**
+        this.objects = new Map();
+        /**
          * key is serverside id
          * @type {Map<String, NetworkObject>}
          */
@@ -190,21 +190,21 @@ export class Scene extends THREE.Scene {
 };
 
 export class NetworkScene extends Scene {
-  constructor(width, height) {
-    super(width, height);
-    /**
+    constructor(width, height) {
+        super(width, height);
+        /**
          * @type {WebSocket}
          */
-    this.socket = null;
-    this.waitingServer = false;
-    this.onmessages = {};
-  }
+        this.socket = null;
+        this.waitingServer = false;
+        this.onmessages = {};
+    }
 
-  /**
+    /**
      * 소켓을 열고 대기큐 등록.
      * @param {string} authToken
      * @param {string} gameType
-     * @return 대기큐 등록 성공 여부 (인증 포함)
+     * @returns 대기큐 등록 성공 여부 (인증 포함)
      */
     async waitQ(authToken, gameType) {
         if (this.waitingServer) {
@@ -285,67 +285,26 @@ export class NetworkScene extends Scene {
 
     onmessage(e) {
         const data = JSON.parse(e.data);
-        if (data.type !== 'auth' || data.status !== 'success') {
-          this.socket.close();
-          rej(new Error('error: server bad response'));
-          return;
-        }
-        res();
-      };
-    });
-  }
-
-  cancelWaitQ() {
-    return new Promise((res, rej) => {
-      if (this.socket?.OPEN == false) {
-        res(true);
-        return;
-      }
-      if (this.waitingServer) {
-        res(false); // 인증 중이라면 대기 큐를 취소할 수 없음
-        return;
-      }
-      this.socket.send(JSON.stringify({
-        type: 'close',
-      }));
-      this.socket.onmessage = (e) => {
-        this.onmessage(e);
-        const data = JSON.parse(e.data);
-        if (data.status === 'success') this.socket.close();
-        this.#initSocketEvent();
-        res(data.status === 'success');
-      };
-    });
-  }
-
-  #initSocketEvent() {
-    this.socket.onmessage = this.onmessage.bind(this);
-    this.socket.onopen = null;
-    this.socket.onerror = null;
-  }
-
-  onmessage(e) {
-    const data = JSON.parse(e.data);
-    if (data?.type == null) return;
-    const func = this.onmessages[data.type];
-    if (func != null) func(data);
-  }
-
-  setOnmessage(type, callback) {
-    this.onmessages[type] = callback;
-  }
-
-  send(data) {
-    if (this.socket == null || this.socket.readyState == false) {
-      throw new Error('socket not open');
+        if (data?.type == null) return;
+        const func = this.onmessages[data.type];
+        if (func != null) func(data);
     }
-    this.socket.send(JSON.stringify(data));
-  }
 
-  destroy() {
-    super.destroy();
-    try {
-      this.socket.close();
-    } catch (e) {}
-  }
+    setOnmessage(type, callback) {
+        this.onmessages[type] = callback;
+    }
+
+    send(data) {
+        if (this.socket == null || this.socket.readyState == false) {
+            throw new Error("socket not open");
+        }
+        this.socket.send(JSON.stringify(data));
+    }
+
+    destroy() {
+        super.destroy();
+        try {
+            this.socket.close();
+        } catch(e) {}
+    }
 }
