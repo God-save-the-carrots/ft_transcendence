@@ -31,6 +31,18 @@ class PongSerializer(serializers.ModelSerializer):
         model = Pong
         fields = '__all__'
 
+def get_custom_value(instance):
+    if instance.rank == 1:
+        return 100
+    elif instance.rank == 2:
+        return -20
+    elif instance.rank == 3:
+        return -40
+    elif instance.rank == 4:
+        return -60
+    else:
+        return 0
+
 class CustomUserSerializer(serializers.ModelSerializer):
     photo_id = serializers.IntegerField(source='profile.photo_id')
     message = serializers.CharField(source='profile.message')
@@ -53,16 +65,7 @@ class CustomScorePongSerializer(serializers.ModelSerializer):
     value = serializers.SerializerMethodField()
 
     def get_value(self, instance):
-        if instance.rank == 1:
-            return 100
-        elif instance.rank == 2:
-            return -20
-        elif instance.rank == 3:
-            return -40
-        elif instance.rank == 4:
-            return -60
-        else:
-            return 0
+        return get_custom_value(instance)
 
     class Meta:
         model = Pong
@@ -105,16 +108,7 @@ class CustomMatchPongSerializer(serializers.ModelSerializer):
     value = serializers.SerializerMethodField()
 
     def get_value(self, instance):
-        if instance.rank == 1:
-            return 100
-        elif instance.rank == 2:
-            return -20
-        elif instance.rank == 3:
-            return -40
-        elif instance.rank == 4:
-            return -60
-        else:
-            return 0
+        return get_custom_value(instance)
 
     class Meta:
         model = Pong
