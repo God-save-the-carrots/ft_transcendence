@@ -66,7 +66,7 @@ class CustomPongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pong
-        fields = ['user', 'value', 'rank']
+        fields = ['user', 'value', 'rank', 'score']
 
 class CustomScoreGameSessionSerializer(serializers.ModelSerializer):
     pong = serializers.SerializerMethodField()
