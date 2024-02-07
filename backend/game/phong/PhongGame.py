@@ -37,8 +37,8 @@ class PhongGame(Game):
         self.min_ball_speed = 10
         self.max_ball_speed = 25
         self.max_score = 3
-        self.last_touch_player = None
-        
+        self.last_touch_player = self.players[0]
+
     async def start_first_frame(self):
         objects = list(map(lambda x: x.json(), self.object_list))
         players = []
