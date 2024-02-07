@@ -18,8 +18,10 @@ export default class UserProfile extends Component {
         `http://localhost/api/user/${this._intra_id}`,
     ).then((x) => x.json());
     const data = this.state.data;
-    return `<div>${JSON.stringify(data)}</div>
+    return `
       <img src= "/public/assets/${data.photo_id}.png" />
+      <h2> UserName: ${data.intra_id}</h2>
+      <h2> message: ${data.message}</h2>
     `;
   }
 }

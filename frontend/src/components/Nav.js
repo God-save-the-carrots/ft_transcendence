@@ -4,22 +4,13 @@ import Router from '../core/Router.js';
 export default class Nav extends Component {
   async template() {
     return `
-      <a href="/" class="logo" ></a>
-      <div class="header-right">
-        <a class="active" href="/">
-          <img src='../../public/assets/nav/LIBFT.png'></img>
-        </a>
-        <a href="/game">
-          <img src='../../public/assets/nav/game.png'></img>
-        </a>
-        <a href="/rank">
-          <img src='../../public/assets/nav/crown.png'></img>
-        </a>
-        <a href="/user/dummy1">
-          <img src='../../public/assets/nav/42logo.png'></img>
-        </a>
-
-      </div>
+      <a href="/" class="nav__link" data-link>home</a>
+      <a href="/user/dummy1" class="nav__link" data-link>user-dummy</a>
+      <a href="/game" class="nav__link" data-link>game</a>
+      <a href="/rank" class="nav__link" data-link>ranks</a>
+      <a href="/test" class="nav__link" data-link>test</a>
+      <a href="/login" class="nav__link" data-link>login-test</a>
+      <input type="button" value="login" />
     `;
   }
   setEvent() {

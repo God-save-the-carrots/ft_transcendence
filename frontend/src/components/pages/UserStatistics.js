@@ -11,9 +11,10 @@ export default class UserStatistics extends Component {
   async template() {
     return `
       <h1> ${this._title} </h1>
-      <h1> ???? </h1>
       <h1> I am ${this._intra_id} </h1>
     `;
   }
   async mounted() {}
 }
+
+
