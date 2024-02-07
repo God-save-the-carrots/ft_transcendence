@@ -39,7 +39,7 @@ class GameSession(models.Model):
         (ROUND_2, 'round 2'),
     ]
 
-    tournament_id = models.ForeignKey(Tournament, on_delete=models.SET_NULL, null=True)
+    tournament_id = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     match_type = models.CharField(max_length=10, choices=MATCH_TYPE_CHOICES, blank=True)
     start_time = models.DateTimeField(blank=True, null=True)
     end_time = models.DateTimeField(blank=True, null=True)
@@ -50,7 +50,7 @@ class GameSession(models.Model):
 
 # Pong : GameSession에 따라 유저마다 생성이될 각 게임정보.
 class Pong(models.Model):
-    game_session_id = models.ForeignKey(GameSession, on_delete=models.SET_NULL, null=True)
+    game_session_id = models.ForeignKey(GameSession, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     rank = models.IntegerField(default=0)
     score = models.IntegerField(default=0)

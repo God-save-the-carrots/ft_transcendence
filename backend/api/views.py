@@ -10,6 +10,7 @@ import math
 # Create your views here.
 
 # login
+# oauth 후 작업필요.
 class LoginAPIView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -26,6 +27,7 @@ class LoginAPIView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 # logout
+# oauth 후 작업필요.
 class LogoutAPIView(APIView):
     def post(self, request):
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -114,6 +116,7 @@ class MatchesAPIView(APIView):
         try:
             tournament = Tournament.objects.get(id=match_id)
             serializer = CustomMatchesSerializer(tournament)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            response_data = serializer.data
+            return Response(response_data, status=status.HTTP_200_OK)
         except Tournament.DoesNotExist:
-            return Response(serializer.data, status=status.HTTP_404_NOT_FOUND)
+            return Response(response_data, status=status.HTTP_404_NOT_FOUND)

@@ -48,7 +48,7 @@ class CustomRankSerializer(serializers.ModelSerializer):
 
 # =================================================================
 
-class CustomPongSerializer(serializers.ModelSerializer):
+class CustomScorePongSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer(source='user_id')
     value = serializers.SerializerMethodField()
 
@@ -66,7 +66,7 @@ class CustomPongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pong
-        fields = ['user', 'value', 'rank', 'score']
+        fields = ['user', 'value', 'rank']
 
 class CustomScoreGameSessionSerializer(serializers.ModelSerializer):
     pong = serializers.SerializerMethodField()
@@ -76,7 +76,7 @@ class CustomScoreGameSessionSerializer(serializers.ModelSerializer):
             pongs = instance.pong_set.all()
         elif instance.match_type == 'round_1':
             pongs = [max(instance.pong_set.all(), key=lambda x: x.rank)]
-        return CustomPongSerializer(pongs, many=True).data
+        return CustomScorePongSerializer(pongs, many=True).data
     
     class Meta:
         model = GameSession
@@ -99,8 +99,29 @@ class CustomScoreSerializer(serializers.ModelSerializer):
     
 # ========================================================================================
 
+class CustomMatchPongSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer(source='user_id')
+    rating = serializers.IntegerField(source='user_id.profile.rating')
+    value = serializers.SerializerMethodField()
+
+    def get_value(self, instance):
+        if instance.rank == 1:
+            return 100
+        elif instance.rank == 2:
+            return -60
+        elif instance.rank == 3:
+            return -40
+        elif instance.rank == 4:
+            return -20
+        else:
+            return 0
+
+    class Meta:
+        model = Pong
+        fields = ['user', 'rating', 'value', 'rank', 'score']
+
 class CustomMatchGameSessionSerializer(serializers.ModelSerializer):
-    round = CustomPongSerializer(source='pong_set', many=True)
+    round = CustomMatchPongSerializer(source='pong_set', many=True)
 
     class Meta:
         model = GameSession
