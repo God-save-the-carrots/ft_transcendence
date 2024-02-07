@@ -40,8 +40,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'intra_id', 'photo_id', 'message']
 
 class CustomRankSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer(source='profile.user_id', read_only=True)
-    rating = serializers.IntegerField(source='profile.rating')
+    user = CustomUserSerializer(source='user_id', read_only=True)
 
     class Meta:
         model = Profile
@@ -51,10 +50,23 @@ class CustomRankSerializer(serializers.ModelSerializer):
 
 class CustomPongSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer(source='user_id')
+    value = serializers.SerializerMethodField()
+
+    def get_value(self, instance):
+        if instance.rank == 1:
+            return 100
+        elif instance.rank == 2:
+            return -60
+        elif instance.rank == 3:
+            return -40
+        elif instance.rank == 4:
+            return -20
+        else:
+            return 0
 
     class Meta:
         model = Pong
-        fields = ['user', 'rank']
+        fields = ['user', 'value', 'rank']
 
 class CustomGameSessionSerializer(serializers.ModelSerializer):
     pong = serializers.SerializerMethodField()
