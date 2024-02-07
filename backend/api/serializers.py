@@ -56,11 +56,11 @@ class CustomScorePongSerializer(serializers.ModelSerializer):
         if instance.rank == 1:
             return 100
         elif instance.rank == 2:
-            return -60
+            return -20
         elif instance.rank == 3:
             return -40
         elif instance.rank == 4:
-            return -20
+            return -60
         else:
             return 0
 
@@ -97,7 +97,7 @@ class CustomScoreSerializer(serializers.ModelSerializer):
             all_matches.extend(match_data['pong'])
         return all_matches
     
-# ========================================================================================
+# =================================================================
 
 class CustomMatchPongSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer(source='user_id')
@@ -108,11 +108,11 @@ class CustomMatchPongSerializer(serializers.ModelSerializer):
         if instance.rank == 1:
             return 100
         elif instance.rank == 2:
-            return -60
+            return -20
         elif instance.rank == 3:
             return -40
         elif instance.rank == 4:
-            return -20
+            return -60
         else:
             return 0
 
