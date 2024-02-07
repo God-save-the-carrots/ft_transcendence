@@ -39,6 +39,7 @@ export default class PhongGame extends NetworkScene {
         this.setOnmessage("update", this.#netUpdate.bind(this));
         this.setOnmessage("step", this.#netStep.bind(this));
         this.setOnmessage("sync", this.#netSync.bind(this));
+        this.setOnmessage("info", this.#netInfo.bind(this));
     }
 
     loadMenu() {
@@ -223,6 +224,11 @@ export default class PhongGame extends NetworkScene {
                 position: {x: obj.position.x, y: obj.position.y}
             })
         }
+    }
+
+    #netInfo(data) {
+        const { score } = data;
+        console.log(score);
     }
 
     #initKeyEvent() {
