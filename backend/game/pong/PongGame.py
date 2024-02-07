@@ -2,18 +2,18 @@ import json
 from operator import attrgetter
 from game.Game import Game
 from game.GameObject import GameObject, Vector2, Line
-from game.phong import logic, map as phong_map
+from game.pong import logic, map as pong_map
 from game.User import User
 
-class PhongGame(Game):
+class PongGame(Game):
     def __init__(self, players: 'list[User]'):
-        Game.__init__(self, players, "phong_" + str(len(players)))
+        Game.__init__(self, players, "pong_" + str(len(players)))
         self.init_countdown = 0.1
         self.wait_timer = 1
         self.players: list[User] = players
         self.onfinish = None
 
-        self.object_list = phong_map.select_map(len(players))
+        self.object_list = pong_map.select_map(len(players))
         self.object_wall = self.filter_objects(lambda x: x.tag == "wall")
         self.player_objs = self.filter_objects(lambda x: x.tag == "player")
         self.dynamic_objs = self.filter_objects(lambda x: x.tag == "player" or x.tag == "ball")

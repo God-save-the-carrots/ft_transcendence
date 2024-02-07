@@ -1,5 +1,5 @@
 import Component from '../../core/Component.js';
-import PhongGame from '../../game/phong/PhongGame.js';
+import PongGame from '../../game/pong/PongGame.js';
 
 export default class Game extends Component {
   _title;
@@ -17,7 +17,7 @@ export default class Game extends Component {
     const ratio = 1 / 2;
     const width = window.innerWidth - 100;
     const height = width * ratio;
-    this.game = new PhongGame(width, height, randomUserToken);
+    this.game = new PongGame(width, height, randomUserToken);
     const $target = document.getElementById('game-content');
     $target.appendChild(this.game.getRenderer().domElement);
   }

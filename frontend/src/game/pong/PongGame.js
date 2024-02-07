@@ -10,11 +10,11 @@ import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
 
-export default class PhongGame extends NetworkScene {
+export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
   static STATE_WAIT = 1;
-  static STATE_PHONG = 2;
-  static STATE_PHONG_TOURNAMENT = 3;
+  static STATE_PONG = 2;
+  static STATE_PONG_TOURNAMENT = 3;
   constructor(width, height, token) {
     super(width, height);
     this.token = token;
@@ -43,7 +43,7 @@ export default class PhongGame extends NetworkScene {
   }
 
   loadMenu() {
-    this.state = PhongGame.STATE_MENU;
+    this.state = PongGame.STATE_MENU;
     this.loadDefaultScene();
     const ready = (type) => {
       this.loadReady();
@@ -54,7 +54,7 @@ export default class PhongGame extends NetworkScene {
       size: {width: 12, height: 12},
       color: 'lightpink',
       icon: 'normal-game.png',
-      buttonParam: 'phong',
+      buttonParam: 'pong',
       callback: ready,
     }));
     this.addGameObject(this.#createObject('button', {
@@ -62,7 +62,7 @@ export default class PhongGame extends NetworkScene {
       size: {width: 12, height: 12},
       color: 'skyblue',
       icon: 'tournament.png',
-      buttonParam: 'phong_4',
+      buttonParam: 'pong_4',
       callback: ready,
     }));
     this.addGameObject(this.#createObject('light', {
@@ -74,7 +74,7 @@ export default class PhongGame extends NetworkScene {
   }
 
   loadReady() {
-    this.state = PhongGame.STATE_WAIT;
+    this.state = PongGame.STATE_WAIT;
     this.loadDefaultScene();
     this.addGameObject(this.#createObject('button', {
       position: {x: 0, y: 0, z: 0},
