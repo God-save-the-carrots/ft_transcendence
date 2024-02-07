@@ -44,9 +44,8 @@ class PhongGame(Game):
         players = []
         for user in self.players:
             players.append({"intra_id": user.intra_id,"unit_id": user.data.unit_id})
-        send_data = json.dumps({"type": "init", "objects": objects, "players": players})
-        for user in self.players:
-            await user.send(send_data)
+        init_data = {"type": "init", "objects": objects, "players": players}
+        await self.broadcast(init_data)
         await self.broadcast_score()
 
     async def update(self, frame, delta):
