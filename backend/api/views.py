@@ -120,3 +120,27 @@ class MatchesAPIView(APIView):
             return Response(response_data, status=status.HTTP_200_OK)
         except Tournament.DoesNotExist:
             return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+
+# TODO : view 파일 분리 필요.
+# api/game/pong/score/<str:intra_id>/profile :
+class ScoreProfileAPIView(APIView):
+    def get(self, request, intra_id):
+        try:
+            user_instance = User.objects.get(intra_id=intra_id)
+            rating_for_user = Profile.objects.all().order_by('-rating')
+            user_rating = user_instance.profile.rating
+            rank_for_user = rating_for_user.filter(rating__gt=user_rating).count() + 1
+            serializer = CustomUserSerializer(user_instance)
+            response_data = {
+                'user': serializer.data, 
+                'rank': rank_for_user,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+
+# api/game/pong/score/<str:intra_id>/play-time : 게임 시간.
+# api/game/pong/score/<str:intra_id>/winning-rate : 승률.
+# api/game/pong/score/<str:intra_id>/goals-against-average : 내가 낸 점수와 상대가 낸 점수를 더한 결과비
+# api/game/pong/score/<str:intra_id>/winning-percentage : 개안 승률, 전체유저의 평균 승률, 1등 유저의 승률
+        

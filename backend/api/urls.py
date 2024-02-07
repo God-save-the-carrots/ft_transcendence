@@ -1,6 +1,6 @@
 from django.urls import path, include
 
-from .views import LoginAPIView, LogoutAPIView, UserAPIView, ScoreAPIView, MatchesAPIView, RankAPIView
+from .views import *
 
 urlpatterns = [
     path('login', LoginAPIView.as_view()),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('game/pong/rank/', RankAPIView.as_view()),
     path('game/pong/score/<str:intra_id>/', ScoreAPIView.as_view()),
     path('game/pong/matches/<int:match_id>/', MatchesAPIView.as_view()),
+    path('game/pong/score/<str:intra_id>/profile/', ScoreProfileAPIView.as_view()),
 ]
