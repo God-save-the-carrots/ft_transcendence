@@ -185,6 +185,6 @@ class PongGame(Game):
             "score": player.data.score,
         } for player in self.players]
         await self.broadcast({
-            "type": "info",
+            "type": "score",
             "score": scores,
         })
