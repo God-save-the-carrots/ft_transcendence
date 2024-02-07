@@ -47,6 +47,7 @@ class PhongGame(Game):
         send_data = json.dumps({"type": "init", "objects": objects, "players": players})
         for user in self.players:
             await user.send(send_data)
+        await self.broadcast_score()
 
     async def update(self, frame, delta):
         self.move_player(delta)
@@ -68,9 +69,7 @@ class PhongGame(Game):
                 other.data.score += 1
             self.init_countdown = 1
             self.ball.set_acc(position=Vector2(0, 0))
-            await self.broadcast({ # TODO: broadcast scorer
-                "type": "debug"
-            })
+            await self.broadcast_score()
 
         touched_player_obj = next((ob for ob in collided_objs if ob.tag == "player"), None)
         if touched_player_obj is not None:
@@ -179,3 +178,14 @@ class PhongGame(Game):
                 "changed": changed,
                 "debug": debug,
             })
+
+    async def broadcast_score(self):
+        scores = [{
+            "unit_id": player.data.unit_id,
+            "intra_id": player.intra_id,
+            "score": player.data.score,
+        } for player in self.players]
+        await self.broadcast({
+            "type": "info",
+            "score": scores,
+        })
