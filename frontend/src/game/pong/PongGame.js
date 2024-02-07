@@ -32,6 +32,7 @@ export default class PongGame extends NetworkScene {
     this.#initKeyEvent();
     this.selectedButton = null;
     this.raycaster = new THREE.Raycaster();
+    this.infoCallbacks = [];
     this.loadMenu();
     this.setOnmessage('ready', this.#netReady.bind(this));
     this.setOnmessage('match', this.#netMatch.bind(this));
@@ -93,6 +94,18 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
+  }
+
+  subscribeInfo(callback) {
+    this.infoCallbacks.push(callback);
+  }
+
+  unsubscribeInfo(callback) {
+    this.infoCallbacks = this.infoCallbacks.filter((x) => x != callback);
+  }
+
+  unsubscribeInfoAll() {
+    this.infoCallbacks = [];
   }
 
   #addTrackingMouseLight() {
@@ -237,7 +250,7 @@ export default class PongGame extends NetworkScene {
   }
 
   #netInfo(data) {
-    console.log(data);
+    for (const cb of this.infoCallbacks) cb({...data});
   }
 
   #initKeyEvent() {
