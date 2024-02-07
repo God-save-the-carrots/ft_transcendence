@@ -2,6 +2,7 @@ import json
 import asyncio
 from game import util
 from game.User import User
+from game.util import generate_random_id, now
 
 class VirtualException(BaseException):
     def __init__(self):
@@ -9,6 +10,9 @@ class VirtualException(BaseException):
 
 class Game:
     def __init__(self, users, name):
+        self.id = generate_random_id()
+        self.tag = ""
+        self.start_at = now()
         self.frame = 0
         self.users: list[User] = users
         self.game_type = name

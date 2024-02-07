@@ -30,7 +30,7 @@ class PongGame(Game):
             user.data.unit_id = self.player_objs[i].id
             user.data.move = 0
             user.data.score = 0
-            user.data.timer = 0
+            user.data.hit = 0
             i += 1
 
         self.player_speed = 20
@@ -74,6 +74,7 @@ class PongGame(Game):
         if touched_player_obj is not None:
             self.min_ball_speed = min(self.min_ball_speed + 1, self.max_ball_speed)
             self.last_touch_player = logic.get_owner(self.players, touched_player_obj)
+            self.last_touch_player.data.hit += 1
 
         await self.broadcast_updated_data(collided_objs)
 
@@ -81,13 +82,17 @@ class PongGame(Game):
 
     async def finish(self):
         if self.onfinish is not None:
-            await self.onfinish(self, self.players)
+            await self.onfinish(self, [{
+                "intra_id": player.intra_id,
+                "score": player.data.score,
+                "hit": player.data.hit,
+            } for player in self.players])
 
         for player in self.players:
             player.pop_onclose_event()
             player.pop_onmessage_event()
 
-        sort_key = attrgetter("data.score", "data.timer")
+        sort_key = attrgetter("data.score")
         grade = sorted(iter(self.players), key=sort_key, reverse=True)
         return {
             "grade": grade
@@ -109,7 +114,6 @@ class PongGame(Game):
                 unit.set_acc(position=right*self.player_speed)
 
     async def onclose(self, user):
-        self.players.remove(user)
         print("close", user)
 
     def filter_objects(self, test_func) -> 'list[GameObject]':

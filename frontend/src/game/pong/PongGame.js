@@ -40,6 +40,7 @@ export default class PongGame extends NetworkScene {
     this.setOnmessage('step', this.#netStep.bind(this));
     this.setOnmessage('sync', this.#netSync.bind(this));
     this.setOnmessage('score', this.#netScore.bind(this));
+    this.setOnmessage('info', this.#netInfo.bind(this));
   }
 
   loadMenu() {
@@ -233,6 +234,10 @@ export default class PongGame extends NetworkScene {
   #netScore(data) {
     const {score} = data;
     console.log(score);
+  }
+
+  #netInfo(data) {
+    console.log(data);
   }
 
   #initKeyEvent() {
