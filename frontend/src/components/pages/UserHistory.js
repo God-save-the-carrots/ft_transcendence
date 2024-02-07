@@ -1,18 +1,18 @@
-import Component from "../../core/Component.js";
+import Component from '../../core/Component.js';
 
 export default class UserHistory extends Component {
-	_title;
-	_intra_id;
-	constructor(target, params = null) {
-		super(target);
-		this._title = "User history";
-		this._intra_id = params;
-	}
-	async template() {
-		return `
-    		<h1> ${this._title} </h1>
-    		<h1> I am ${this._intra_id} </h1>
-    	`;
-	}
-	async mounted() {}
+  _title;
+  _intra_id;
+  constructor(target, params = null) {
+    super(target);
+    this._title = 'User history';
+    this._intra_id = params;
+  }
+  async template() {
+    return `
+      <h1> ${this._title} </h1>
+      <h1> I am ${this._intra_id} </h1>
+    `;
+  }
+  async mounted() {}
 }
