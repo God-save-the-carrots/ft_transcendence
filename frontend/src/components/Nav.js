@@ -3,7 +3,7 @@ import Router from '../core/Router.js';
 
 export default class Nav extends Component {
   async template() {
-    return `
+    let afterLoginHtml = `
       <link rel="stylesheet" type="text/css" href="../../public/assets/nav/nav.css" />
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -38,7 +38,40 @@ export default class Nav extends Component {
           </div>
         </div>
       </nav>
-`;
+    `;
+    let beforeLoginHtml = `
+      <link rel="stylesheet" type="text/css" href="../../public/assets/nav/nav.css" />
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+            aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a class="navbar-brand" href="/" data-link></a>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item" data-link>
+                <a class="nav-link active" aria-current="page" href="/game">
+                  <img src="../../public/assets/nav/heart.png"data-link/>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/rank">
+                  <img src="../../public/assets/nav/heart.png" data-link/>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/rank">
+                  <img src="../../public/assets/nav/heart.png" data-link/>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    `;
+    // if login
+    return afterLoginHtml;
   }
   setEvent() {
     this.addEvent('click', '[data-link]', async (e) => {
