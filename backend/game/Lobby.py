@@ -3,18 +3,18 @@ from game.User import User
 from game.NormalGame import NormalGame
 from game.Tournament import Tournament
 
-from game.phong.PhongGame import PhongGame
+from game.pong.PongGame import PongGame
 from websockets.exceptions import ConnectionClosedOK
 
 class Lobby:
     def __init__(self):
         self.qlist: dict[str, list[User]] = {
-            "phong": [],
-            "phong_4": [],
+            "pong": [],
+            "pong_4": [],
         }
         self.qmatch = {
-            "phong": {"cap":(2, 3), "rule":NormalGame, "game":PhongGame} ,
-            "phong_4": {"cap":(4, 4), "rule":Tournament, "game":PhongGame},
+            "pong": {"cap":(2, 3), "rule":NormalGame, "game":PongGame} ,
+            "pong_4": {"cap":(4, 4), "rule":Tournament, "game":PongGame},
         }
 
     def join_lobby(self, user: User):
