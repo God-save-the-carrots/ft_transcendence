@@ -2,18 +2,18 @@ import json
 from operator import attrgetter
 from game.Game import Game
 from game.GameObject import GameObject, Vector2, Line
-from game.phong import logic, map as phong_map
+from game.pong import logic, map as pong_map
 from game.User import User
 
-class PhongGame(Game):
+class PongGame(Game):
     def __init__(self, players: 'list[User]'):
-        Game.__init__(self, players, "phong_" + str(len(players)))
+        Game.__init__(self, players, "pong_" + str(len(players)))
         self.init_countdown = 0.1
         self.wait_timer = 1
         self.players: list[User] = players
         self.onfinish = None
 
-        self.object_list = phong_map.select_map(len(players))
+        self.object_list = pong_map.select_map(len(players))
         self.object_wall = self.filter_objects(lambda x: x.tag == "wall")
         self.player_objs = self.filter_objects(lambda x: x.tag == "player")
         self.dynamic_objs = self.filter_objects(lambda x: x.tag == "player" or x.tag == "ball")
@@ -30,23 +30,23 @@ class PhongGame(Game):
             user.data.unit_id = self.player_objs[i].id
             user.data.move = 0
             user.data.score = 0
-            user.data.timer = 0
+            user.data.hit = 0
             i += 1
 
         self.player_speed = 20
         self.min_ball_speed = 10
         self.max_ball_speed = 25
         self.max_score = 3
-        self.last_touch_player = None
-        
+        self.last_touch_player = self.players[0]
+
     async def start_first_frame(self):
         objects = list(map(lambda x: x.json(), self.object_list))
         players = []
         for user in self.players:
             players.append({"intra_id": user.intra_id,"unit_id": user.data.unit_id})
-        send_data = json.dumps({"type": "init", "objects": objects, "players": players})
-        for user in self.players:
-            await user.send(send_data)
+        init_data = {"type": "init", "objects": objects, "players": players}
+        await self.broadcast(init_data)
+        await self.broadcast_score()
 
     async def update(self, frame, delta):
         self.move_player(delta)
@@ -68,14 +68,13 @@ class PhongGame(Game):
                 other.data.score += 1
             self.init_countdown = 1
             self.ball.set_acc(position=Vector2(0, 0))
-            await self.broadcast({ # TODO: broadcast scorer
-                "type": "debug"
-            })
+            await self.broadcast_score()
 
         touched_player_obj = next((ob for ob in collided_objs if ob.tag == "player"), None)
         if touched_player_obj is not None:
             self.min_ball_speed = min(self.min_ball_speed + 1, self.max_ball_speed)
             self.last_touch_player = logic.get_owner(self.players, touched_player_obj)
+            self.last_touch_player.data.hit += 1
 
         await self.broadcast_updated_data(collided_objs)
 
@@ -83,13 +82,17 @@ class PhongGame(Game):
 
     async def finish(self):
         if self.onfinish is not None:
-            await self.onfinish(self, self.players)
+            await self.onfinish(self, [{
+                "intra_id": player.intra_id,
+                "score": player.data.score,
+                "hit": player.data.hit,
+            } for player in self.players])
 
         for player in self.players:
             player.pop_onclose_event()
             player.pop_onmessage_event()
 
-        sort_key = attrgetter("data.score", "data.timer")
+        sort_key = attrgetter("data.score")
         grade = sorted(iter(self.players), key=sort_key, reverse=True)
         return {
             "grade": grade
@@ -111,7 +114,6 @@ class PhongGame(Game):
                 unit.set_acc(position=right*self.player_speed)
 
     async def onclose(self, user):
-        self.players.remove(user)
         print("close", user)
 
     def filter_objects(self, test_func) -> 'list[GameObject]':
@@ -179,3 +181,14 @@ class PhongGame(Game):
                 "changed": changed,
                 "debug": debug,
             })
+
+    async def broadcast_score(self):
+        scores = [{
+            "unit_id": player.data.unit_id,
+            "intra_id": player.intra_id,
+            "score": player.data.score,
+        } for player in self.players]
+        await self.broadcast({
+            "type": "score",
+            "score": scores,
+        })

@@ -8,7 +8,7 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "ignorePatterns": ["frontend/src/game/", "frontend/src/threejs/", "backend"],
+    "ignorePatterns": ["frontend/src/threejs/", "backend"],
     "rules": {
         "camelcase": 0,
         "require-jsdoc" : 0

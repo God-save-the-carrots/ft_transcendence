@@ -5,6 +5,7 @@ from game.Game import Game
 
 class NormalGame(Rule):
     def __init__(self, players: 'list[User]', game_constructor: Game) -> None:
+        Rule.__init__(self)
         self.players = players
         self.game_constructor = game_constructor
         self.game = None

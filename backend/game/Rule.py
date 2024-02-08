@@ -1,12 +1,17 @@
 import asyncio
 from game.User import User
 from game.Game import Game
+from game.util import generate_random_id, now
 
 class VirtualException(BaseException):
     def __init__(self):
         BaseException(self)
 
 class Rule:
+    def __init__(self):
+        self.id = generate_random_id()
+        self.start_at = now()
+
     async def start(self):
         raise VirtualException()
 
