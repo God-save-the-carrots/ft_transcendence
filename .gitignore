@@ -4,3 +4,4 @@ pgdata/
 .clang-format
 jsconfig.json
 node_modules
+backend/api/migrations/

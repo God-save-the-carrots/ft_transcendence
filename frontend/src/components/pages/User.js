@@ -14,7 +14,6 @@ export default class User extends Component {
   async template() {
     return `
       <h1> ${this._title} </h1>
-      <h1> Hello ! ${this._params.intra_id} </h1>
       <main data-component="test-app1"></main>
       <a href="statistics" class="user__link" data-link>statistics</a>
       <a href="history" class="user__link" data-link>history</a>
@@ -42,7 +41,6 @@ export default class User extends Component {
         e.preventDefault();
         const href = e.target.getAttribute('href');
         const intra_id = this._params.intra_id;
-        console.log(this._title);
         if (href === 'history') new UserHistory(_test_app2, intra_id);
         else new UserStatistics(_test_app2, intra_id);
       }
