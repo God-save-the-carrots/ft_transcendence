@@ -12,16 +12,16 @@ export default class Nav extends Component {
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand" href="/"></a>
+            <a class="navbar-brand" href="/" data-link></a>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li class="nav-item">
+              <li class="nav-item" data-link>
                 <a class="nav-link active" aria-current="page" href="/game">
-                  <img src="../../public/assets/nav/game.png"/>
+                  <img src="../../public/assets/nav/game.png"data-link/>
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/rank">
-                  <img src="../../public/assets/nav/crown.png"/>
+                  <img src="../../public/assets/nav/crown.png" data-link/>
                 </a>
               </li>
               <li class="nav-item dropdown">
@@ -29,9 +29,9 @@ export default class Nav extends Component {
                   <img src="../../public/assets/nav/42logo.png"/>
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <li><a class="dropdown-item" href="/user/dummy1">Profile</a></li>
-                  <li><a class="dropdown-item" href="#">Logout</a></li>
-                  <li><a class="dropdown-item" href="/test">Test</a></li>
+                  <li><a class="dropdown-item" href="/user/dummy1" data-link>Profile</a></li>
+                  <li><a class="dropdown-item" href="#" data-link>Logout</a></li>
+                  <li><a class="dropdown-item" href="/test" data-link>Test</a></li>
                   </ul>
               </li>
             </ul>
