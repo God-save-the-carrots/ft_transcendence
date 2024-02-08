@@ -1,0 +1,14 @@
+.navbar-brand {
+  position: relative;
+  background: url(./LIBFT.png) no-repeat;
+  width: 170px;
+  height: 24px;
+  left: 15px;
+}
+
+/* Modify the background color */
+.navbar-dark {
+  background-color: #15017A !important;
+  border: none !important;
+  border-width: 0 !important;
+}
