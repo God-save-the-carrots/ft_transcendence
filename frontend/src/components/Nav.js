@@ -3,12 +3,15 @@ import Router from '../core/Router.js';
 
 export default class Nav extends Component {
   async template() {
-    let afterLoginHtml = `
-      <link rel="stylesheet" type="text/css" href="../../public/assets/nav/nav.css" />
+    const afterLoginHtml = `
+      <link rel="stylesheet" type="text/css" 
+        href="../../public/assets/nav/nav.css" />
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
-            aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <button class="navbar-toggler" type="button" 
+            data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+            aria-controls="navbarTogglerDemo01" aria-expanded="false" 
+            aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
@@ -25,26 +28,32 @@ export default class Nav extends Component {
                 </a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="/user/dummy1" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="/user/dummy1" 
+                id="navbarDropdownMenuLink" role="button" 
+                data-bs-toggle="dropdown" aria-expanded="false">
                   <img src="../../public/assets/nav/42logo.png"/>
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <li><a class="dropdown-item" href="/user/dummy1" data-link>Profile</a></li>
-                  <li><a class="dropdown-item" href="#" data-link>Logout</a></li>
-                  <li><a class="dropdown-item" href="/test" data-link>Test</a></li>
-                  </ul>
-              </li>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li><a class="dropdown-item" href="/user/dummy1" data-link>Profile
+              </a></li>
+              <li><a class="dropdown-item" href="#" data-link>Logout</a></li>
+              <li><a class="dropdown-item" href="/test" data-link>Test</a></li>
+            </ul>
+            </li>
             </ul>
           </div>
         </div>
       </nav>
     `;
-    let beforeLoginHtml = `
-      <link rel="stylesheet" type="text/css" href="../../public/assets/nav/nav.css" />
+    const beforeLoginHtml = `
+      <link rel="stylesheet" type="text/css" 
+        href="../../public/assets/nav/nav.css" />
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
-            aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <button class="navbar-toggler" type="button" 
+            data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+            aria-controls="navbarTogglerDemo01" aria-expanded="false" 
+            aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
