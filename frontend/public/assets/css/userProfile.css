@@ -1,0 +1,21 @@
+.profile {
+  background-color: black;
+}
+
+.img-profile {
+  height: 100px;
+  padding-left: 20px;
+  padding-right: 0px;
+}
+
+.card-title {
+  padding-top: 20px;
+  display: inline-block;
+  font-size: 50px;
+  color: white;
+}
+
+.card-message {
+  font-size: 30px;
+  color: white;
+}
