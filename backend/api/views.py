@@ -65,9 +65,9 @@ class UserAPIView(APIView):
 class RankAPIView(APIView):
     def get(self, request):
         try:
-            game_type = request.GET.get('game_type')
-            page = request.GET.get('page', 0)
-            page_size = request.GET.get('page_size', 20)
+            game_type = request.GET.get('game_type', None)
+            page = int(request.GET.get('page', 0))
+            page_size = int(request.GET.get('page_size', 20))
 
             all_users_with_profile = Profile.objects.all().select_related('user_id').order_by('-rating')
             serializer = CustomRankSerializer(all_users_with_profile, many=True)
@@ -88,9 +88,9 @@ class RankAPIView(APIView):
 class ScoreAPIView(APIView):
     def get(self, request, intra_id):
         try:
-            game_type = request.GET.get('game_type')
-            page = request.GET.get('page', 0)
-            page_size = request.GET.get('page_size', 20)
+            game_type = request.GET.get('game_type', None)
+            page = int(request.GET.get('page', 0))
+            page_size = int(request.GET.get('page_size', 20))
 
             user = User.objects.get(intra_id=intra_id)
             user_tournaments = Tournament.objects.filter(
