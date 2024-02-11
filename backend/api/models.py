@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
@@ -41,8 +42,8 @@ class GameSession(models.Model):
 
     tournament_id = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     match_type = models.CharField(max_length=10, choices=MATCH_TYPE_CHOICES, blank=True)
-    start_time = models.DateTimeField(blank=True, null=True)
-    end_time = models.DateTimeField(blank=True, null=True)
+    start_time = models.DateTimeField(default=timezone.now)
+    end_time = models.DateTimeField(default=timezone.now)
 
     def is_valid_session(self):
         return self.start_time <= self.end_time

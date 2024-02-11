@@ -10,4 +10,5 @@ urlpatterns = [
     path('game/pong/score/<str:intra_id>/', ScoreAPIView.as_view()),
     path('game/pong/matches/<int:match_id>/', MatchesAPIView.as_view()),
     path('game/pong/score/<str:intra_id>/profile/', ScoreProfileAPIView.as_view()),
+    path('game/pong/score/<str:intra_id>/play-time/', ScorePlayTimeAPIView.as_view()),
 ]
