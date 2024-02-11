@@ -64,7 +64,6 @@ class UserAPIView(APIView):
 
 
 # game/pong/rank/
-# TODO : page에 따라 연산에 맞는 컨텐츠를 반환해주는 함수필요.
 class RankAPIView(APIView):
     def get(self, request):
         try:
@@ -72,9 +71,12 @@ class RankAPIView(APIView):
             page = int(request.GET.get('page', 0))
             page_size = int(request.GET.get('page_size', 20))
 
+            start_index = page_size * page
+            end_index = page_size * (page + 1)
+
             all_users_with_profile = Profile.objects.all().select_related('user_id').order_by('-rating')
-            serializer = CustomRankSerializer(all_users_with_profile, many=True)
-            content_length = len(serializer.data)
+            serializer = CustomRankSerializer(all_users_with_profile[start_index:end_index], many=True)
+            content_length = len(all_users_with_profile)
             response_data = {
                 'page': page,
                 'page_size': page_size,
@@ -95,12 +97,15 @@ class ScoreAPIView(APIView):
             page = int(request.GET.get('page', 0))
             page_size = int(request.GET.get('page_size', 20))
 
+            start_index = page_size * page
+            end_index = page_size * (page + 1)
+
             user = User.objects.get(intra_id=intra_id)
             user_tournaments = Tournament.objects.filter(
                 gamesession__pong__user_id=user
             ).distinct()
-            serializer = CustomScoreSerializer(user_tournaments, many=True)
-            content_length = len(serializer.data)
+            serializer = CustomScoreSerializer(user_tournaments[start_index:end_index], many=True)
+            content_length = len(user_tournaments)
             response_data = {
                 'page': page,
                 'page_size': page_size,
