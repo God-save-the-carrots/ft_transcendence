@@ -157,18 +157,15 @@ class ScorePlayTimeAPIView(APIView):
             total_time_minutes = int(total_time_seconds / 60)
 
             users_with_total_time = User.objects.annotate(
-                total_play_time=ExpressionWrapper(
-                    Sum(
-                        F('pong__game_session_id__end_time') - F('pong__game_session_id__start_time'),
-                        output_field=models.DurationField()
-                    ),
-                    output_field=fields.DurationField()
+                total_play_time=Sum(
+                    F('pong__game_session_id__end_time') - F('pong__game_session_id__start_time'),
+                    output_field=models.DurationField()
                 )
-            ).order_by('total_play_time')
+            ).order_by('-total_play_time')
 
-            users_list = sorted(users_with_total_time, key=lambda user: -user.total_play_time.total_seconds() if user.total_play_time is not None else float('inf'))
+            users_list = [user for user in users_with_total_time if user.total_play_time is not None]
 
-            play_time_rank = next((i + 1 for i, user in enumerate(users_list) if user.intra_id == intra_id), 0)
+            play_time_rank = next((i + 1 for i, user in enumerate(users_list) if user.intra_id == intra_id), -1)
             response_data = {
                 'minutes': total_time_minutes,
                 'play_time_rank': play_time_rank,
