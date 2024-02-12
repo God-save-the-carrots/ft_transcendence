@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import Sum, F, ExpressionWrapper, fields
+from django.db.models import Sum, F, Q, ExpressionWrapper, fields
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -203,8 +203,15 @@ class ScoreGoalsAgainstAverageAPIView(APIView):
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
+            user_pongs = Pong.objects.filter(user_id=user_instance)
+            enemy_pongs= Pong.objects.filter(
+                game_session_id__in=user_pongs.values('game_session_id'),
+            ).exclude(user_id=user_instance)
+            user_score = user_pongs.aggregate(user_score=Sum('score'))['user_score']
+            enemy_score = enemy_pongs.aggregate(enemy_score=Sum('score'))['enemy_score']
             response_data = {
-
+                'user_score': user_score,
+                'enemy_score': enemy_score,
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
