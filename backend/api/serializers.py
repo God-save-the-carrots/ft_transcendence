@@ -128,3 +128,20 @@ class CustomMatchesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
         fields = ['match_id', 'game_type', 'game']
+
+# =================================================================
+        
+class CustomWinningPercentageSerializer(serializers.ModelSerializer):
+    winning_percentage = serializers.SerializerMethodField()
+
+    def get_winning_percentage(self, instance):
+        user_instance = User.objects.get(intra_id=instance.intra_id)
+        user_pongs = Pong.objects.filter(user_id=user_instance).distinct('game_session_id__tournament_id')
+        total_game = user_pongs.count()
+        winning_game = user_pongs.filter(rank=1).count()
+        winning_percentage = (winning_game / total_game) * 100 if total_game > 0 else 0
+        return int(winning_percentage)
+
+    class Meta:
+        model = User
+        fields = ['intra_id', 'winning_percentage']

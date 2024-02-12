@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import Sum, F, Q, ExpressionWrapper, fields
+from django.db.models import Sum, F
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,7 +8,6 @@ from .models import User, Profile, Tournament, GameSession, Pong
 import math
 
 from django.db import models
-from datetime import timedelta
 
 # Create your views here.
 
@@ -185,15 +184,8 @@ class ScoreWinningRateAPIView(APIView):
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
-
-            user_pongs = Pong.objects.filter(user_id=user_instance).distinct('game_session_id__tournament_id')
-            total_round = user_pongs.count()
-            winning_round = user_pongs.filter(rank=1).count()
-            response_data = {
-                'total_round': total_round,
-                'winning_round': winning_round,
-                'losing_round': total_round - winning_round,
-            }
+            serializer = CustomWinningPercentageSerializer(user_instance)
+            response_data = serializer.data
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -217,13 +209,25 @@ class ScoreGoalsAgainstAverageAPIView(APIView):
         except User.DoesNotExist:
             return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-# api/game/pong/score/<str:intra_id>/winning-percentage : 개안 승률, 전체유저의 평균 승률, 1등 유저의 승률
+# api/game/pong/score/<str:intra_id>/winning-percentage : 개인 승률, 전체유저의 평균 승률, 1등 유저의 승률
 class ScoreWinningPercentageAPIView(APIView):
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
-            response_data = {
+            all_instance = User.objects.all()
+            serializer = CustomWinningPercentageSerializer(all_instance, many=True)
+            sorted_serializer_data = sorted(serializer.data, key=lambda x: x['winning_percentage'], reverse=True)
 
+            winning_percentages_only = [item['winning_percentage'] for item in sorted_serializer_data]
+            total_winning_percentage = sum(winning_percentages_only)
+
+            user_winning_percentage = CustomWinningPercentageSerializer(user_instance).data
+            average_winning_percentage = int(total_winning_percentage / len(sorted_serializer_data) if len(sorted_serializer_data) > 0 else 0)
+            highest_winning_percentage = sorted_serializer_data[0]
+            response_data = {
+                'highest_winning_percentage': highest_winning_percentage,
+                'user_winning_percentage': user_winning_percentage,
+                'average_winning_percentage': average_winning_percentage,
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
