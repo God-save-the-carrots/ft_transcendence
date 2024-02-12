@@ -5,6 +5,7 @@ import {NetworkScene} from '../Scene.js';
 import Ball from './Ball.js';
 import Player from './Player.js';
 import Wall from './Wall.js';
+import ScoreBoard from './ScoreBoard.js';
 import {zaxis} from '../preset.js';
 import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
@@ -122,8 +123,8 @@ export default class PongGame extends NetworkScene {
       size: {width: 12, height: 12},
       callback: async () => {
         this.#netInfo({
-          "type": "info",
-          "cause": "end_game_confirm"
+          'type': 'info',
+          'cause': 'end_game_confirm',
         });
         this.loadMenu();
       },
@@ -233,6 +234,11 @@ export default class PongGame extends NetworkScene {
       this.addGameObject(mesh);
     }
 
+    loader.load('/src/threejs/fonts/helvetiker_regular.typeface.json', (font) => {
+      this.scoreboard = new ScoreBoard(data.players, font);
+      this.addGameObject(this.scoreboard);
+    });
+
     // rotate camera angle for player
     for (const player of data.players) {
       if (player.intra_id != this.intraId) continue;
@@ -306,6 +312,9 @@ export default class PongGame extends NetworkScene {
 
   #netScore(data) {
     const {score} = data;
+    if (this.scoreboard) {
+      this.scoreboard.updateScore(score);
+    }
     console.log(score);
   }
 
