@@ -183,7 +183,20 @@ class ScorePlayTimeAPIView(APIView):
 # api/game/pong/score/<str:intra_id>/winning-rate : 승률.
 class ScoreWinningRateAPIView(APIView):
     def get(self, request, intra_id):
-        pass
+        try:
+            user_instance = User.objects.get(intra_id=intra_id)
+
+            user_pongs = Pong.objects.filter(user_id=user_instance).distinct('game_session_id__tournament_id')
+            total_round = user_pongs.count()
+            winning_round = user_pongs.filter(rank=1).count()
+            response_data = {
+                'total_round': total_round,
+                'winning_round': winning_round,
+                'losing_round': total_round - winning_round,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
 
 # api/game/pong/score/<str:intra_id>/goals-against-average : 내가 낸 점수와 상대가 낸 점수를 더한 결과비
 class ScoreGoalsAgainstAverageAPIView(APIView):
