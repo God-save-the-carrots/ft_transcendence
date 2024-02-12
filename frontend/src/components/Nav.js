@@ -4,7 +4,7 @@ import Router from '../core/Router.js';
 export default class Nav extends Component {
   async template() {
     return `
-<link rel="stylesheet" type="text/css" href="../../public/assets/nav/nav.css" />
+<link rel="stylesheet" type="text/css" href="../../public/assets/css/nav.css" />
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
