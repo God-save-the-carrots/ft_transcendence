@@ -12,19 +12,19 @@ export default class Nav extends Component {
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" href="/game" data-link>
-            <img src="../../public/assets/nav/game.png"/>
+            <img src="../../public/assets/image/game.svg"/>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/rank" data-link>
-            <img src="../../public/assets/nav/crown.png"/>
+            <img src="../../public/assets/image/crown.svg"/>
           </a>
         </li>
         <li class="dropdown nav-item">
-          <a class="nav-link " href="/user/dummy1"
+          <a class="nav-link" href="/user/dummy1"
             id="navbarDropdownMenuLink" role="button"
             data-bs-toggle="dropdown" aria-expanded="false">
-            <img class="nav-profile" src="../../public/assets/nav/42logo.png"/>
+            <span class="nav-profile"></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-lg-end"
             aria-labelledby="navbarDropdownMenuLink">

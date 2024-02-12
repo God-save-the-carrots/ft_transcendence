@@ -16,7 +16,13 @@ body {
 .navbar {
   height: 60px !important;
   padding: 14px 59px;
-  /*i assume your navbar size 100px*/
+}
+
+/* Modify the background color */
+.navbar-dark {
+  background-color: #15017A !important;
+  border: none !important;
+  border-width: 0 !important;
 }
 
 .collapse .navbar-collapse,
@@ -37,18 +43,12 @@ body {
   padding: 0;
 }
 
-/* Modify the background color */
-.navbar-dark {
-  background-color: #15017A !important;
-  border: none !important;
-  border-width: 0 !important;
+.nav-item {
+  margin: 5px;
 }
 
-.nav-profile {
-  position: relative;
-  background: url(./Ellipse_24.png) no-repeat;
-  height: 35px;
-  left: 15px;
+.nav-link img {
+  width: 38px;
 }
 
 .dropdown-menu {
@@ -59,15 +59,28 @@ body {
   padding: -1;
 }
 
+.dropdown .nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-profile {
+  background-image: url(../image/42logo.svg);
+  background-size: cover;
+  width: 38px;
+  height: 38px;
+  background-color: white;
+  border-radius: 50%;
+  display: inline-block;
+}
+
 .dropdown-menu.show {
-  transform: translate(0px, -12px);
+  transform: translate(0px, -7px);
 }
 
 .dropdown-menu li a {
   display: block;
-  /* overflow: hidden; */
-  /* text-overflow: ellipsis; */
-  /* white-space: normal; */
 }
 
 .dropdown-item {
