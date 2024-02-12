@@ -1,0 +1,66 @@
+  @font-face {
+    font-family: 'Press Start 2P';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/pressstart2p/v14/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff2) format('woff2');
+  }
+
+  .navbar a {
+    font-family: "Press Start 2P" !important;
+  }
+
+  .navbar {
+    height: 50px !important;
+    /*i assume your navbar size 100px*/
+  }
+
+  .navbar-brand {
+    position: relative;
+    background: url(./LIBFT.png) no-repeat;
+    width: 170px;
+    height: 24px;
+    left: 15px;
+  }
+
+  /* Modify the background color */
+  .navbar-dark {
+    background-color: #15017A !important;
+    border: none !important;
+    border-width: 0 !important;
+  }
+
+  .nav-profile {
+    position: relative;
+    background: url(./Ellipse_24.png) no-repeat;
+    height: 35px;
+    left: 15px;
+  }
+
+  .dropdown-menu {
+
+    background-color: #15017A !important;
+    margin-left: 16px;
+    margin-right: 5px;
+    border: none;
+    padding: -1;
+  }
+
+  .dropdown-menu.show {
+    transform: translate(0px, -12px);
+  }
+
+  .dropdown-menu li a {
+    display: block;
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
+    /* white-space: normal; */
+  }
+
+  .dropdown-item {
+    color: white;
+  }
+
+  .navbar-nav .nav-link {
+    margin-right: 20px;
+    margin-left: 20px;
+  }
