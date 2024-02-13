@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import models
 
-from accounts.models import User
-from pong.models import Pong, GameSession, Tournament
+from accounts.models import User, Profile
+from pong.models import Pong, Tournament
 
 from .serializers import *
 
