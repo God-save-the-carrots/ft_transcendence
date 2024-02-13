@@ -42,9 +42,15 @@ export default class Nav extends Component {
   }
   setEvent() {
     this.addEvent('click', '[data-link]', async (e) => {
+      const parent = e.target.parentElement;
+      e.preventDefault();
       if (e.target.matches('[data-link]')) {
         e.preventDefault();
         const href = e.target.href;
+        await Router.navigateTo(href);
+      } else if (parent.matches('[data-link]')) {
+        e.preventDefault();
+        const href = parent.href;
         await Router.navigateTo(href);
       }
     });
