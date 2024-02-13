@@ -97,8 +97,16 @@ class ScoreWinningRateAPIView(APIView):
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
-            serializer = CustomWinningPercentageSerializer(user_instance)
-            response_data = serializer.data
+            user_pongs = Pong.objects.filter(user_id=user_instance).distinct('game_session_id__tournament_id')
+            total_round = user_pongs.count()
+            winning_round = user_pongs.filter(rank=1).count()
+            losing_round = user_pongs.exclude(rank=1).count()
+            response_data = {
+                'intra_id': intra_id,
+                'total_round': total_round,
+                'winning_round': winning_round,
+                'losing_round': losing_round,
+            }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
