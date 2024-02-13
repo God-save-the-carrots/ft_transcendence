@@ -6,6 +6,7 @@ import UserHistory from './UserHistory.js';
 export default class User extends Component {
   _title;
   _params;
+  _myCss = '../../../public/assets/css/User.css';
   constructor(params = null) {
     super(document.querySelector('#app'));
     this._title = 'User';
@@ -13,11 +14,21 @@ export default class User extends Component {
   }
   async template() {
     return `
-      <h1> ${this._title} </h1>
-      <main data-component="test-app1"></main>
-      <a href="statistics" class="user__link" data-link>statistics</a>
-      <a href="history" class="user__link" data-link>history</a>
-      <main data-component="test-app2"></main>
+      <link rel="stylesheet" href="${this._myCss}" type="text/css" />
+      <main>
+        <div class="page-profile" data-component="test-app1"></div>
+        <div class="user-menu">
+          <div class="stats_test"> </div>
+          <div class="stats_link"> 
+            <a href="statistics">
+              <p data-link>statistics</p></a>
+          </div>
+          <div class="history_link"> 
+            <a href="history" data-link>history</a>
+          </div>
+        </div>
+        <div class="user-page" data-component="test-app2"></div>
+      </main>
     `;
   }
 

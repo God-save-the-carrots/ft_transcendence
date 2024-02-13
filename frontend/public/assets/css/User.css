@@ -1,0 +1,142 @@
+@import "./Pagination.css";
+
+main {
+  height: 1900px;
+  background-color: black;
+}
+
+.user-page {
+  width : 100%;
+  height : 90%;
+  background-color: black;
+  padding-left: 20%;
+  padding-right: 25%;
+}
+
+/* userProfile  */
+.page-profile {
+  padding-left: 5%;
+  height: 300px;
+  background-color: black;
+}
+
+.profile {
+  height : 100%;
+  background-color: black;
+}
+
+.profile-heading {
+  height : 40%;
+  background-color: black;
+}
+
+.profile-body {
+  height : 60%;
+  background-color: pink;
+}
+
+.profile__avatar {
+  height : 100%;
+  float : left;
+  width : 25%;
+  background-color: black;
+}
+
+.profile__user {
+  height : 100%;
+  float : left;
+  width : 40%;
+  background-color: green;
+}
+
+.profile__intra {
+  padding-left: 5%;
+  height : 70%;
+  width : 100%;
+  background-color: black;
+  font-weight:bold;
+  font-size:5em;
+  color:white;
+  float : left;
+}
+
+.profile__text {
+  width : 100%;
+  height : 30%;
+  float : left;
+  background-color: black;
+  font-weight:bold;
+  font-size:2em;
+  color:white;
+  padding-left: 7%;
+}
+.profile__rank {
+  width : 35%;
+  height : 100%;
+  float : left;
+  color:white;
+  background-color: black;
+}
+
+.profile__rank > h1 {
+  font-weight:bold;
+  font-size:7em;
+  background: linear-gradient(#FFEC8D 0%, #32D9CE 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.profile__rank > h2 {
+  font-size:1.5em;
+}
+
+/* userMenu */
+
+.user-menu {
+  height : 8%;
+  background-color: black;
+  padding-left: 20%;
+}
+
+.stats_test {
+  height: 40%;
+  background-color: black;
+}
+
+.stats_link {
+  float : left;
+  background-color: black;
+  padding-right: 2%;
+}
+
+.history_link {
+  float : left;
+  background-color: black;
+  padding-right: 2%;
+}
+.stats_link > a {
+  text-decoration-line: none;
+  color: white !important;
+  font-weight:bold;
+  font-size:2em;
+}
+.stats_link > a:focus {
+  color: #9BEBEB! important;
+}
+
+.history_link > a {
+  text-decoration-line: none;
+  color: white !important;
+  font-weight:bold;
+  font-size:2em;
+  padding-right: 5%;
+}
+
+.history_link > a:focus {
+  color: #FD9785! important;
+}
+
+.stats_link > a > p {
+  color: #9BEBEB! important;
+}
