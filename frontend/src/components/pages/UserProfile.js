@@ -18,7 +18,7 @@ export default class UserProfile extends Component {
     this.state.data = await fetch(profile_api,
     ).then((x) => x.json());
     const data = this.state.data;
-    const img = `/public/assets/${data.user.photo_id}.png`;
+    const img = `/public/assets/profile/${data.user.photo_id}.png`;
     return `
 <div class="profile">
   <div class="profile-heading"></div>
