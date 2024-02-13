@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from datetime import datetime
+from django.utils import timezone
 from accounts.models import User, Profile
 from pong.models import Pong, GameSession, Tournament
 import random
@@ -65,9 +66,9 @@ class Command(BaseCommand):
                             pong.user_id = second_player_user
                         pong.save()
 
-                game_session.end_time = datetime(2024, 2, 11, 23, random.randint(21, 30), 0)
-                game_session.start_time = datetime(2024, 2, 11, 23, 20, 0)
-
+                
+                game_session.end_time = timezone.make_aware(datetime(2024, 2, 11, 23, random.randint(21, 30), 0))
+                game_session.start_time = timezone.make_aware(datetime(2024, 2, 11, 23, 20, 0))
                 game_session.save()
 
         self.stdout.write(self.style.SUCCESS('Successfully created dummy'))
