@@ -1,0 +1,47 @@
+@import "./UserHistoryTournament.css";
+
+.stats_link > a > p {
+  color: white! important;
+}
+
+.history_link > a {
+  color: #FD9785! important;
+}
+
+.history-page {
+  height: 44%
+}
+
+.history-card {
+  /* width: 100%; */
+  border-radius: 1em !important;
+  padding-bottom: 0;
+  border-color: black;
+  /* background-color: #F4E4D9; */
+  height: 88%;
+}
+.header-history {
+  background-color: #FD9785;
+  border-color: #FD9785;
+  height : 88px;
+}
+
+.avatar-group {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.avatar {
+  vertical-align: middle;
+  width: 77px;
+  height: 77px;
+  border-radius: 50%;
+  background-color: #F4E4D9;
+  border-color: black;
+}
+
+.body-history {
+  background-color: #F4E4D9;
+  height: 100%;
+  border-radius: 1em !important;
+}

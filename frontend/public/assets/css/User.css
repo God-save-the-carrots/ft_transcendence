@@ -138,5 +138,9 @@ main {
 }
 
 .stats_link > a > p {
-  color: #9BEBEB! important;
+  color: #9BEBEB;
+}
+
+.history_link > a > p {
+  color: white;
 }
