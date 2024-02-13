@@ -6,7 +6,7 @@ import {RenderPass} from '../threejs/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from '../threejs/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from '../threejs/postprocessing/OutputPass.js';
 
-const url = `ws://${window.location.hostname}:4444`;
+const url = `ws://${window.location.hostname}:8000`;
 
 export class Scene extends THREE.Scene {
   constructor(width, height) {
