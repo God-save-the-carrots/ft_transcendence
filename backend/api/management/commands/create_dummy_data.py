@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from datetime import datetime
-from api.models import User, Profile, Pong, GameSession, Tournament
+from accounts.models import User, Profile
+from pong.models import Pong, GameSession, Tournament
 import random
 
 class Command(BaseCommand):

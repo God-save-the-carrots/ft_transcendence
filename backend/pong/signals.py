@@ -1,15 +1,7 @@
-# signals.py
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import User, Profile, Tournament, GameSession, Pong
-
-
-@receiver(post_save, sender=User)
-def create_profiles(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user_id=instance)
-
+from .models import Pong, GameSession, Tournament
 
 @receiver(post_save, sender=Tournament)
 def create_GameSessions(sender, instance, created, **kwargs):

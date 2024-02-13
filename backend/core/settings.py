@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
 	'api',
+    'accounts',
+    'pong',
+    'score',
 ]
 
 MIDDLEWARE = [

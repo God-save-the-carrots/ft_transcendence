@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from api.models import User, Tournament
+from accounts.models import User
+from pong.models import Tournament
 
 class Command(BaseCommand):
     help = 'Deletes dummy'
