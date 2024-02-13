@@ -144,7 +144,7 @@ class ScoreProfileAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"detail": "Tournament not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 # api/game/pong/score/<str:intra_id>/play-time : 게임 시간.
