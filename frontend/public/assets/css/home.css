@@ -1,0 +1,79 @@
+* {margin: 0; padding: 0;}
+
+@font-face {
+  font-family: 'Retro Gaming';
+  src: url('../font/RetroGaming.woff2') format('woff2'),
+      url('../font/RetroGaming.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  background-color: black;
+  font-family: "Retro Gaming";
+}
+
+.background .map {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+  width: 1500px;
+}
+
+.background .content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+  display: flex;
+  width: 659px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.img-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.img-wrap img {
+  height: 100px;
+}
+
+.img-wrap .one {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+
+.content p {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-color: transparent;
+  background-image: linear-gradient(#FFEC8D, #32D9CE);
+  font-size: 96px;
+  text-align: center;
+}
+
+.content span {
+  display: block;
+}
+
+.content .title {
+  font-size: 100px;
+}
+
+.btn-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.login-btn {
+  width: 328px;
+  height: 68px;
+  font-size: 36px;
+  border-radius: 10px;
+  border: none;
+}
