@@ -1,16 +1,62 @@
 from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from accounts.models import Profile
-from .serializers import *
+from django.utils import timezone
+from .models import Pong, GameSession, Tournament
+from accounts.models import User, Profile
+from .serializers import CustomRankSerializer, CustomMatchesSerializer
 
 import math
 
-# Create your views here.
+# /
+class PongAPIView(APIView):
+    def post(self, request):
+        games_data = request.data.get('games', [])
+        players_data = request.data.get('players', [])
+        player_dict = {player_data['intra_id']: player_data['grade'] for player_data in players_data}
 
-# game/pong/rank/
+        tournament = Tournament.objects.create(game_type='pong_4')
+
+        for game_data in games_data:
+            match_type = game_data.get('match', '')
+            start_time = timezone.now()
+            end_time = timezone.now()
+
+            if 'start_time' in game_data:
+                start_time = timezone.datetime.fromtimestamp(game_data['start_time'])
+            if 'end_time' in game_data:
+                end_time = timezone.datetime.fromtimestamp(game_data['end_time'])
+
+            game_session = GameSession.objects.create(
+                tournament_id=tournament,
+                match_type=match_type,
+                start_time = start_time,
+                end_time = end_time
+            )
+
+            scores_data = game_data.get('scores', [])
+            for score_data in scores_data:
+                intra_id=score_data.get('intra_id', '')
+
+                user_id = User.objects.get(intra_id=intra_id)
+                rank = player_dict.get(intra_id, 0)
+                score = score_data.get('score', 0)
+
+                pong = Pong.objects.create(
+                    game_session_id=game_session,
+                    user_id=user_id,
+                    rank=rank,
+                    score=score
+                )
+        response_data = {
+            'tournament_id': tournament.id
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
+
+# /rank/
 class RankAPIView(APIView):
     def get(self, request):
         try:
@@ -36,7 +82,7 @@ class RankAPIView(APIView):
             return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         
 
-# game/pong/matches/<int:match_id>/
+# /matches/<int:match_id>/
 class MatchesAPIView(APIView):
     def get(self, request, match_id):
         try:
