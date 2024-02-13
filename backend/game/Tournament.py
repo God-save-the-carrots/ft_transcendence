@@ -3,7 +3,7 @@ import json
 from game.Rule import Rule
 from game.User import User
 from game.Game import Game
-from game.util import now
+from game.util import now, post_data
 
 class Tournament(Rule):
     def __init__(self, players: 'list[User]', game_constructor: Game) -> None:
@@ -100,4 +100,6 @@ class Tournament(Rule):
             "games": sorted_games,
             "players": sorted_players,
         })
-        print(save_data) # TODO: store the save_data to db
+        url = "http://localhost:8000/api/game/pong/" # TODO: use env
+        if await post_data(url, save_data) is None:
+            print("failed to store game result")
