@@ -3,7 +3,7 @@ from accounts.models import User
 from pong.models import Tournament
 
 class Command(BaseCommand):
-    help = 'Deletes dummy'
+    help = 'Deletes dummy data'
 
     def handle(self, *args, **options):
         # Delete dummy users
@@ -13,4 +13,4 @@ class Command(BaseCommand):
         dummy_users = Tournament.objects.filter(game_type='pong_4')
         dummy_users.delete()
 
-        self.stdout.write(self.style.SUCCESS('Successfully deleted dummy'))
+        self.stdout.write(self.style.SUCCESS('Successfully deleted dummy data'))

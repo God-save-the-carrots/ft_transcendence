@@ -1,23 +1,14 @@
 from django.core.management.base import BaseCommand
 from datetime import datetime
 from django.utils import timezone
-from accounts.models import User, Profile
+from accounts.models import User
 from pong.models import Pong, GameSession, Tournament
 import random
 
 class Command(BaseCommand):
-    help = 'Creates dummy data'
+    help = 'Creates dummy tournament'
 
     def handle(self, *args, **options):
-        # Create dummy users
-        for i in range(1, 6):  # Adjust the range based on the number of dummy users you want
-            user = User.objects.create(intra_id=f'dummy{i}')
-
-            profile = Profile.objects.get(user_id=user.id)
-            profile.rating = random.randint(800, 1500)
-            profile.photo_id = random.randint(1, 8)
-            profile.save()
-
         for i in range(1, 6):  # Adjust the range based on the number of dummy Tournaments you want
             tournament = Tournament.objects.create(game_type='pong_4')
 
@@ -94,4 +85,4 @@ class Command(BaseCommand):
                             score=score
                         )
 
-        self.stdout.write(self.style.SUCCESS('Successfully created dummy data'))
+        self.stdout.write(self.style.SUCCESS('Successfully created dummy tournament'))
