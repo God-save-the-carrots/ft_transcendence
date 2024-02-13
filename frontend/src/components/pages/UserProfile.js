@@ -14,14 +14,30 @@ export default class UserProfile extends Component {
     };
   }
   async template() {
-    this.state.data = await fetch(
-        `http://localhost/api/user/${this._intra_id}`,
+    const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
+    this.state.data = await fetch(profile_api,
     ).then((x) => x.json());
     const data = this.state.data;
+    const img = `/public/assets/${data.user.photo_id}.png`;
     return `
-      <img src= "/public/assets/${data.photo_id}.png" />
-      <h2> UserName: ${data.intra_id}</h2>
-      <h2> message: ${data.message}</h2>
+<div class="profile">
+  <div class="profile-heading"></div>
+  <div class="profile-body">
+    <div class="profile__avatar">
+      <img src="${img}" class="float-end rounded-circle mb-3"
+        style="width: 180px; margin-right: 10px;"
+        alt="Avatar" />
+    </div>
+    <div class="profile__user">
+      <div class="profile__intra">${data.user.intra_id}</div>
+      <div class="profile__text"> HELLO ! ${data.user.message} </div>
+    </div>
+    <div class="profile__rank">
+      <h1> ${data.rank} </h1>
+      <h2> RANK </h2>
+    </div>
+  </div>
+</div>
     `;
   }
 }
