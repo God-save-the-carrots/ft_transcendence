@@ -66,13 +66,18 @@ body {
 }
 
 .nav-profile {
-  background-image: url(../image/42logo.svg);
-  background-size: cover;
+  /* background-image: url(../image/42logo.svg);
+  background-size: cover; */
   width: 38px;
   height: 38px;
   background-color: white;
   border-radius: 50%;
   display: inline-block;
+}
+
+.nav-profile img {
+  width: 38px;
+  height: 38px;
 }
 
 .dropdown-menu.show {
