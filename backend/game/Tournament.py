@@ -1,4 +1,5 @@
 import asyncio
+import json
 from game.Rule import Rule
 from game.User import User
 from game.Game import Game
@@ -9,7 +10,8 @@ class Tournament(Rule):
         Rule.__init__(self)
         self.players = players
         self.game_constructor = game_constructor
-        
+        self.results = []
+
     async def start(self):
         await self.step("start game", timer=1)
         winners = self.players
@@ -21,6 +23,7 @@ class Tournament(Rule):
             await self.step("end round", timer=3)
         await self.step("end game", timer=1)
         await self.disconnect(self.players)
+        await self.save_result()
 
     async def start_round(self, round, players: 'list[User]') -> 'list[User]':
         matchs = zip(*[iter(players)]*2)
@@ -50,6 +53,15 @@ class Tournament(Rule):
             "tag": game.tag,
             "result": players,
         })
+        self.results.append({
+            "match": game.tag[:7],
+            "scores": [{
+                "intra_id": player["intra_id"],
+                "score": player["score"],
+            } for player in players],
+            "start_time": game.start_time,
+            "end_time": game.end_time,
+        })
         await asyncio.sleep(1)
 
     async def broadcast_result(self, targets, data):
@@ -61,3 +73,31 @@ class Tournament(Rule):
         send_data = {"type": "info"}
         send_data.update(data)
         await self.broadcast(self.players, send_data)
+
+    async def save_result(self):
+        grades = [{
+            "intra_id": score["intra_id"],
+            "score": score["score"],
+            "time": res["end_time"] - res["start_time"],
+        } for res in self.results for score in res["scores"]]
+        sum = {}
+        for grade in grades:
+            intra_id = grade["intra_id"]
+            if intra_id not in sum:
+                sum[intra_id] = {"intra_id": intra_id, "score": 0, "time": 0}
+            sum[intra_id]["score"] += grade["score"]
+            sum[intra_id]["time"] += grade["time"]
+        key = lambda x: (x["score"], x["time"])
+        sorted_grades = sorted(sum.values(), key=key, reverse=True)
+        sorted_players = [{
+            "intra_id": value["intra_id"],
+            "grade": index + 1,
+        } for index, value in enumerate(sorted_grades)]
+
+        sorted_games = sorted(self.results, key=lambda x: x["match"], reverse=True)
+
+        save_data = json.dumps({
+            "games": sorted_games,
+            "players": sorted_players,
+        })
+        print(save_data) # TODO: store the save_data to db

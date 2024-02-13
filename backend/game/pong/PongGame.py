@@ -1,5 +1,5 @@
-import json
 from operator import attrgetter
+from game.util import now
 from game.Game import Game
 from game.GameObject import GameObject, Vector2, Line
 from game.pong import logic, map as pong_map
@@ -38,6 +38,8 @@ class PongGame(Game):
         self.max_ball_speed = 25
         self.max_score = 3
         self.last_touch_player = self.players[0]
+        self.start_time = None
+        self.end_time = None
 
     async def start_first_frame(self):
         objects = list(map(lambda x: x.json(), self.object_list))
@@ -47,6 +49,7 @@ class PongGame(Game):
         init_data = {"type": "init", "objects": objects, "players": players}
         await self.broadcast(init_data)
         await self.broadcast_score()
+        self.start_time = now()
 
     async def update(self, frame, delta):
         self.move_player(delta)
@@ -81,6 +84,7 @@ class PongGame(Game):
         return True
 
     async def finish(self):
+        self.end_time = now()
         if self.onfinish is not None:
             await self.onfinish(self, [{
                 "intra_id": player.intra_id,
