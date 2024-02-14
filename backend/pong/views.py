@@ -61,15 +61,17 @@ class RankAPIView(APIView):
     def get(self, request):
         try:
             game_type = request.GET.get('game_type', None)
-            page = int(request.GET.get('page', 0))
+            page = int(request.GET.get('page', 1))
             page_size = int(request.GET.get('page_size', 20))
 
-            start_index = page_size * page
-            end_index = page_size * (page + 1)
+            start_index = page_size * (page - 1)
+            end_index = page_size * (page)
 
             all_users_with_profile = Profile.objects.all().select_related('user_id').order_by('-rating')
-            serializer = CustomRankSerializer(all_users_with_profile[start_index:end_index], many=True)
             content_length = len(all_users_with_profile)
+            if start_index < 0:
+                return Response({"error": "Invalid page index"}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = CustomRankSerializer(all_users_with_profile[start_index:end_index], many=True)
             response_data = {
                 'page': page,
                 'page_size': page_size,
@@ -79,7 +81,7 @@ class RankAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except Profile.DoesNotExist:
-            return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         
 
 # /matches/<int:match_id>/
@@ -91,4 +93,4 @@ class MatchesAPIView(APIView):
             response_data = serializer.data
             return Response(response_data, status=status.HTTP_200_OK)
         except Tournament.DoesNotExist:
-            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "match_id not found"}, status=status.HTTP_404_NOT_FOUND)

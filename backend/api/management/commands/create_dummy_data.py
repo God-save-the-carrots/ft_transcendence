@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
             game_sessions = GameSession.objects.filter(tournament_id=tournament.id)
 
-            for index in range(0, 4):
+            for index in range(0, 3):
                 if index == 0:
                     match_type = 'round_2'
                     end_time = timezone.make_aware(datetime(2024, 2, 11, 23, random.randint(21, 30), 0))
@@ -36,7 +36,7 @@ class Command(BaseCommand):
                         end_time = end_time
                     )
 
-                    for index in range(0, 1):
+                    for index in range(0, 2):
                         first_player_user = User.objects.get(intra_id='dummy1')
                         second_player_user = User.objects.get(intra_id='dummy2')
                         if index == 0:
@@ -77,7 +77,7 @@ class Command(BaseCommand):
                         first_player_user = User.objects.get(intra_id='dummy2')
                         second_player_user = User.objects.get(intra_id='dummy4')
 
-                    for index in range(0, 1):
+                    for index in range(0, 2):
                         if index == 0:
                             pong.rank = first_player_rank
                             pong.score = 10
