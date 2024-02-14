@@ -10,7 +10,11 @@ def generate_random_id():
     return uuid.uuid4().hex
 
 def post_request(endpoint, body):
-    return requests.post(endpoint, data=body)
+    return requests.post(endpoint, data=body,
+                        headers={
+                            'Content-type':'application/json',
+                            'Accept':'application/json'
+                        })
 
 async def post_data(endpoint, body):
     try:
