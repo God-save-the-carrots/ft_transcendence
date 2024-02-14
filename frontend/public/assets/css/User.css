@@ -40,6 +40,7 @@ main {
   float : left;
   width : 25%;
   background-color: black;
+  position:relative;
 }
 
 .profile__user {

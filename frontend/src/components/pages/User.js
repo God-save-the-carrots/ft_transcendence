@@ -1,7 +1,10 @@
 import Component from '../../core/Component.js';
 import UserProfile from './UserProfile.js';
+import UserProfileLogined from './UserProfileLogined.js';
 import UserStatistics from './UserStatistics.js';
 import UserHistory from './UserHistory.js';
+
+const g_logined_test = true;
 
 export default class User extends Component {
   _title;
@@ -39,7 +42,11 @@ export default class User extends Component {
     const _test_app2 = this.$target.querySelector(
         '[data-component="test-app2"]',
     );
-    new UserProfile(_test_app1, this._params.intra_id);
+    if (g_logined_test == true) {
+      new UserProfileLogined(_test_app1, this._params.intra_id);
+    } else {
+      new UserProfile(_test_app1, this._params.intra_id);
+    }
     new UserStatistics(_test_app2, this._params.intra_id);
   }
 

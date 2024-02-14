@@ -92,11 +92,23 @@ async function createHistoryContents(jsonData) {
     item.score.forEach(function(scoreItem) {
       const user = scoreItem.user.intra_id;
       const photo = scoreItem.user.photo_id;
-      list_HTML += `
+
+      if (scoreItem.rank === 1) {
+        list_HTML += `
+              <a class="parent-image" href="/user/${user}">
+              <img class="avatar parent-image" alt="Avatar"
+              src="/public/assets/profile/${photo}.png" />
+              <img class="crown-icon"
+              src="/public/assets/image/crown.png" />
+              </a>
+        `;
+      } else {
+        list_HTML += `
               <a href="/user/${user}">
               <img class="avatar" alt="Avatar"
               src="/public/assets/profile/${photo}.png" /></a>
-      `;
+        `;
+      }
     });
     list_HTML += `
             </div>
