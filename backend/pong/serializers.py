@@ -53,10 +53,15 @@ class CustomMatchPongSerializer(serializers.ModelSerializer):
 
 class CustomMatchGameSessionSerializer(serializers.ModelSerializer):
     round = CustomMatchPongSerializer(source='pong_set', many=True)
+    second = serializers.SerializerMethodField()
+
+    def get_second(self, instance):
+        second = (instance.end_time - instance.start_time).total_seconds()
+        return int(second)
 
     class Meta:
         model = GameSession
-        fields = ['match_type', 'round']
+        fields = ['match_type', 'second', 'round']
 
 class CustomMatchesSerializer(serializers.ModelSerializer):
     match_id = serializers.IntegerField(source='id')
