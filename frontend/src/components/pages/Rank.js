@@ -109,5 +109,5 @@ export default class Rank extends Component {
   </div>
       `;
   }
-  async mounted() { }
+  async mounted() {}
 }
