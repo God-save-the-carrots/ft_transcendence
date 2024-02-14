@@ -22,7 +22,6 @@ export default class UserHistory extends Component {
         history_api + '?' + `page=${_current_page}&page_size=1`,
     ).then((x) => x.json());
     // card
-    // html += createListFromJSON(data.data);
     const last_page_index = data.last_page_index;
     html += `
      <link rel="stylesheet" href="${this._my_css}" type="text/css" />
