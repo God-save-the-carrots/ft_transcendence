@@ -24,7 +24,9 @@ export default class Nav extends Component {
           <a class="nav-link" href="/user/dummy1"
             id="navbarDropdownMenuLink" role="button"
             data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="nav-profile"></span>
+            <span class="nav-profile">
+              <img src="../../public/assets/profile/1.png">
+            </span>
           </a>
           <ul class="dropdown-menu dropdown-menu-lg-end"
             aria-labelledby="navbarDropdownMenuLink">
