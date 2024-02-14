@@ -65,7 +65,15 @@ class CustomMatchGameSessionSerializer(serializers.ModelSerializer):
 
 class CustomMatchesSerializer(serializers.ModelSerializer):
     match_id = serializers.IntegerField(source='id')
-    game = CustomMatchGameSessionSerializer(source='gamesession_set', many=True)
+    game = serializers.SerializerMethodField()
+
+    def get_game(self, instance):
+        games = CustomMatchGameSessionSerializer(instance.gamesession_set.all(), many=True).data
+        sorted_games = []
+
+        if games:
+            sorted_games = sorted(games, key=lambda x: x['match_type'], reverse=True)
+        return sorted_games
 
     class Meta:
         model = Tournament
