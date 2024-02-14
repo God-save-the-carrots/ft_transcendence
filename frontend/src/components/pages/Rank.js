@@ -10,12 +10,33 @@ export default class Rank extends Component {
   }
 
   async template() {
-    const profile_api = `http://localhost/api/user/${this._params.intra_id}`;
-    this.state.data = await fetch(profile_api,
+    const rank_api = `http://localhost/api/game/pong/rank/`;
+    const data = await fetch(rank_api,
     ).then((x) => x.json());
-    const data = this.state.data;
-    const img = `/public/assets/profile/${data.user.photo_id}.png`;
-    const intra_id = `${this._params.intra_id}`;
+    const img = `/public/assets/profile/${data.data[0].user.photo_id}.png`;
+    const intra_id = `${data.data[0].user.intra_id}`;
+    const msg = `${data.data[0].message}`;
+    const rating = `${data.data[0].rating}`;
+
+    const img1 = `/public/assets/profile/${data.data[0].user.photo_id}.png`;
+    const intra_id1 = `${data.data[0].user.intra_id}`;
+    const msg1 = `${data.data[0].message}`;
+    const rating1 = `${data.data[0].rating}`;
+
+    const img = `/public/assets/profile/${data.data[0].user.photo_id}.png`;
+    const intra_id = `${data.data[0].user.intra_id}`;
+    const msg = `${data.data[0].message}`;
+    const rating = `${data.data[0].rating}`;
+
+    const img = `/public/assets/profile/${data.data[0].user.photo_id}.png`;
+    const intra_id = `${data.data[0].user.intra_id}`;
+    const msg = `${data.data[0].message}`;
+    const rating = `${data.data[0].rating}`;
+
+    const img = `/public/assets/profile/${data.data[0].user.photo_id}.png`;
+    const intra_id = `${data.data[0].user.intra_id}`;
+    const msg = `${data.data[0].message}`;
+    const rating = `${data.data[0].rating}`;
     return `
     <link rel="stylesheet" href="../../../public/assets/css/rank.css">
     <div class="block-wrap">
@@ -28,19 +49,19 @@ export default class Rank extends Component {
             <img src="${img}" alt="profile-image">
           </span>
           <span class="username">${intra_id}</span>
-          <span class="msg">나는 당근~🥕</span>
-          <span class="score">100</span>
+          <span class="msg">${msg}</span>
+          <span class="score">${rating}</span>
         </li>
         <ul class="block-list">
           <li class="block">
             <span class="rank">1</span>
             <div class="space"></div>
             <span class="profile">
-              <img src="../../../public/assets/profile/2.png" alt="profile-image">
+              <img src="${img}" alt="profile-image">
             </span>
-            <span class="username">cheseo</span>
-            <span class="msg">나는 당근~🥕</span>
-            <span class="score">100</span>
+            <span class="username">${intra_id}</span>
+            <span class="msg">${msg}</span>
+            <span class="score">${rating}</span>
           </li>
           <li class="block">
             <span class="rank">2</span>
