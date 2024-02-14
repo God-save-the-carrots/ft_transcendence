@@ -7,21 +7,21 @@
     display: inline-flex;
     position: relative;
 }
-.pagination li a.page-link{
+.pagination li a.page-link {
     text-align: center;
     color: white;
     background-color: black;
     font-size: 20px;
     font-weight: 500;
-    line-height: 38px;
-    height: 38px;
-    width: 38px;
-    padding: 0;
-    margin: 0 6px 30px;
-    border: none;
-    border-radius: 50%;
-    position: relative;
-    z-index: 1;
+    line-height: 28px !important;
+    height: 28px!important;
+    width: 28px!important;
+    padding: 0!important;
+    margin: 25px 15px 35px!important;
+    border: none!important;
+    border-radius: 50%!important;
+    position: relative!important;
+    z-index: 1!important;
     transition: all 0.7s ease 0s;
 }
 .pagination li a.page-link:hover,
@@ -53,15 +53,4 @@
 .pagination li.active a.page-link:hover:before,
 .pagination li.active a.page-link:before{
     transform: scale(1.25);
-}
-@media only screen and (max-width: 480px){
-    .pagination{
-        font-size: 0;
-        display: inline-block;
-    }
-    .pagination li{
-        display: inline-block;
-        vertical-align: top;
-        margin: 0 0 10px;
-    }
 }

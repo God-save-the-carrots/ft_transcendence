@@ -1,4 +1,4 @@
-@import "./Pagination.css";
+@import "./pagination.css";
 
 main {
   height: 1900px;
@@ -138,5 +138,9 @@ main {
 }
 
 .stats_link > a > p {
-  color: #9BEBEB! important;
+  color: #9BEBEB;
+}
+
+.history_link > a > p {
+  color: white;
 }
