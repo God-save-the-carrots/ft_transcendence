@@ -3,135 +3,182 @@ import Component from '../../core/Component.js';
 export default class UserHistory extends Component {
   _title;
   _intra_id;
-  _myCss = '../../../public/assets/css/UserHistory.css';
+  _my_css = '../../../public/assets/css/userHistory.css';
   constructor(target, params = null) {
     super(target);
     this._title = 'User History';
     this._intra_id = params;
-    this._current_page = 1;
   }
   async initState() {
     return {
-      _current_page: 1,
+      current_page: 1,
     };
   }
   async template() {
-    const _current_page = this.state._current_page;
-    const previous = _current_page == 1 ? 1 : _current_page - 1;
+    const _current_page = this.state.current_page;
     let html = '';
-    const history_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
+    const history_api = `http://localhost/api/game/pong/score/${this._intra_id}`;
     const data = await fetch(
-        `http://localhost/api/game/pong/score/${this._intra_id}`,
+        history_api + '?' + `page=${_current_page - 1}&page_size=1`,
     ).then((x) => x.json());
     // card
     // html += createListFromJSON(data.data);
+    const last_page_index = data.last_page_index;
     html += `
-      <link rel="stylesheet" href="${this._myCss}" type="text/css" />
+     <link rel="stylesheet" href="${this._my_css}" type="text/css" />
       <div class="history-page">
-        <div class="card history-card">
-          <div class="card-header header-history">
-            <div class="avatar-group">
-              <a href="/user/dummy1"><img class="avatar" alt="Avatar" src="/public/assets/profile/1.png" /></a>
-              <a href="/user/dummy2"><img class="avatar" alt="Avatar" src="/public/assets/profile/2.png" /></a>
-              <a href="/user/dummy3"><img class="avatar" alt="Avatar" src="/public/assets/profile/3.png" /></a>
-              <a href="/user/dummy4"><img class="avatar" alt="Avatar" src="/public/assets/profile/4.png" /></a>
-            </div>
-          </div>
-          <div class="card-body body-history">
-            <div class="item">
-              <div class="item-parent">
-                <div class="card item-card">
-                  <div class="item-card-head">
-                    <img class="avatar" alt="Avatar" src="/public/assets/profile/1.png" />
-                    <div class="item-time">
-                      <div>TIME</div>
-                      <p> 01:30</p>
-                    </div>
-                    <img class="avatar" alt="Avatar" src="/public/assets/profile/2.png" />
-                  </div>
-                  <div class="item-card-body">
-                    <p>10 : 0</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item-childrens">
-                <div class="item-child">
-                  <div class="card item-card">
-                    <div class="item-card-head">
-                      <img class="avatar" alt="Avatar" src="/public/assets/profile/1.png" />
-                      <div class="item-time">
-                        <div>TIME</div>
-                        <p> 01:30</p>
-                      </div>
-                      <img class="avatar" alt="Avatar" src="/public/assets/profile/2.png" />
-                    </div>
-                    <div class="item-card-body">
-                      <p>10 : 1</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="item-child">
-                  <div class="card item-card">
-                    <div class="item-card-head">
-                      <img class="avatar" alt="Avatar" src="/public/assets/profile/1.png" />
-                      <div class="item-time">
-                        <div>TIME</div>
-                        <p> 01:30</p>
-                      </div>
-                      <img class="avatar" alt="Avatar" src="/public/assets/profile/2.png" />
-                    </div>
-                    <div class="item-card-body">
-                      <p>10 : 2</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      ${await createHistoryContents(data.data)}
       </div>
     `;
     // paginataion
-    html += `
-      <div class="pagination-outer">
-        <ul class="pagination pagination-circle">
-          <li class="page-item"><a class="page-link" data-page=${previous}>«</a></li>
-          <li class="page-item"><a class="page-link" data-page=${_current_page}> ${_current_page} </a></li>
-          <li class="page-item"><a class="page-link" data-page=${Number(_current_page) + 1}>${Number(_current_page) + 1}</a></li>
-          <li class="page-item"><a class="page-link" data-page=${Number(_current_page) + 2}>${Number(_current_page) + 2}</a></li>
-          <li class="page-item"><a class="page-link" data-page=${Number(_current_page) + 3}>»</a></li>
-        </ul>
-      </div>
-    `;
+    html += createHistoryPagination(_current_page, last_page_index);
     return html;
   }
   async mounted() {}
 
   setEvent() {
     this.addEvent('click', '.page-item', async (e) => {
-      this.state._current_page = e.target.dataset.page;
+      if (isNaN(e.target.dataset.page)) return;
+      if (e.target.dataset.page != '+') {
+        this.state.current_page = e.target.dataset.page;
+      }
     });
   }
-
 }
 
-function createListFromJSON(jsonData) {
-  let listHTML = ''; 
-  jsonData.forEach(function(item) {
+function createHistoryPagination(current, last) {
+  let list_HTML = `
+  <div class="pagination-outer">
+    <ul class="pagination pagination-circle">`;
 
-    listHTML += '<div class="card">';
-    listHTML += '<div class="card-header">';
-    listHTML += '<li>';
-    listHTML += 'Match ID: ' + item.match_id + '<br>';
-    listHTML += 'Scores: <ul>';
+  for (let i = current - 2; i != current; i ++) {
+    let index;
+    if (i > 0) index = i;
+    else index = '+';
+    list_HTML +=` 
+      <li class="page-item">
+        <a class="page-link" data-page=${index}>${index}</a>
+      </li>
+  `;
+  }
+
+  for (let i = Number(current); i <= Number(current) + 2; i ++) {
+    console.log(i, Number(current) + 2);
+    let index;
+    if (i > last) index = '+';
+    else index = i;
+    list_HTML += `
+      <li class="page-item">
+        <a class="page-link" data-page=${index}>${index}</a>
+      </li>
+    `;
+  }
+  list_HTML += `
+      </ul>
+    </div>
+    `;
+  return list_HTML;
+}
+
+async function createHistoryContents(jsonData) {
+  let list_HTML = '';
+  for (const item of jsonData) {
+    const match_id = item.match_id;
+    // heder
+    list_HTML += `
+        <div class="card history-card">
+          <div class="card-header header-history">
+            <div class="avatar-group">
+    `;
     item.score.forEach(function(scoreItem) {
-      listHTML += '<li>' +
-        'User:' + scoreItem.user.intra_id +
-        ', Value: ' + scoreItem.value + ', Rank: ' + scoreItem.rank + '</li>';
+      const user = scoreItem.user.intra_id;
+      const photo = scoreItem.user.photo_id;
+      list_HTML += `
+              <a href="/user/${user}">
+              <img class="avatar" alt="Avatar"
+              src="/public/assets/profile/${photo}.png" /></a>
+      `;
     });
-    listHTML += '</ul></li>';
-    listHTML += '</div>';
-    listHTML += '</div>';
-  });
-  return listHTML;
+    list_HTML += `
+            </div>
+          </div>
+    `;
+    // heder
+    // body
+    list_HTML += `
+          <div class="card-body body-history">
+            <div class="item">
+`;
+    const history_api = `http://localhost/api/game/pong/matches/${match_id}`;
+    const data = await fetch(
+        history_api,
+    ).then((x) => x.json());
+    console.log(data.game[0]);
+    const r2 = data.game[0];
+    const r1_1 = data.game[1];
+    const r1_2 = data.game[2];
+    // R2
+    list_HTML += `
+    <div class="item-parent">
+      <div class="card item-card">
+        <div class="item-card-head">
+          <img class="avatar" alt="Avatar"
+          src="/public/assets/profile/${r2.round[0].user.photo_id}.png" />
+          <div class="item-time">
+            <div>TIME</div>
+            <p> 01:30</p>
+          </div>
+          <img class="avatar" alt="Avatar"
+          src="/public/assets/profile/${r2.round[1].user.photo_id}.png" />
+        </div>
+        <div class="item-card-body">
+          <p>${r2.round[0].score} : ${r2.round[1].score}</p>
+        </div>
+      </div>
+    </div>
+    `;
+    list_HTML += `
+    <div class="item-childrens">
+
+      <div class="item-child">
+        <div class="card item-card">
+          <div class="item-card-head">
+            <img class="avatar" alt="Avatar"
+            src="/public/assets/profile/${r1_1.round[0].user.photo_id}.png" />
+            <div class="item-time">
+              <div>TIME</div>
+              <p> 01:30</p>
+            </div>
+            <img class="avatar" alt="Avatar"
+            src="/public/assets/profile/${r1_1.round[1].user.photo_id}.png" />
+          </div>
+          <div class="item-card-body">
+            <p>${r1_1.round[0].score} : ${r1_1.round[1].score}</p>
+          </div>
+        </div>
+      </div>
+        <div class="item-child">
+          <div class="card item-card">
+            <div class="item-card-head">
+              <img class="avatar" alt="Avatar"
+              src="/public/assets/profile/${r1_2.round[0].user.photo_id}.png" />
+              <div class="item-time">
+                <div>TIME</div>
+                <p> 01:30</p>
+              </div>
+              <img class="avatar" alt="Avatar"
+              src="/public/assets/profile/${r1_2.round[1].user.photo_id}.png" />
+            </div>
+            <div class="item-card-body">
+              <p>${r1_2.round[0].score} : ${r1_2.round[1].score}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+  // body
+  }
+  return list_HTML;
 }

@@ -3,7 +3,7 @@ import Component from '../../core/Component.js';
 export default class UserStatistics extends Component {
   _title;
   _intra_id;
-  _myCss = '../../../public/assets/css/UserStatistics.css';
+  _my_css = '../../../public/assets/css/userStatistics.css';
   constructor(target, params = null) {
     super(target);
     this._title = 'User Statistics';
@@ -15,7 +15,7 @@ export default class UserStatistics extends Component {
     ).then((x) => x.json());
 
     let html = `
-      <link rel="stylesheet" href="${this._myCss}" type="text/css" />
+      <link rel="stylesheet" href="${this._my_css}" type="text/css" />
       <div class="boxs">
         <div class="playtime">
           <p class="title"> Playtime </p>

@@ -6,7 +6,7 @@ import UserHistory from './UserHistory.js';
 export default class User extends Component {
   _title;
   _params;
-  _myCss = '../../../public/assets/css/User.css';
+  _myCss = '../../../public/assets/css/user.css';
   constructor(params = null) {
     super(document.querySelector('#app'));
     this._title = 'User';
