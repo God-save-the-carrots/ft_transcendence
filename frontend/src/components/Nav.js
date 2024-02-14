@@ -16,7 +16,7 @@ export default class Nav extends Component {
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/rank" data-link>
+          <a class="nav-link" href="/rank/dummy1" data-link>
             <img src="../../public/assets/image/crown.svg"/>
           </a>
         </li>
