@@ -19,7 +19,7 @@ export default class UserHistory extends Component {
     let html = '';
     const history_api = `http://localhost/api/game/pong/score/${this._intra_id}`;
     const data = await fetch(
-        history_api + '?' + `page=${_current_page - 1}&page_size=1`,
+        history_api + '?' + `page=${_current_page}&page_size=1`,
     ).then((x) => x.json());
     // card
     // html += createListFromJSON(data.data);
