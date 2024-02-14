@@ -17,18 +17,20 @@ class ScoreAPIView(APIView):
     def get(self, request, intra_id):
         try:
             game_type = request.GET.get('game_type', None)
-            page = int(request.GET.get('page', 0))
+            page = int(request.GET.get('page', 1))
             page_size = int(request.GET.get('page_size', 20))
 
-            start_index = page_size * page
-            end_index = page_size * (page + 1)
+            start_index = page_size * (page - 1)
+            end_index = page_size * (page)
 
             user = User.objects.get(intra_id=intra_id)
             user_tournaments = Tournament.objects.filter(
                 gamesession__pong__user_id=user
             ).distinct()
-            serializer = CustomScoreSerializer(user_tournaments[start_index:end_index], many=True)
             content_length = len(user_tournaments)
+            if start_index < 0 or content_length < end_index:
+                return Response({"error": "Invalid code"}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = CustomScoreSerializer(user_tournaments[start_index:end_index], many=True)
             response_data = {
                 'page': page,
                 'page_size': page_size,

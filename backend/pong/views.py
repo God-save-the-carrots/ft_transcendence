@@ -61,15 +61,17 @@ class RankAPIView(APIView):
     def get(self, request):
         try:
             game_type = request.GET.get('game_type', None)
-            page = int(request.GET.get('page', 0))
+            page = int(request.GET.get('page', 1))
             page_size = int(request.GET.get('page_size', 20))
 
-            start_index = page_size * page
-            end_index = page_size * (page + 1)
+            start_index = page_size * (page - 1)
+            end_index = page_size * (page)
 
             all_users_with_profile = Profile.objects.all().select_related('user_id').order_by('-rating')
-            serializer = CustomRankSerializer(all_users_with_profile[start_index:end_index], many=True)
             content_length = len(all_users_with_profile)
+            if start_index < 0 or content_length < end_index:
+                return Response({"error": "Invalid code"}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = CustomRankSerializer(all_users_with_profile[start_index:end_index], many=True)
             response_data = {
                 'page': page,
                 'page_size': page_size,
