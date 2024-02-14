@@ -39,7 +39,7 @@ class UserAPIView(APIView):
             serializer = CustomUserSerializer(user_model)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     
     def patch(self, request, intra_id):
         try:

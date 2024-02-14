@@ -28,8 +28,8 @@ class ScoreAPIView(APIView):
                 gamesession__pong__user_id=user
             ).distinct()
             content_length = len(user_tournaments)
-            if start_index < 0 or content_length < end_index:
-                return Response({"error": "Invalid code"}, status=status.HTTP_400_BAD_REQUEST)
+            if start_index < 0:
+                return Response({"error": "Invalid page index"}, status=status.HTTP_400_BAD_REQUEST)
             serializer = CustomScoreSerializer(user_tournaments[start_index:end_index], many=True)
             response_data = {
                 'page': page,
@@ -40,7 +40,7 @@ class ScoreAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 # TODO : view 파일 분리 필요.
@@ -59,7 +59,7 @@ class ScoreProfileAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 # api/game/pong/score/<str:intra_id>/play-time : 게임 시간.
@@ -91,7 +91,7 @@ class ScorePlayTimeAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 # api/game/pong/score/<str:intra_id>/winning-rate : 승률.
@@ -111,7 +111,7 @@ class ScoreWinningRateAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 # api/game/pong/score/<str:intra_id>/goals-against-average : 내가 낸 점수와 상대가 낸 점수를 더한 결과비
 class ScoreGoalsAgainstAverageAPIView(APIView):
@@ -130,7 +130,7 @@ class ScoreGoalsAgainstAverageAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 # api/game/pong/score/<str:intra_id>/winning-percentage : 개인 승률, 전체유저의 평균 승률, 1등 유저의 승률
 class ScoreWinningPercentageAPIView(APIView):
@@ -154,4 +154,4 @@ class ScoreWinningPercentageAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)

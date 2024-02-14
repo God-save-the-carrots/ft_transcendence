@@ -69,8 +69,8 @@ class RankAPIView(APIView):
 
             all_users_with_profile = Profile.objects.all().select_related('user_id').order_by('-rating')
             content_length = len(all_users_with_profile)
-            if start_index < 0 or content_length < end_index:
-                return Response({"error": "Invalid code"}, status=status.HTTP_400_BAD_REQUEST)
+            if start_index < 0:
+                return Response({"error": "Invalid page index"}, status=status.HTTP_400_BAD_REQUEST)
             serializer = CustomRankSerializer(all_users_with_profile[start_index:end_index], many=True)
             response_data = {
                 'page': page,
@@ -81,7 +81,7 @@ class RankAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
         except Profile.DoesNotExist:
-            return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         
 
 # /matches/<int:match_id>/
@@ -93,4 +93,4 @@ class MatchesAPIView(APIView):
             response_data = serializer.data
             return Response(response_data, status=status.HTTP_200_OK)
         except Tournament.DoesNotExist:
-            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "match_id not found"}, status=status.HTTP_404_NOT_FOUND)
