@@ -55,6 +55,7 @@ class Line:
     def __init__(self, start:Vector2, end:Vector2):
         self.start = start
         self.end = end
+        self.center = (start + end) * 0.5
 
     def __str__(self):
         return f"{self.start} -> {self.end}"

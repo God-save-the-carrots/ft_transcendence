@@ -13,9 +13,12 @@ class PongGame(Game):
         self.players: list[User] = players
         self.onfinish = None
 
-        self.object_list = pong_map.select_map(len(players))
+        (self.object_list, self.player_move_range) = pong_map.select_map(len(players))
         self.object_wall = self.filter_objects(lambda x: x.tag == "wall")
         self.player_objs = self.filter_objects(lambda x: x.tag == "player")
+        self.player_start_pos = {}
+        for player in self.player_objs:
+            self.player_start_pos[player] = player.transform.position
         self.dynamic_objs = self.filter_objects(lambda x: x.tag == "player" or x.tag == "ball")
         self.rect_objs = self.filter_objects(lambda x: x.type == "rect")
         self.object_dict: dict[str, GameObject] = {}
@@ -33,8 +36,8 @@ class PongGame(Game):
             user.data.hit = 0
             i += 1
 
-        self.player_speed = 20
-        self.min_ball_speed = 10
+        self.player_speed = 18
+        self.min_ball_speed = 20
         self.max_ball_speed = 25
         self.max_score = 3
         self.last_touch_player = self.players[0]
@@ -52,6 +55,9 @@ class PongGame(Game):
         self.start_time = now()
 
     async def update(self, frame, delta):
+        if all(not player.connected for player in self.players):
+            return False
+
         self.move_player(delta)
 
         if self.is_end():
@@ -125,23 +131,45 @@ class PongGame(Game):
 
     def move_player(self, delta):
         for player in self.player_objs:
+            center = self.player_start_pos[player]
             player.apply_acc(delta)
+            pos = player.transform.position
+            half_size = player.transform.scale.x * 0.5
+            limit = self.player_move_range - half_size
+            if center.distance(pos) > limit:
+                fix = (pos - center).normalized() * limit
+                player.transform.position = center + fix
+                player.set_acc(position=Vector2(0, 0))
 
     def move_ball(self, delta):
         collided_objs = []
+        candidates = []
         old_position, _, _ = self.ball.apply_acc(delta)
+
         for rect in self.rect_objs:
             current_position = self.ball.transform.position
             ray = Line(old_position, current_position)
-            point = logic.pass_through(ray, rect)
-            if point is None:
+            collision = logic.pass_through(ray, rect)
+            if collision is None:
                 continue
-            if self.ball.acc.position.dot(rect.transform.rotation) > 0:
+            (point, _) = collision
+            distance = old_position.distance(point)
+            if len(candidates) == 0:
+                candidates.append((distance, collision, rect))
+            elif distance > candidates[0][0] + 0.0001:
                 continue
-            new_acc_pos = logic.reflect(self.ball, rect, self.min_ball_speed)
-            self.ball.set_acc(position=new_acc_pos)
+            elif distance > candidates[0][0] - 0.0001:
+                candidates.append((distance, collision, rect))
+            else:
+                candidates = [(distance, collision, rect)]
+
+        for candi in candidates:
+            (_, (point, line), rect) = candi
+            new_acc_pos = logic.reflect(self.ball, line, rect)
+            self.ball.set_acc(position=new_acc_pos * self.min_ball_speed)
             self.ball.transform.position = point + new_acc_pos * 0.0001
             collided_objs.append(rect)
+
         return collided_objs
 
     def is_end(self):
