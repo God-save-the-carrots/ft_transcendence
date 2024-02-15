@@ -1,13 +1,14 @@
 apiVersion: 1
+
 providers:
-  - name: 'dashboards'
+  - name: 'default'
     orgId: 1
-    folder: 'services'
+    folder: ''
     folderUid: ''
     type: file
     disableDeletion: false
     editable: true
+    allowUiUpdates: false
     updateIntervalSeconds: 10
-    allowUiUpdates: true
     options:
-      path: /var/lib/grafana/dashboards
+      path: /etc/grafana/dashboards

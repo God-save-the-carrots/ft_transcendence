@@ -43,7 +43,8 @@ services:
     environment:
       - POSTGRES_HOST=${DATABASE_CONTAINER_NAME}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:16.1-alpine3.19
@@ -60,22 +61,27 @@ services:
       - 5432:5432
     volumes:
       - ${DATABASE_VOLUME}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
 
   grafana:
     image: grafana/grafana:latest
     container_name: ${GRAFANA_CONTAINER_NAME}
-    build:
-      context: ./devops/grafana
     env_file:
       - .env
+    build:
+      context: ./devops/grafana
     ports:
       - 3000:3000
-    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-      - GF_DATABASE_HOST=db
-      - GF_DATABASE_PORT=5432
+      - GF_DATABASE_TYPE=postgres
+      - GF_DATABASE_HOST=postgres
       - GF_DATABASE_NAME=${POSTGRES_DB}
       - GF_DATABASE_USER=${POSTGRES_USER}
       - GF_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
@@ -95,7 +101,6 @@ services:
     volumes:
       - ${PROMETHEUS_VOLUME}:/etc/prometheus
       - prom_data:/etc/prometheus
-
 
 volumes:
   run_vol:
