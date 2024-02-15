@@ -7,6 +7,13 @@ from .models import User, Profile
 class LoginSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=100)
 
+class TokenSerializer(serializers.Serializer):
+    access_token = serializers.CharField(max_length=100)
+    token_type = serializers.CharField(max_length=100)
+    expires_in = serializers.IntegerField()
+    refresh_token = serializers.CharField(max_length=100)
+    created_at = serializers.IntegerField()
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
