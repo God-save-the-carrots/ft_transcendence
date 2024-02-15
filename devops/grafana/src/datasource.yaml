@@ -1,9 +1,10 @@
 apiVersion: 1
+
 datasources:
-  - name: PostgreSQL
-    type: postgres
-    access: proxy
-    database: ${DATABASE_CONTAINER_NAME}
-    user: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-    url: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${DATABASE_CONTAINER_NAME}
+- name: Prometheus
+  type: prometheus
+  access: proxy
+  url: http://prometheus:9090
+  isDefault: true
+  access: proxy
+  editable: true
