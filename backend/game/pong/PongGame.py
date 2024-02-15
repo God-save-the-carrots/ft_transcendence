@@ -13,9 +13,12 @@ class PongGame(Game):
         self.players: list[User] = players
         self.onfinish = None
 
-        self.object_list = pong_map.select_map(len(players))
+        (self.object_list, self.player_move_range) = pong_map.select_map(len(players))
         self.object_wall = self.filter_objects(lambda x: x.tag == "wall")
         self.player_objs = self.filter_objects(lambda x: x.tag == "player")
+        self.player_start_pos = {}
+        for player in self.player_objs:
+            self.player_start_pos[player] = player.transform.position
         self.dynamic_objs = self.filter_objects(lambda x: x.tag == "player" or x.tag == "ball")
         self.rect_objs = self.filter_objects(lambda x: x.type == "rect")
         self.object_dict: dict[str, GameObject] = {}
@@ -125,7 +128,15 @@ class PongGame(Game):
 
     def move_player(self, delta):
         for player in self.player_objs:
+            center = self.player_start_pos[player]
             player.apply_acc(delta)
+            pos = player.transform.position
+            half_size = player.transform.scale.x * 0.5
+            limit = self.player_move_range - half_size
+            if center.distance(pos) > limit:
+                fix = (pos - center).normalized() * limit
+                player.transform.position = center + fix
+                player.set_acc(position=Vector2(0, 0))
 
     def move_ball(self, delta):
         collided_objs = []

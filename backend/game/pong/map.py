@@ -58,7 +58,7 @@ def player_2_map():
     o.transform.scale = Vector2(5, 1)
     object_list.append(o)
 
-    return object_list
+    return (object_list, player_distance + 2)
 
 def player_3_map():
     deg30 = math.pi / 6
@@ -127,7 +127,7 @@ def player_3_map():
     o.transform.scale = Vector2(5, 1)
     object_list.append(o)
 
-    return object_list
+    return (object_list, player_distance * root3 * 0.7)
 
 def player_4_map():
     object_list: list[GameObject] = []
@@ -188,4 +188,4 @@ def player_4_map():
     o.transform.scale = Vector2(5, 1)
     object_list.append(o)
 
-    return object_list
+    return (object_list, player_distance + 2)
