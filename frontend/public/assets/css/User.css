@@ -41,13 +41,25 @@ main {
   width : 25%;
   background-color: black;
   position:relative;
+  z-index: 0;
+}
+
+.profile__avatar > button {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: #dadada;
+  right: 5%;
+  bottom: 18%;
+  z-index: 1;
+  display: flex;
+  border-radius: 30%;
 }
 
 .profile__user {
   height : 100%;
   float : left;
   width : 40%;
-  background-color: green;
 }
 
 .profile__intra {
@@ -144,4 +156,17 @@ main {
 
 .history_link > a > p {
   color: white;
+}
+
+.bi-pencil-fill{
+    position : absolute;
+    transform: translate(-50%, -50%);
+    top: 30%;
+    left : 40%;   
+    z-index: 1;
+    font-size: 20px;
+    color: #555555;
+    display: flex;
+    right: 5%;
+    bottom: 18%;
 }

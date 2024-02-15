@@ -47,13 +47,18 @@
 }
 .parent-image {
   position: relative;
+  z-index: 0;
 }
 
 .crown-icon {
   position: absolute;
-  bottom:0;
+  transform: translate(-50%, -50%);
+  top: -30%;
+  left: -20%;
+  bottom: 0%;
   width: 60px;
   height: 60px;
-  top: -45%;
-  left: 11%;
+  /* background-color: #F4E4D9; */
+  border-radius:50%;
+  transform: rotate(-40grad);
 }

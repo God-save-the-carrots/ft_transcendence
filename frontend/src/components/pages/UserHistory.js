@@ -96,10 +96,10 @@ async function createHistoryContents(jsonData) {
       if (scoreItem.rank === 1) {
         list_HTML += `
               <a class="parent-image" href="/user/${user}">
-              <img class="avatar parent-image" alt="Avatar"
-              src="/public/assets/profile/${photo}.png" />
-              <img class="crown-icon"
-              src="/public/assets/image/crown.png" />
+                <img class="avatar" alt="Avatar"
+                src="/public/assets/profile/${photo}.png" />
+                <img class="crown-icon"
+                src="/public/assets/image/crown.png" />
               </a>
         `;
       } else {
