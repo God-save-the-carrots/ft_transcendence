@@ -11,6 +11,7 @@ class User:
         self.game_type = game_type
         self.onclose: 'list[Coroutine]' = []
         self.onmessage: 'list[Coroutine]' = []
+        self.connected = True
         self.connected_at = now()
         self.data = SimpleNamespace()
 
@@ -42,8 +43,9 @@ class User:
     async def send(self, data):
         try:
             await self.socket.send(data)
+            self.connected = True
         except:
-            print(self.socket.id, "send error:", data)
+            self.connected = False
 
     async def send_json(self, json_data):
         await self.send(json.dumps(json_data))

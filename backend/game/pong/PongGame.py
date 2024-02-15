@@ -55,6 +55,9 @@ class PongGame(Game):
         self.start_time = now()
 
     async def update(self, frame, delta):
+        if all(not player.connected for player in self.players):
+            return False
+
         self.move_player(delta)
 
         if self.is_end():
