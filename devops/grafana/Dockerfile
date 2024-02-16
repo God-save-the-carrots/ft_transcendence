@@ -11,8 +11,8 @@ RUN chmod 755 /var/lib/grafana
 RUN mkdir -p /var/lib/grafana/sessions
 RUN chmod 755 /var/lib/grafana/sessions
 
-COPY ./src/defaults.ini /etc/grafana/
-COPY ./src/datasource.yaml /etc/grafana/provisioning/datasources/
+COPY ./src/grafana.ini /etc/grafana/grafana.ini
+COPY ./src/datasources.yaml /etc/grafana/provisioning/datasources/datasources.yaml
 
 
 # set dashboards
