@@ -1,5 +1,6 @@
 import Component from '../../core/Component.js';
 import PongGame from '../../game/pong/PongGame.js';
+import GameRound from './GameRound.js';
 
 export default class Game extends Component {
   _title;
@@ -8,19 +9,32 @@ export default class Game extends Component {
     super(document.querySelector('#app'));
     this.game = null;
     this._title = 'Game';
-  }
-  async template() {
-    return `<div id="game-content"></div>`;
-  }
-  async mounted() {
     const randomUserToken = Math.random().toString(36).substring(2, 7);
     const ratio = 1 / 2;
     const width = window.innerWidth - 100;
     const height = width * ratio;
     this.game = new PongGame(width, height, randomUserToken);
-    const $target = document.getElementById('game-content');
-    $target.appendChild(this.game.getRenderer().domElement);
-    this.game.subscribeInfo(console.log);
+    this.game.subscribeInfo(result => {
+      this.state.sessionResults = [...this.state.sessionResults, result];
+    });
+  }
+  async initState() {
+    return {
+      sessionResults: []
+    }
+  }
+  async template() {
+    return `
+      <div id="game-content"></div>
+      <div id="game-test"></div>
+    `;
+  }
+  async mounted() {
+    const gameDiv = document.getElementById('game-content');
+    gameDiv.appendChild(this.game.getRenderer().domElement);
+
+    const resultDiv = document.getElementById('game-test');
+    new GameRound(resultDiv, this.state.sessionResults);
   }
   async unmounted() {
     if (this.game) {
