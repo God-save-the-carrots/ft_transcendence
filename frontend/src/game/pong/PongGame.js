@@ -15,6 +15,7 @@ export default class PongGame extends NetworkScene {
   static STATE_WAIT = 1;
   static STATE_PONG = 2;
   static STATE_PONG_TOURNAMENT = 3;
+  static STATE_END = 4;
   constructor(width, height, token) {
     super(width, height);
     this.token = token;
@@ -86,6 +87,30 @@ export default class PongGame extends NetworkScene {
       callback: async () => {
         const success = await this.cancelWaitQ();
         if (success) this.loadMenu();
+      },
+    }));
+    this.addGameObject(this.#createObject('light', {
+      position: {x: 0, y: 0, z: 20},
+      intensity: 500,
+    }));
+    this.#addTrackingMouseLight();
+    this.#addButtonEvents();
+  }
+
+  loadEndConfirm() {
+    this.state = PongGame.STATE_END;
+    this.loadDefaultScene();
+    this.addGameObject(this.#createObject('button', {
+      position: {x: 0, y: 0, z: 0},
+      color: 'green',
+      icon: 'close.png',
+      size: {width: 12, height: 12},
+      callback: async () => {
+        this.#netInfo({
+          "type": "info",
+          "cause": "end_game_confirm"
+        });
+        this.loadMenu();
       },
     }));
     this.addGameObject(this.#createObject('light', {
@@ -229,7 +254,7 @@ export default class PongGame extends NetworkScene {
 
     }
     if (data?.level === 'end game') {
-      this.loadMenu();
+      this.loadEndConfirm();
     }
   }
 
