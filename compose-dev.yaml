@@ -66,7 +66,6 @@ services:
       - 5432:5432
     volumes:
       - ${DATABASE_VOLUME}:/var/lib/postgresql/data
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -138,6 +137,7 @@ services:
       - GF_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - ${GRAFANA_VOLUME}:/etc/grafana/provisioning/datasources
+      - ./devops/grafana/src/datasource.yaml://etc/grafana/provisioning/datasources/init-datasource.yaml
     networks:
       - docker-network
 
