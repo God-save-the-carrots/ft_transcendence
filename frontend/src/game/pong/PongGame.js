@@ -53,6 +53,18 @@ export default class PongGame extends NetworkScene {
     this.setOnmessage('info', this.#netInfo.bind(this));
   }
 
+  exitGame() {
+    this.addGameObject(this.#createObject('button', {
+      opacity: 0.5,
+      position: {x: 0, y: 0, z: 0},
+      size: {width: 12, height: 12},
+      color: 'gray',
+      text: 'exit',
+      callback: this.loadMenu.bind(this),
+    }));
+    this.#addButtonEvents();
+  }
+
   loadMenu() {
     this.state = PongGame.STATE_MENU;
     this.loadDefaultScene();
