@@ -49,11 +49,12 @@ main {
   width: 30px;
   height: 30px;
   background-color: #dadada;
-  right: 5%;
-  bottom: 18%;
   z-index: 1;
   display: flex;
   border-radius: 30%;
+  transform: translate(-50%, -50%);
+  top: 100%;
+  left : 100%;   
 }
 
 .profile__user {
@@ -156,17 +157,4 @@ main {
 
 .history_link > a > p {
   color: white;
-}
-
-.bi-pencil-fill{
-    position : absolute;
-    transform: translate(-50%, -50%);
-    top: 30%;
-    left : 40%;   
-    z-index: 1;
-    font-size: 20px;
-    color: #555555;
-    display: flex;
-    right: 5%;
-    bottom: 18%;
 }
