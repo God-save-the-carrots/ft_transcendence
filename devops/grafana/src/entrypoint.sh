@@ -2,5 +2,5 @@
 
 # --config 재정의
 (grafana server \
-    --config /etc/grafana/grafana.ini \
+    --config /etc/grafana/defaults.ini \
     --homepath /usr/share/grafana)
