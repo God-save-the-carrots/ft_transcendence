@@ -21,8 +21,6 @@ services:
     depends_on:
       - db
       - backend
-    networks:
-      - docker-network
 
   backend:
     image: ${BACKEND_IMAGE_NAME}:${BACKEND_IMAGE_TAG}
@@ -47,8 +45,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - docker-network
 
   db:
     image: postgres:16.1-alpine3.19
@@ -71,10 +67,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
-    networks:
-      docker-network:
-        aliases:
-          - localhost
 
   grafana:
     image: grafana/grafana:latest
@@ -96,9 +88,6 @@ services:
       - GF_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - ${GRAFANA_VOLUME}:/etc/grafana/provisioning/datasources
-      - ./devops/grafana/src/datasource.yaml://etc/grafana/provisioning/datasources/init-datasource.yaml
-    networks:
-      - docker-network
 
   prometheus:
     image: prom/prometheus:latest
@@ -113,8 +102,6 @@ services:
     volumes:
       - ${PROMETHEUS_VOLUME}:/etc/prometheus
       - prom_data:/etc/prometheus
-    networks:
-      - docker-network
 
 volumes:
   run_vol:
@@ -127,8 +114,3 @@ volumes:
       device: tmpfs
   grafana_data:
   prom_data:
-
-networks:
-  docker-network:
-    name: docker-network
-    driver: bridge
