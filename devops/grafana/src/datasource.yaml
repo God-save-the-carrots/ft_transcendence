@@ -1,12 +1,14 @@
 apiVersion: 1
 
 datasources:
-- name: Postgres
+- name: grafana-postgresql-datasource
   type: postgres
   access: proxy
+  database: ${POSTGRES_USER}
   user: ${POSTGRES_USER}
-  password: ${POSTGRES_PASSWORD}
-  url: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+  url: postgres:5432
+  secureJsonData:
+    password: ${POSTGRES_PASSWORD}
   jsonData:
     postgresVersion: 160
   readOnly: false

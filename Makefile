@@ -128,12 +128,16 @@ events:
 .PHONY: create # Creates containers for a service.
 create:
 	@mkdir -p ${DATABASE_VOLUME}
+	@mkdir -p ${GRAFANA_VOLUME}
+	@mkdir -p ${PROMETHEUS_VOLUME}
 	docker compose create --build
 
 .PHONY: up # Create and start containers
 up:
 	@mkdir -p ${DATABASE_VOLUME}
 	@./create_certificate.sh
+	@mkdir -p ${GRAFANA_VOLUME}
+	@mkdir -p ${PROMETHEUS_VOLUME}
 	docker compose up -d --build
 
 .PHONY: down # Stop and remove containers, networks
