@@ -1,0 +1,26 @@
+.bi-pencil-fill{
+    position : absolute;
+    font-size: 20px;
+    color: #555555;
+    display: flex;
+    right: 5%;
+    bottom: 18%;
+}
+
+.input-hidden {
+    position: absolute;
+    left: -9999px;
+}
+
+input[type=radio] ~ label>img {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    margin: 5px;
+    border-radius: 50%;
+    background-color: black;
+}
+
+input[type=radio]:checked + label>img {
+    box-shadow: 0 0 3px 3px black;
+}
