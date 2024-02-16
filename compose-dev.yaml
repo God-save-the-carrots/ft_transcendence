@@ -57,7 +57,6 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_SSL=off
     ports:
       - 5432:5432
     volumes:
@@ -108,41 +107,6 @@ services:
       - 9090:9090
     volumes:
       - ./devops/prometheus:/etc/prometheus
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: ${GRAFANA_CONTAINER_NAME}
-    env_file:
-      - .env
-    build:
-      context: ./devops/grafana
-    ports:
-      - 3000:3000
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      - GF_DATABASE_TYPE=postgres
-      - GF_DATABASE_HOST=postgres
-      - GF_DATABASE_NAME=${POSTGRES_DB}
-      - GF_DATABASE_USER=${POSTGRES_USER}
-      - GF_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
-    volumes:
-      - ${GRAFANA_VOLUME}:/etc/grafana/provisioning/datasources
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: ${PROMETHEUS_CONTAINER_NAME}
-    build:
-      context: ./devops/prometheus
-    env_file:
-      - .env
-    ports:
-      - 9090:9090
-    restart: unless-stopped
-    volumes:
-      - ${PROMETHEUS_VOLUME}:/etc/prometheus
-      - prom_data:/etc/prometheus
 
 volumes:
   run_vol:

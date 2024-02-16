@@ -10,6 +10,8 @@ USER grafana
 ENV DS_PROMETHEUS=Prometheus
 
 RUN mkdir -p /var/lib/grafana/sessions
+COPY ./src/grafana.ini /etc/grafana/grafana.ini
+COPY ./src/datasources.yaml /etc/grafana/provisioning/datasources/datasources.yaml
 
 COPY ./src/grafana.ini /etc/grafana/grafana.ini
 COPY ./src/datasources.yaml /etc/grafana/provisioning/datasources/datasources.yaml
