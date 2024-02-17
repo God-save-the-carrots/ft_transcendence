@@ -223,6 +223,7 @@ export default class PongGame extends NetworkScene {
 
   #netInit(data) {
     this.loadDefaultScene();
+    this.camera.position.z = 30;
 
     // create objects
     for (const rawObject of data.objects) {
