@@ -94,6 +94,7 @@ class PongGame(Game):
         if self.onfinish is not None:
             await self.onfinish(self, [{
                 "intra_id": player.intra_id,
+                "photo_id": player.photo_id,
                 "score": player.data.score,
                 "hit": player.data.hit,
             } for player in self.players])

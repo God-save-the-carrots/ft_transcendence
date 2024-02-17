@@ -18,7 +18,8 @@ class Rule:
     async def step(self, level, timer):
         print(level) # for debug
         await self.broadcast(self.players, {"type": "step", "level": level, "timer": timer})
-        await asyncio.sleep(timer)
+        if timer != 0:
+            await asyncio.sleep(timer)
 
     async def broadcast(self, players, json_data):
         for player in players:

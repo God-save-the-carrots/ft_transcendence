@@ -8,6 +8,7 @@ class User:
     def __init__(self, socket: WebSocketServerProtocol, intra_id, game_type):
         self.socket = socket
         self.intra_id = intra_id
+        self.photo_id = 0 # TODO: update photo_id
         self.game_type = game_type
         self.onclose: 'list[Coroutine]' = []
         self.onmessage: 'list[Coroutine]' = []

@@ -13,7 +13,7 @@ class Tournament(Rule):
         self.results = []
 
     async def start(self):
-        await self.step("start game", timer=1)
+        await self.start_game(self.players)
         winners = self.players
         i = 0
         while len(winners) > 1:
@@ -21,7 +21,7 @@ class Tournament(Rule):
             await self.step("start round", timer=1)
             winners = await self.start_round(i, winners)
             await self.step("end round", timer=3)
-        await self.step("end game", timer=1)
+        await self.end_game()
         await self.disconnect(self.players)
         await self.save_result()
 
@@ -34,7 +34,8 @@ class Tournament(Rule):
             players = [*match]
             game = self.game_constructor(players)
             game.tag = "round_" + str(round) + "_" + str(i)
-            game.onfinish = self.endsession
+            game.onfinish = self.end_session
+            await self.start_session(game, players)
             tasks.append(asyncio.create_task(game.start()))
         results = await asyncio.gather(*tasks)
 
@@ -46,7 +47,33 @@ class Tournament(Rule):
 
         return winners
 
-    async def endsession(self, game, players):
+    async def start_game(self, players: 'list[User]'):
+        await self.broadcast_info({
+            "cause": "start_game",
+            "players": [{
+                "intra_id": player.intra_id,
+                "photo_id": player.photo_id,
+            } for player in players]
+        })
+        await self.step("start game", timer=1)
+
+    async def end_game(self):
+        await self.broadcast_info({
+            "cause": "end_game",
+        })
+        await self.step("end game", timer=0)
+
+    async def start_session(self, game:Game, players:'list[User]'):
+        await self.broadcast_info({
+            "cause": "start_session",
+            "tag": game.tag,
+            "players": [{
+                "intra_id": player.intra_id,
+                "photo_id": player.photo_id,
+            } for player in players]
+        })
+
+    async def end_session(self, game, players):
         await self.broadcast_info({
             "cause": "end_session",
             "play_time": now() - game.start_at,
