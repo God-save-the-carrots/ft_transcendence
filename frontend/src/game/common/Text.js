@@ -10,6 +10,7 @@ export default class Text extends GameObject {
       color: 0xffffff,
       position: {x: 0, y: 0, z: 0},
       text: 'hello threejs',
+      opacity: 1.0,
       refreshCallback: () => {},
       ...params,
     };
@@ -17,7 +18,7 @@ export default class Text extends GameObject {
     this.params = params;
     this.position.set(params.position.x, params.position.y, params.position.z);
 
-    const fontPath = '/src/threejs/fonts/helvetiker_regular.typeface.json';
+    const fontPath = '/src/threejs/fonts/helvetiker_bold.typeface.json';
     loader.load(fontPath, (font) => {
       this.font = font;
       this.setText(this.params.text);
@@ -26,7 +27,11 @@ export default class Text extends GameObject {
   }
 
   createText(params, font) {
-    const materials = new THREE.MeshPhongMaterial({color: 0xffffff});
+    const materials = new THREE.MeshPhongMaterial({
+      color: this.params.color,
+      transparent: true,
+      opacity: this.params.opacity,
+    });
     const shapes = font.generateShapes(params.text, 7);
     const geometry = new THREE.ShapeGeometry( shapes );
     geometry.computeBoundingBox();
