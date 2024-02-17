@@ -119,8 +119,8 @@ export default class PongGame extends NetworkScene {
     this.loadDefaultScene();
     this.addGameObject(this.#createObject('button', {
       position: {x: 0, y: 0, z: 0},
-      color: 'green',
-      icon: 'close.png',
+      color: 'gray',
+      text: 'EXIT',
       size: {width: 12, height: 12},
       callback: async () => {
         this.#netInfo({
