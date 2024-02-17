@@ -18,23 +18,26 @@ export default class UserProfile extends Component {
 
   setEvent() {
     // this.addEvent('submit', '[type=Submit]');
-    this.$target.querySelector('.avatar-form').addEventListener('submit', async (e) => {
-      this.state.photo_id = document.querySelector('input[name="avatar"]:checked').id;
-      e.preventDefault();
-      const change_api = `http://localhost/api/user/${this._intra_id}/`;
-      await fetch(change_api, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          'photo_id': Number(this.state.photo_id)}),
-      });
-    });
+    this.$target.querySelector('.avatar-form')
+        .addEventListener('submit', async (e) => {
+          // this.state.photo_id =
+          const photo_id =
+              document.querySelector('input[name="avatar"]:checked').id;
+          e.preventDefault();
+          const change_api = `http://localhost/api/user/${this._intra_id}/`;
+          await fetch(change_api, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              'photo_id': Number(photo_id)}),
+          });
+          this.state.photo_id = photo_id;
+        });
   }
 
   async template() {
-    console.log('in template', this.state.photo_id);
     const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
     const data = await fetch(profile_api,
     ).then((x) => x.json());
@@ -59,54 +62,70 @@ export default class UserProfile extends Component {
       <div class="profile__text"> HELLO ! ${data.user.message} </div>
 
       <!-- Modal -->
-      <div class="modal fade" id="editmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="editmodal" tabindex="-1"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">change my avatar</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+              change my avatar
+              </h1>
+              <button type="button" class="btn-close" 
+                data-bs-dismiss="modal" aria-label="Close">
+              </button>
             </div>
             <div class="modal-body">
-
+              <!-- avatar 선택 -->
               <form class="avatar-form">
                 <div>
-                  <input type="radio" name="avatar" id="1" class="input-hidden" />
+                  <input type="radio" 
+                  name="avatar" id="1" class="input-hidden" />
                   <label for="1">
                     <img src="/public/assets/profile/1.png"/>
                   </label>
-                  <input type="radio" name="avatar" id="2" class="input-hidden" />
+                  <input type="radio" 
+                  name="avatar" id="2" class="input-hidden" />
                   <label for="2">
                     <img src="/public/assets/profile/2.png"/>
                   </label>
-                  <input type="radio" name="avatar" id="3" class="input-hidden" />
+                  <input type="radio" 
+                  name="avatar" id="3" class="input-hidden" />
                   <label for="3">
                     <img src="/public/assets/profile/3.png"/>
                   </label>
-                  <input type="radio" name="avatar" id="4" class="input-hidden" />
+                  <input type="radio" 
+                  name="avatar" id="4" class="input-hidden" />
                   <label for="4">
                     <img src="/public/assets/profile/4.png"/>
                   </label>
                 </div>
                 <div>
-                  <input type="radio" name="avatar" id="5" class="input-hidden" />
+                  <input type="radio" 
+                  name="avatar" id="5" class="input-hidden" />
                   <label for="5">
                     <img src="/public/assets/profile/5.png"/>
                   </label>
-                  <input type="radio" name="avatar" id="6" class="input-hidden" />
+                  <input type="radio" 
+                  name="avatar" id="6" class="input-hidden" />
                   <label for="6">
                     <img src="/public/assets/profile/6.png"/>
                   </label>
-                  <input type="radio" name="avatar" id="7" class="input-hidden" />
+                  <input type="radio" 
+                  name="avatar" id="7" class="input-hidden" />
                   <label for="7">
                     <img src="/public/assets/profile/7.png"/>
                   </label>
-                  <input type="radio" name="avatar" id="8" class="input-hidden" />
+                  <input type="radio" 
+                  name="avatar" id="8" class="input-hidden" />
                   <label for="8">
                     <img src="/public/assets/profile/8.png"/>
                   </label>
                 </div>
-                <button type="Submit" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <!-- submit button -->
+                <button type="Submit" class="btn btn-primary"
+                  data-bs-dismiss="modal">Save changes</button>
+                <button type="button" class="btn btn-secondary"
+                  data-bs-dismiss="modal">Close</button>
               </form>
             </div>
           </div>
