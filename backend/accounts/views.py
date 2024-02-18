@@ -43,10 +43,13 @@ class UserAPIView(APIView):
     
     def patch(self, request, intra_id):
         try:
-            profile_instance = Profile.objects.get(user_id__intra_id=intra_id)
+            user_instance = User.objects.get(intra_id=intra_id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            profile_instance = user_instance.profile
         except Profile.DoesNotExist:
-            return Response(serializer.data, status=status.HTTP_404_NOT_FOUND)
-
+            return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         if 'photo_id' in request.data:
             profile_instance.photo_id = request.data['photo_id']
         if 'message' in request.data:
@@ -54,5 +57,5 @@ class UserAPIView(APIView):
         
         profile_instance.save()
 
-        serializer = ProfileSerializer(profile_instance)
+        serializer = CustomUserSerializer(user_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
