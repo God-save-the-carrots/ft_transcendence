@@ -9,6 +9,7 @@ import {zaxis} from '../preset.js';
 import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
+import Shutter from '../common/Shutter.js';
 
 export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
@@ -29,8 +30,10 @@ export default class PongGame extends NetworkScene {
       'text': Text,
       'icon': Icon,
       'timer': LoadingCircle,
+      'loader': Shutter,
     };
     this.#initKeyEvent();
+    this.shutter = null;
     this.selectedButton = null;
     this.raycaster = new THREE.Raycaster();
     this.infoCallbacks = [];
@@ -74,6 +77,9 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
+    this.addGameObject(this.#createObject('loader', {
+      position: {x: 0, y: 0, z: 15},
+    }));
   }
 
   loadReady() {
@@ -95,6 +101,9 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
+    this.addGameObjectTo(this.#createObject('loader', {
+      position: {x: 0, y: 0, z: 15},
+    }), this.camera);
   }
 
   loadEndConfirm() {
@@ -119,6 +128,10 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
+    this.addGameObjectTo(this.#createObject('loader', {
+      size: 0,
+      position: {x: 0, y: 0, z: 15},
+    }).setSize(10), this.camera);
   }
 
   subscribeInfo(callback) {
@@ -197,7 +210,7 @@ export default class PongGame extends NetworkScene {
   #netMatch(data) {
     const {status} = data;
     if (status === 'fail') this.loadReady();
-    if (status === 'success') this.loadDefaultScene(); // TODO:
+    if (status === 'success') this.loadDefaultScene();
   }
 
   #netInit(data) {
@@ -226,6 +239,13 @@ export default class PongGame extends NetworkScene {
       camera.setRotationFromAxisAngle(zaxis, rad - Math.PI * 0.5);
       camera.rotateX(Math.PI / 12);
     }
+
+    this.shutter = this.#createObject('loader', {
+      size: 0,
+      position: {x: 0, y: 0, z: 15},
+    }).setSize(20);
+    this.addGameObjectTo(this.shutter, this.camera);
+    this.camera.add(new PointLight());
   }
 
   #netUpdate(data) {
@@ -246,12 +266,18 @@ export default class PongGame extends NetworkScene {
   #netStep(data) {
     if (data?.level === 'start game') {
       this.loadDefaultScene();
+      this.#addTrackingMouseLight();
+      this.shutter = this.#createObject('loader', {
+        size: 10,
+        position: {x: 0, y: 0, z: 15},
+      }).setSize(0);
+      this.addGameObjectTo(this.shutter, this.camera);
     }
     if (data?.level === 'start round') {
 
     }
     if (data?.level === 'end round') {
-
+      this.shutter.setSize(0);
     }
     if (data?.level === 'end game') {
       this.loadEndConfirm();

@@ -133,6 +133,16 @@ export class Scene extends THREE.Scene {
     return gameObject;
   }
 
+  addGameObjectTo(gameObject, parent) {
+    if (gameObject == null) throw new Error('gameObject is null');
+    if (gameObject instanceof NetworkObject) {
+      this.networkObjects.set(gameObject.net.id, gameObject);
+    }
+    this.objects.set(gameObject.uuid, gameObject);
+    parent.add(gameObject);
+    return gameObject;
+  }
+
   getNetworkObject(id) {
     return this.networkObjects.get(id);
   }
