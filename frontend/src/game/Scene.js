@@ -68,10 +68,13 @@ export class Scene extends THREE.Scene {
     // init render camera
     const aspect = this.width / this.height;
     this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
-    this.camera.position.z = 42;
     this.renderer.setSize(this.width, this.height);
     this.renderer.shadowMap.enabled = true;
     this.composer.passes[0].camera = this.camera;
+    this.cameraHolder = new THREE.Object3D();
+    this.cameraHolder.position.z = 42;
+    this.cameraHolder.add(this.camera);
+    this.add(this.cameraHolder);
 
     // add background
     const background = new THREE.Mesh(
