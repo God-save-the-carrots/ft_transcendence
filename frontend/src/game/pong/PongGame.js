@@ -17,6 +17,10 @@ export default class PongGame extends NetworkScene {
   static STATE_PONG = 2;
   static STATE_PONG_TOURNAMENT = 3;
   static STATE_END = 4;
+  static SHUTTER_SIZE_SMALL = 0;
+  static SHUTTER_SIZE_LARGE = 15;
+  static SHUTTER_SIZE_HUGE = 30;
+  static SHUTTER_HEIGHT = 15;
   constructor(width, height, token) {
     super(width, height);
     this.token = token;
@@ -30,7 +34,7 @@ export default class PongGame extends NetworkScene {
       'text': Text,
       'icon': Icon,
       'timer': LoadingCircle,
-      'loader': Shutter,
+      'shutter': Shutter,
     };
     this.#initKeyEvent();
     this.shutter = null;
@@ -77,8 +81,9 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
-    this.addGameObject(this.#createObject('loader', {
-      position: {x: 0, y: 0, z: 15},
+    this.addGameObject(this.#createObject('shutter', {
+      size: PongGame.SHUTTER_SIZE_LARGE,
+      position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
     }));
   }
 
@@ -101,9 +106,10 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
-    this.addGameObjectTo(this.#createObject('loader', {
-      position: {x: 0, y: 0, z: 15},
-    }), this.camera);
+    this.addGameObject(this.#createObject('shutter', {
+      size: PongGame.SHUTTER_SIZE_LARGE,
+      position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+    }));
   }
 
   loadEndConfirm() {
@@ -128,10 +134,10 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
-    this.addGameObjectTo(this.#createObject('loader', {
-      size: 0,
-      position: {x: 0, y: 0, z: 15},
-    }).setSize(10), this.camera);
+    this.addGameObject(this.#createObject('shutter', {
+      size: PongGame.SHUTTER_SIZE_SMALL,
+      position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+    }).setSize(PongGame.SHUTTER_SIZE_LARGE));
   }
 
   subscribeInfo(callback) {
@@ -240,12 +246,15 @@ export default class PongGame extends NetworkScene {
       camera.rotateX(Math.PI / 12);
     }
 
-    this.shutter = this.#createObject('loader', {
-      size: 0,
-      position: {x: 0, y: 0, z: 15},
-    }).setSize(20);
-    this.addGameObjectTo(this.shutter, this.camera);
-    this.camera.add(new PointLight());
+    this.shutter = this.#createObject('shutter', {
+      size: PongGame.SHUTTER_SIZE_SMALL,
+      position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+    }).setSize(PongGame.SHUTTER_SIZE_HUGE);
+    this.addGameObject(this.shutter);
+    this.addGameObject(this.#createObject('light', {
+      position: {x: 0, y: 0, z: 42},
+      intensity: 100,
+    }));
   }
 
   #netUpdate(data) {
@@ -267,17 +276,17 @@ export default class PongGame extends NetworkScene {
     if (data?.level === 'start game') {
       this.loadDefaultScene();
       this.#addTrackingMouseLight();
-      this.shutter = this.#createObject('loader', {
-        size: 10,
-        position: {x: 0, y: 0, z: 15},
-      }).setSize(0);
-      this.addGameObjectTo(this.shutter, this.camera);
+      this.shutter = this.#createObject('shutter', {
+        size: PongGame.SHUTTER_SIZE_LARGE,
+        position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+      }).setSize(PongGame.SHUTTER_SIZE_SMALL);
+      this.addGameObject(this.shutter);
     }
     if (data?.level === 'start round') {
 
     }
     if (data?.level === 'end round') {
-      this.shutter.setSize(0);
+      this.shutter.setSize(PongGame.SHUTTER_SIZE_SMALL);
     }
     if (data?.level === 'end game') {
       this.loadEndConfirm();
