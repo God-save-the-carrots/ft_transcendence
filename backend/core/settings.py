@@ -146,3 +146,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ],
 }
+
+# 42 OAuth
+# https://api.intra.42.fr/apidoc/guides/getting_started
+
+CLIENT_ID = os.environ.get('CLIENT_ID')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+REDIRECT_URI = 'http://localhost:8000/api/login'

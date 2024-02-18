@@ -6,23 +6,52 @@ from rest_framework import status
 from .models import User, Profile
 from .serializers import *
 
+import requests
+from django.conf import settings
+from django.shortcuts import redirect
+from urllib.parse import urlencode
+
 # Create your views here.
 
 # login
 # oauth 후 작업필요.
 class LoginAPIView(APIView):
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        if not serializer.is_valid():
-             return Response({"error": "Invalid code"}, status=status.HTTP_400_BAD_REQUEST)
-        code = serializer.validated_data['code']
+    def get(self, request):
+        client_id = settings.CLIENT_ID
+        client_secret = settings.CLIENT_SECRET
+        redirect_uri = settings.REDIRECT_URI
 
-        response_data = {
-            "id": 42,
-            "intra_id": "dummy42",
-            "photo_id": 0,
-            "message": "dummy message42"
-        }
+        login_serializer = LoginSerializer(data=request.query_params)
+        if not login_serializer.is_valid():
+            query_params = {
+                'client_id': client_id,
+                'redirect_uri': redirect_uri,
+                'response_type': 'code',
+            }
+            return redirect(f"https://api.intra.42.fr/oauth/authorize?{urlencode(query_params)}")
+
+        token = requests.post('https://api.intra.42.fr/oauth/token', data={
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'redirect_uri': redirect_uri,
+            'grant_type': 'authorization_code',
+            'code': login_serializer.validated_data['code'],
+        })
+        if token.status_code != 200:
+            return Response({"error": "Failed to get token"}, status=status.HTTP_400_BAD_REQUEST)
+
+        token_serializer = TokenSerializer(data=token.json())
+        if not token_serializer.is_valid():
+            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
+        me = requests.get('https://api.intra.42.fr/v2/me', headers={'Authorization': f"Bearer {token.json()['access_token']}"})
+        if me.status_code != 200:
+            return Response({"error": "Failed to get 42 info"}, status=status.HTTP_400_BAD_REQUEST)
+        user_instance = User.objects.get_or_create(intra_id=me.json()['login'])
+
+        # todo: return jwt token
+        custom_user_serializer = CustomUserSerializer(user_instance[0])
+        response_data = custom_user_serializer.data
         return Response(response_data, status=status.HTTP_200_OK)
 
 # logout
