@@ -12,9 +12,11 @@ class NormalGame(Rule):
         
     async def start(self):
         await self.step("start game", timer=1)
+        await self.step("start round", timer=1)
         self.game = self.game_constructor(self.players)
         self.game.onfinish = self.endsession
         result = await self.game.start()
+        await self.step("end round", timer=1)
         await self.step("end game", timer=1)
 
         losers = result.get("grade")[1:]
