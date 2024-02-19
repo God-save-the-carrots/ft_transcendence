@@ -223,7 +223,7 @@ export default class PongGame extends NetworkScene {
 
   #netInit(data) {
     this.loadDefaultScene();
-    this.camera.position.z = 30;
+    this.cameraHolder.position.z = 30;
 
     // create objects
     for (const rawObject of data.objects) {
@@ -240,7 +240,6 @@ export default class PongGame extends NetworkScene {
     this.scoreboards = {};
     for (const player of data.players) {
       const unit = this.getNetworkObject(player.unit_id);
-      const pos = unit.position * 0.5 + new THREE.Vector3(0, 0, 0.1);
       this.scoreboards[player.intra_id] = new ScoreBoard({
         name: player.intra_id,
         score: 0,
@@ -265,12 +264,14 @@ export default class PongGame extends NetworkScene {
       const angle = rad - Math.PI * 0.5;
 
       const {cameraHolder} = this;
-      cameraHolder.position.set(unit.position.x, unit.position.y, cameraHolder.position.z);
+      const {x, y} = unit.position;
+      cameraHolder.position.set(x, y, cameraHolder.position.z);
       cameraHolder.setRotationFromAxisAngle(zaxis, angle);
       cameraHolder.rotateX(Math.PI / 12);
 
       // rotate scoreboards
       for (const intraId in this.scoreboards) {
+        if (Object.hasOwn(this.scoreboards, key) == false) continue;
         const scoreboard = this.scoreboards[intraId];
         scoreboard.setRotationFromAxisAngle(zaxis, angle);
       }
