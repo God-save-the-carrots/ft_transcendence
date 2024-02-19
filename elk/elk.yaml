@@ -41,6 +41,7 @@ services:
     depends_on:
       certs:
         condition: service_healthy
+    container_name: elasticsearch
     image: elasticsearch:${STACK_VERSION}
     ports:
       - ${ES_PORT}:9200
@@ -62,7 +63,7 @@ services:
         - xpack.security.http.ssl.certificate=certs/elasticsearch/elasticsearch.crt
         - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
         - xpack.security.http.ssl.verification_mode=certificate
-        - xpack.license.self_generated.type=${LICENSE}    
+        - xpack.license.self_generated.type=${LICENSE}
     mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
@@ -73,6 +74,39 @@ services:
         [
           "CMD-SHELL",
           "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 120
+
+  kibana:
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    container_name: kibana
+    image: kibana:${STACK_VERSION}
+    ports:
+      - ${KIBANA_PORT}:5601
+    volumes:
+      - ./certs:/usr/share/kibana/config/certs
+      - ./kibana:/usr/share/kibana/data
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD?Kibana password is required}
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/certs/ca/ca.crt
+      - MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED=true
+      - SERVER_SSL_ENABLED=true
+      - SERVER_SSL_KEY=/usr/share/kibana/config/certs/kibana/kibana.key
+      - SERVER_SSL_CERTIFICATE=/usr/share/kibana/config/certs/kibana/kibana.crt
+      - SERVER_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/certs/ca/ca.crt
+    mem_limit: ${MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:5601",
         ]
       interval: 10s
       timeout: 10s
