@@ -1,0 +1,28 @@
+body {
+  background-color: black;
+  font-family: "Retro Gaming";
+  width: 100%;
+  height: 100vh;
+}
+
+.game-wrap {
+  width: 100%;
+  height: 100%;
+  background-color:blue;
+}
+.block {
+  width: 100%;
+  height: 70px;
+  /* height: 70px; */
+  background-color: #FFF5DE;
+  margin: 2% 0%;
+  padding: 0.3% 4%;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+}
+
+.block > .content {
+  width:  100%;
+  w
+}
