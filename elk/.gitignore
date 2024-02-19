@@ -1,0 +1,5 @@
+*.zip
+*.key
+*.crt
+
+elasticsearch
