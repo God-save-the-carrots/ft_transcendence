@@ -43,7 +43,7 @@ export default class PongGame extends NetworkScene {
     this.scoreboards = {};
     this.raycaster = new THREE.Raycaster();
     this.infoCallbacks = [];
-    this.alias;
+    this.alias = 'anonymous';
     this.loadMenu();
     this.setOnmessage('ready', this.#netReady.bind(this));
     this.setOnmessage('match', this.#netMatch.bind(this));
