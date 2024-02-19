@@ -8,22 +8,24 @@ export default class UserProfile extends Component {
     super(target);
     this._intra_id = intra_id;
     this._title = 'UserProfile';
+    this.state.photo_id;
   }
   async initState() {
     return {
-      data: {},
       photo_id: 0,
     };
   }
 
   setEvent() {
-    // this.addEvent('submit', '[type=Submit]');
     this.$target.querySelector('.avatar-form')
         .addEventListener('submit', async (e) => {
-          // this.state.photo_id =
-          const photo_id =
-              document.querySelector('input[name="avatar"]:checked').id;
+          const photo_id = document
+              .querySelector('input[name="avatar"]:checked').id;
           e.preventDefault();
+          if (this.state.photo_id === photo_id) {
+            console.log('hello');
+            return;
+          }
           const change_api = `http://localhost/api/user/${this._intra_id}/`;
           await fetch(change_api, {
             method: 'PATCH',
@@ -38,6 +40,7 @@ export default class UserProfile extends Component {
   }
 
   async template() {
+    if (this.state.photo_id > 8) return;
     const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
     const data = await fetch(profile_api,
     ).then((x) => x.json());
