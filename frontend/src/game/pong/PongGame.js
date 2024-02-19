@@ -358,11 +358,10 @@ export default class PongGame extends NetworkScene {
       const neg = this.key['ArrowRight'] || this.key['d'] ? -1 : 0;
       const move = pos + neg;
 
+      if (this.socket == null) return;
       if (action.move != move && this.socket.readyState == this.socket.OPEN) {
         action.move = move;
-        if (this.socket.readyState == this.socket.OPEN) {
-          this.send({type: 'move', data: action});
-        }
+        this.send({type: 'move', data: action});
       }
     });
   }
