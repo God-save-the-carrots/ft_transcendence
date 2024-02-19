@@ -7,9 +7,20 @@ body {
 
 .game-wrap {
   width: 100%;
-  height: 100%;
-  background-color:blue;
+  height: 100vh;
+  background-color:black;
 }
+.content {
+  display: flex;
+  justify-content: center;
+  padding-top: 5%;
+}
+.game {
+  width: 50%;
+  height: 50vh;
+  background-color:black;
+}
+
 .block {
   width: 100%;
   height: 70px;
