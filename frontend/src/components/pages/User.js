@@ -21,12 +21,12 @@ export default class User extends Component {
       <main>
         <div class="page-profile" data-component="test-app1"></div>
         <div class="user-menu">
-          <div class="stats_test"> </div>
-          <div class="stats_link"> 
+          <div class="stats_test"></div>
+          <div class="stats_link">
             <a href="statistics">
               <p data-link>statistics</p></a>
           </div>
-          <div class="history_link"> 
+          <div class="history_link">
             <a href="history" data-link>history</a>
           </div>
         </div>

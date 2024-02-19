@@ -29,7 +29,7 @@ export default class UserHistory extends Component {
       ${await createHistoryContents(data.data)}
       </div>
     `;
-    // paginataion
+    // pagination
     html += createHistoryPagination(_current_page, last_page_index);
     return html;
   }
@@ -54,11 +54,12 @@ function createHistoryPagination(current, last) {
     let index;
     if (i > 0) index = i;
     else index = '+';
-    list_HTML +=` 
+    list_HTML +=
+      `
       <li class="page-item">
         <a class="page-link" data-page=${index}>${index}</a>
       </li>
-  `;
+      `;
   }
 
   for (let i = Number(current); i <= Number(current) + 2; i ++) {

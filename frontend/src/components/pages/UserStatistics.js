@@ -19,7 +19,7 @@ export default class UserStatistics extends Component {
       <div class="boxs">
         <div class="playtime">
           <p class="title"> Playtime </p>
-          <p align="center" class="playtime_hour"> 
+          <p align="center" class="playtime_hour">
             ${convertToHoursMinutes(playtime_data.minutes)}
           </p>
           <p align="center" class="playtime_day">
@@ -49,8 +49,8 @@ export default class UserStatistics extends Component {
               aria-valuemin="0" aria-valuemax="100">
               win ${winning_data.winning_round}R
             </div>
-            <div class="progress-bar bg-info" role="progressbar" 
-              style="width: ${winning_ratio.value2Ratio}%;" 
+            <div class="progress-bar bg-info" role="progressbar"
+              style="width: ${winning_ratio.value2Ratio}%;"
               aria-valuenow="${winning_ratio.value2Ratio}"
               aria-valuemin="0" aria-valuemax="100">
               lose ${winning_data.losing_round}R
