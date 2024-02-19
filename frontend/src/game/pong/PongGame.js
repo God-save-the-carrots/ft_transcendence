@@ -5,6 +5,7 @@ import {NetworkScene} from '../Scene.js';
 import Ball from './Ball.js';
 import Player from './Player.js';
 import Wall from './Wall.js';
+import ScoreBoard from './ScoreBoard.js';
 import {zaxis} from '../preset.js';
 import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
@@ -39,6 +40,7 @@ export default class PongGame extends NetworkScene {
     this.#initKeyEvent();
     this.shutter = null;
     this.selectedButton = null;
+    this.scoreboards = {};
     this.raycaster = new THREE.Raycaster();
     this.infoCallbacks = [];
     this.loadMenu();
@@ -117,13 +119,13 @@ export default class PongGame extends NetworkScene {
     this.loadDefaultScene();
     this.addGameObject(this.#createObject('button', {
       position: {x: 0, y: 0, z: 0},
-      color: 'green',
-      icon: 'close.png',
+      color: 'gray',
+      text: 'EXIT',
       size: {width: 12, height: 12},
       callback: async () => {
         this.#netInfo({
-          "type": "info",
-          "cause": "end_game_confirm"
+          'type': 'info',
+          'cause': 'end_game_confirm',
         });
         this.loadMenu();
       },
@@ -221,6 +223,7 @@ export default class PongGame extends NetworkScene {
 
   #netInit(data) {
     this.loadDefaultScene();
+    this.cameraHolder.position.z = 30;
 
     // create objects
     for (const rawObject of data.objects) {
@@ -233,6 +236,23 @@ export default class PongGame extends NetworkScene {
       this.addGameObject(mesh);
     }
 
+    // create scoreboard
+    this.scoreboards = {};
+    for (const player of data.players) {
+      const unit = this.getNetworkObject(player.unit_id);
+      this.scoreboards[player.intra_id] = new ScoreBoard({
+        name: player.intra_id,
+        score: 0,
+        opacity: 0.5,
+        position: {
+          x: unit.position.x * 0.5,
+          y: unit.position.y * 0.5,
+          z: 0.1,
+        },
+      });
+      this.addGameObject(this.scoreboards[player.intra_id]);
+    }
+
     // rotate camera angle for player
     for (const player of data.players) {
       if (player.intra_id != this.intraId) continue;
@@ -240,10 +260,21 @@ export default class PongGame extends NetworkScene {
       const rawUnit = data.objects.filter((x) => x.id == unit.net.id)[0];
       const upside = (rawUnit.transform.rotation.y > 0 ? 1 : -1);
       const rad = Math.acos(rawUnit.transform.rotation.x) * upside;
+
+      const angle = rad - Math.PI * 0.5;
+
       const {cameraHolder} = this;
-      cameraHolder.position.set(unit.position.x, unit.position.y, cameraHolder.position.z);
-      cameraHolder.setRotationFromAxisAngle(zaxis, rad - Math.PI * 0.5);
+      const {x, y} = unit.position;
+      cameraHolder.position.set(x, y, cameraHolder.position.z);
+      cameraHolder.setRotationFromAxisAngle(zaxis, angle);
       cameraHolder.rotateX(Math.PI / 12);
+
+      // rotate scoreboards
+      for (const intraId in this.scoreboards) {
+        if (Object.hasOwn(this.scoreboards, key) == false) continue;
+        const scoreboard = this.scoreboards[intraId];
+        scoreboard.setRotationFromAxisAngle(zaxis, angle);
+      }
     }
 
     this.shutter = this.#createObject('shutter', {
@@ -306,7 +337,10 @@ export default class PongGame extends NetworkScene {
 
   #netScore(data) {
     const {score} = data;
-    console.log(score);
+    for (const playerScore of score) {
+      const scoreboard = this.scoreboards[playerScore.intra_id];
+      scoreboard.updateScore(playerScore.score);
+    }
   }
 
   #netInfo(data) {
