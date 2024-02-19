@@ -5,7 +5,7 @@ from game.util import now
 import json
 
 class User:
-    def __init__(self, socket: WebSocketServerProtocol, intra_id, game_type):
+    def __init__(self, socket: WebSocketServerProtocol, intra_id, game_type, alias):
         self.socket = socket
         self.intra_id = intra_id
         self.photo_id = 0 # TODO: update photo_id
@@ -14,6 +14,7 @@ class User:
         self.onmessage: 'list[Coroutine]' = []
         self.connected = True
         self.connected_at = now()
+        self.alias = alias
         self.data = SimpleNamespace()
 
     @property

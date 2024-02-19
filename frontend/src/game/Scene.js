@@ -219,9 +219,10 @@ export class NetworkScene extends Scene {
    * 소켓을 열고 대기큐 등록.
    * @param {string} authToken
    * @param {string} gameType
+   * @param {Object} data
    * @return {boolean} 대기큐 등록 성공 여부 (인증 포함)
    */
-  async waitQ(authToken, gameType) {
+  async waitQ(authToken, gameType, data) {
     if (this.waitingServer) {
       console.log('block double waiting');
       return false;
@@ -232,7 +233,7 @@ export class NetworkScene extends Scene {
         this.socket = new WebSocket(url);
         this.#initSocketEvent();
       }
-      await this.#waitConnectServer(authToken, gameType);
+      await this.#waitConnectServer(authToken, gameType, data);
     } catch (e) {
       console.error(e);
       return false;
@@ -243,7 +244,7 @@ export class NetworkScene extends Scene {
     return true;
   }
 
-  #waitConnectServer(authToken, gameType) {
+  #waitConnectServer(authToken, gameType, data) {
     return new Promise((res, rej) => {
       this.socket.onerror = (e) => {
         this.socket.close();
@@ -254,6 +255,7 @@ export class NetworkScene extends Scene {
           type: 'auth',
           token: authToken,
           game: gameType,
+          data,
         }));
       };
       this.socket.onmessage = (e) => {
