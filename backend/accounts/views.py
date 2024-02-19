@@ -10,6 +10,7 @@ import requests
 from django.conf import settings
 from django.shortcuts import redirect
 from urllib.parse import urlencode
+from .custom_token import get_tokens_for_user
 
 # Create your views here.
 
@@ -47,12 +48,11 @@ class LoginAPIView(APIView):
         me = requests.get('https://api.intra.42.fr/v2/me', headers={'Authorization': f"Bearer {token.json()['access_token']}"})
         if me.status_code != 200:
             return Response({"error": "Failed to get 42 info"}, status=status.HTTP_400_BAD_REQUEST)
-        user_instance = User.objects.get_or_create(intra_id=me.json()['login'])
+        user_info = me.json()
+        user_instance, created = User.objects.get_or_create(intra_id=user_info['login'])
 
-        # todo: return jwt token
-        custom_user_serializer = CustomUserSerializer(user_instance[0])
-        response_data = custom_user_serializer.data
-        return Response(response_data, status=status.HTTP_200_OK)
+        token = get_tokens_for_user(user_instance)
+        return Response(token, status=status.HTTP_200_OK)
 
 # logout
 # oauth 후 작업필요.

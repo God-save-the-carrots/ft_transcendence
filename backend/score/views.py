@@ -14,9 +14,9 @@ import math
 
 # game/pong/score/<str:intra_id>/
 class ScoreAPIView(APIView):
+    
     def get(self, request, intra_id):
         try:
-            game_type = request.GET.get('game_type', None)
             page = int(request.GET.get('page', 1))
             page_size = int(request.GET.get('page_size', 20))
 
