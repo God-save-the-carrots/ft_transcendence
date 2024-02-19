@@ -5,3 +5,4 @@ pgdata/
 jsconfig.json
 node_modules
 backend/api/migrations/
+tmp.html
