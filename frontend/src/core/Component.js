@@ -1,6 +1,9 @@
 import {observable, observe} from './observer.js';
 
 export default class Component {
+  /**
+   * @type {Element} $target
+   */
   $target;
   props;
   state = {};
