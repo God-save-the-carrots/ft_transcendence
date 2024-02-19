@@ -9,6 +9,7 @@ import {zaxis} from '../preset.js';
 import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
+import Shutter from '../common/Shutter.js';
 
 export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
@@ -16,6 +17,10 @@ export default class PongGame extends NetworkScene {
   static STATE_PONG = 2;
   static STATE_PONG_TOURNAMENT = 3;
   static STATE_END = 4;
+  static SHUTTER_SIZE_SMALL = 0;
+  static SHUTTER_SIZE_LARGE = 10;
+  static SHUTTER_SIZE_HUGE = 15;
+  static SHUTTER_HEIGHT = -15;
   constructor(width, height, token) {
     super(width, height);
     this.token = token;
@@ -29,8 +34,10 @@ export default class PongGame extends NetworkScene {
       'text': Text,
       'icon': Icon,
       'timer': LoadingCircle,
+      'shutter': Shutter,
     };
     this.#initKeyEvent();
+    this.shutter = null;
     this.selectedButton = null;
     this.raycaster = new THREE.Raycaster();
     this.infoCallbacks = [];
@@ -74,6 +81,10 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
+    this.addGameObjectTo(this.#createObject('shutter', {
+      size: PongGame.SHUTTER_SIZE_LARGE,
+      position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+    }), this.cameraHolder);
   }
 
   loadReady() {
@@ -95,6 +106,10 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
+    this.addGameObjectTo(this.#createObject('shutter', {
+      size: PongGame.SHUTTER_SIZE_LARGE,
+      position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+    }), this.cameraHolder);
   }
 
   loadEndConfirm() {
@@ -119,6 +134,10 @@ export default class PongGame extends NetworkScene {
     }));
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
+    this.addGameObjectTo(this.#createObject('shutter', {
+      size: PongGame.SHUTTER_SIZE_SMALL,
+      position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+    }).setSize(PongGame.SHUTTER_SIZE_LARGE), this.cameraHolder);
   }
 
   subscribeInfo(callback) {
@@ -157,7 +176,7 @@ export default class PongGame extends NetworkScene {
 
   #getMouseWorldPosition(screenX, screenY) {
     const rect = new THREE.Vector2();
-    this.camera.getViewSize(this.camera.position.z, rect);
+    this.camera.getViewSize(this.cameraHolder.position.z, rect);
     const ratio = {
       x: screenX / this.renderer.domElement.width,
       y: screenY / this.renderer.domElement.height,
@@ -197,7 +216,7 @@ export default class PongGame extends NetworkScene {
   #netMatch(data) {
     const {status} = data;
     if (status === 'fail') this.loadReady();
-    if (status === 'success') this.loadDefaultScene(); // TODO:
+    if (status === 'success') this.loadDefaultScene();
   }
 
   #netInit(data) {
@@ -221,11 +240,21 @@ export default class PongGame extends NetworkScene {
       const rawUnit = data.objects.filter((x) => x.id == unit.net.id)[0];
       const upside = (rawUnit.transform.rotation.y > 0 ? 1 : -1);
       const rad = Math.acos(rawUnit.transform.rotation.x) * upside;
-      const {camera} = this;
-      camera.position.set(unit.position.x, unit.position.y, camera.position.z);
-      camera.setRotationFromAxisAngle(zaxis, rad - Math.PI * 0.5);
-      camera.rotateX(Math.PI / 12);
+      const {cameraHolder} = this;
+      cameraHolder.position.set(unit.position.x, unit.position.y, cameraHolder.position.z);
+      cameraHolder.setRotationFromAxisAngle(zaxis, rad - Math.PI * 0.5);
+      cameraHolder.rotateX(Math.PI / 12);
     }
+
+    this.shutter = this.#createObject('shutter', {
+      size: PongGame.SHUTTER_SIZE_SMALL,
+      position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+    }).setSize(PongGame.SHUTTER_SIZE_HUGE);
+    this.addGameObjectTo(this.shutter, this.cameraHolder);
+    this.addGameObject(this.#createObject('light', {
+      position: {x: 0, y: 0, z: 42},
+      intensity: 100,
+    }));
   }
 
   #netUpdate(data) {
@@ -246,12 +275,18 @@ export default class PongGame extends NetworkScene {
   #netStep(data) {
     if (data?.level === 'start game') {
       this.loadDefaultScene();
+      this.#addTrackingMouseLight();
+      this.shutter = this.#createObject('shutter', {
+        size: PongGame.SHUTTER_SIZE_LARGE,
+        position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
+      }).setSize(PongGame.SHUTTER_SIZE_SMALL);
+      this.addGameObjectTo(this.shutter, this.cameraHolder);
     }
     if (data?.level === 'start round') {
 
     }
     if (data?.level === 'end round') {
-
+      this.shutter.setSize(PongGame.SHUTTER_SIZE_SMALL);
     }
     if (data?.level === 'end game') {
       this.loadEndConfirm();
