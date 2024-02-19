@@ -53,6 +53,7 @@ class Tournament(Rule):
             "players": [{
                 "intra_id": player.intra_id,
                 "photo_id": player.photo_id,
+                "alias": player.alias,
             } for player in players]
         })
         await self.step("start game", timer=1)
@@ -70,6 +71,7 @@ class Tournament(Rule):
             "players": [{
                 "intra_id": player.intra_id,
                 "photo_id": player.photo_id,
+                "alias": player.alias,
             } for player in players]
         })
 

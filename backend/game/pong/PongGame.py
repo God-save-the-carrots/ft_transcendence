@@ -48,7 +48,11 @@ class PongGame(Game):
         objects = list(map(lambda x: x.json(), self.object_list))
         players = []
         for user in self.players:
-            players.append({"intra_id": user.intra_id,"unit_id": user.data.unit_id})
+            players.append({
+                "intra_id": user.intra_id,
+                "unit_id": user.data.unit_id,
+                "alias": user.alias,
+            })
         init_data = {"type": "init", "objects": objects, "players": players}
         await self.broadcast(init_data)
         await self.broadcast_score()
@@ -95,6 +99,7 @@ class PongGame(Game):
             await self.onfinish(self, [{
                 "intra_id": player.intra_id,
                 "photo_id": player.photo_id,
+                "alias": player.alias,
                 "score": player.data.score,
                 "hit": player.data.hit,
             } for player in self.players])
@@ -219,6 +224,7 @@ class PongGame(Game):
         scores = [{
             "unit_id": player.data.unit_id,
             "intra_id": player.intra_id,
+            "alias": player.alias,
             "score": player.data.score,
         } for player in self.players]
         await self.broadcast({

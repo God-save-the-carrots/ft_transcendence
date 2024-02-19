@@ -12,8 +12,8 @@ async def accept(websocket: WebSocketServerProtocol):
     global lobby
     print(websocket.id, "accept:", websocket.request_headers.get("Origin"), websocket.path)
     try:
-        intra_id, game_type = await auth(websocket)
-        user = User(websocket, intra_id, game_type)
+        intra_id, game_type, alias = await auth(websocket)
+        user = User(websocket, intra_id, game_type, alias)
         lobby.join_lobby(user)
     except asyncio.exceptions.CancelledError:
         print(websocket.id, "timeout")
@@ -26,7 +26,7 @@ async def accept(websocket: WebSocketServerProtocol):
 async def auth(websocket):
     raw_info = await asyncio.wait_for(websocket.recv(), timeout=10)
     info = json.loads(raw_info)
-    token, game_type = (info.get("token"), info.get("game"))
+    token, game_type, alias = (info.get("token"), info.get("game"), info.get("data").get("alias"))
     if token == None:
         raise "err"
     if game_type == None or lobby.is_valid_game_type(game_type) == False:
@@ -34,7 +34,7 @@ async def auth(websocket):
     print(websocket.id, "token:", token) # TODO: jwt validate check
     await websocket.send(json.dumps({"type":"auth", "status":"success"})) # TODO: response jwt check result
     intra_id = token # TODO: get intra_id from jwt
-    return (intra_id, game_type)
+    return (intra_id, game_type, alias)
 
 async def listen_port(port):
     global lobby

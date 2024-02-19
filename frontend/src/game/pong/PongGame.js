@@ -43,6 +43,7 @@ export default class PongGame extends NetworkScene {
     this.scoreboards = {};
     this.raycaster = new THREE.Raycaster();
     this.infoCallbacks = [];
+    this.alias;
     this.loadMenu();
     this.setOnmessage('ready', this.#netReady.bind(this));
     this.setOnmessage('match', this.#netMatch.bind(this));
@@ -59,7 +60,7 @@ export default class PongGame extends NetworkScene {
     this.loadDefaultScene();
     const ready = (type) => {
       this.loadReady();
-      this.waitQ(this.token, type);
+      this.waitQ(this.token, type, {alias: this.alias});
     };
     this.addGameObject(this.#createObject('button', {
       position: {x: -7, y: 0, z: 0},
@@ -271,7 +272,7 @@ export default class PongGame extends NetworkScene {
 
       // rotate scoreboards
       for (const intraId in this.scoreboards) {
-        if (Object.hasOwn(this.scoreboards, key) == false) continue;
+        if (Object.hasOwn(this.scoreboards, intraId) == false) continue;
         const scoreboard = this.scoreboards[intraId];
         scoreboard.setRotationFromAxisAngle(zaxis, angle);
       }
@@ -364,5 +365,9 @@ export default class PongGame extends NetworkScene {
         }
       }
     });
+  }
+
+  setAlias(alias) {
+    this.alias = alias;
   }
 }
