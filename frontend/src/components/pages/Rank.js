@@ -16,7 +16,7 @@ export default class Rank extends Component {
     ).then((x) => x.json());
     const img = `/public/assets/profile/${data.data[0].user.photo_id}.png`;
     const intra_id = `${data.data[0].user.intra_id}`;
-    const msg = `${data.data[0].message}`;
+    const msg = `${data.data[0].user.message}`;
     const rating = `${data.data[0].rating}`;
 
     const img1 = `/public/assets/profile/${data.data[1].user.photo_id}.png`;
