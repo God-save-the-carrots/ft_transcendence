@@ -36,9 +36,10 @@ class Command(BaseCommand):
                         end_time = end_time
                     )
 
+                    first_player_user = User.objects.get(intra_id='dummy1')
+                    second_player_user = User.objects.get(intra_id='dummy2')
+
                     for index in range(0, 2):
-                        first_player_user = User.objects.get(intra_id='dummy1')
-                        second_player_user = User.objects.get(intra_id='dummy2')
                         if index == 0:
                             rank = 1
                             score = 10
@@ -48,7 +49,7 @@ class Command(BaseCommand):
                             score = random.randint(1, 9)
                             user_id = second_player_user
 
-                        pong = Pong.objects.create(
+                        Pong.objects.create(
                             game_session_id=game_session,
                             user_id=user_id,
                             rank=rank,
@@ -67,27 +68,27 @@ class Command(BaseCommand):
                     )
 
                     if index == 1:
-                        first_player_rank = 1
-                        second_player_rank = 3
                         first_player_user = User.objects.get(intra_id='dummy1')
+                        first_player_rank = 1
                         second_player_user = User.objects.get(intra_id='dummy3')
+                        second_player_rank = 3
                     else:
-                        first_player_rank = 2
-                        second_player_rank = 4
                         first_player_user = User.objects.get(intra_id='dummy2')
+                        first_player_rank = 2
                         second_player_user = User.objects.get(intra_id='dummy4')
+                        second_player_rank = 4
 
                     for index in range(0, 2):
                         if index == 0:
-                            pong.rank = first_player_rank
-                            pong.score = 10
-                            pong.user_id = first_player_user
+                            rank = first_player_rank
+                            score = 10
+                            user_id = first_player_user
                         else:
-                            pong.rank = second_player_rank
-                            pong.score = random.randint(1, 9)
-                            pong.user_id = second_player_user
+                            rank = second_player_rank
+                            score = random.randint(1, 9)
+                            user_id = second_player_user
 
-                        pong = Pong.objects.create(
+                        Pong.objects.create(
                             game_session_id=game_session,
                             user_id=user_id,
                             rank=rank,
