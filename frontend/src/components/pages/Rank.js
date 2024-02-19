@@ -4,121 +4,51 @@ import Router from '../../core/Router.js';
 export default class Rank extends Component {
   _title;
   _params;
+  _my_css = '../../../public/assets/css/rank.css';
   constructor(params = null) {
     super(document.querySelector('#app'));
     this._title = 'Rank';
     this._params = params;
   }
+  async initState() {
+    return {
+      current_page: 1,
+    };
+  }
 
   async template() {
     const rank_api = `http://localhost/api/game/pong/rank/`;
-    const data = await fetch(rank_api,
+
+    const _current_page = this.state.current_page;
+    const data = await fetch(
+        rank_api + '?' + `page=${_current_page}&page_size=5`,
     ).then((x) => x.json());
-    const img = `/public/assets/profile/${data.data[0].user.photo_id}.png`;
-    const intra_id = `${data.data[0].user.intra_id}`;
-    const msg = `${data.data[0].user.message}`;
-    const rating = `${data.data[0].rating}`;
 
-    const img1 = `/public/assets/profile/${data.data[1].user.photo_id}.png`;
-    const intra_id1 = `${data.data[1].user.intra_id}`;
-    const msg1 = `${data.data[1].user.message}`;
-    const rating1 = `${data.data[1].rating}`;
-
-    const img2 = `/public/assets/profile/${data.data[2].user.photo_id}.png`;
-    const intra_id2 = `${data.data[2].user.intra_id}`;
-    const msg2 = `${data.data[2].user.message}`;
-    const rating2 = `${data.data[2].rating}`;
-
-    const img3 = `/public/assets/profile/${data.data[3].user.photo_id}.png`;
-    const intra_id3 = `${data.data[3].user.intra_id}`;
-    const msg3 = `${data.data[3].user.message}`;
-    const rating3 = `${data.data[3].rating}`;
-
-    const img4 = `/public/assets/profile/${data.data[4].user.photo_id}.png`;
-    const intra_id4 = `${data.data[4].user.intra_id}`;
-    const msg4 = `${data.data[4].user.message}`;
-    const rating4 = `${data.data[4].rating}`;
-    return `
-    <link rel="stylesheet" href="../../../public/assets/css/rank.css">
-    <div class="block-wrap">
-      <div class="title">RANKING</div>
-      <div class="content">
+    // TODO: block mine 로그인 연동하면 바꿔야 함
+    let html = '';
+    html += `
+      <link rel="stylesheet" href="${this._my_css}" type="text/css">
+      <link rel="stylesheet" href="../../../public/assets/css/Pagination.css" type="text/css">
+      <div class="block-wrap">
+        <div class="title">RANKING</div>
         <li class="block mine">
           <span class="rank">1</span>
           <div class="space"></div>
           <span class="profile">
-            <img src="${img}" alt="profile-image">
+            <img src="/public/assets/profile/1.png" alt="profile-image">
           </span>
-          <span class="username">${intra_id}</span>
-          <span class="msg">${msg}</span>
-          <span class="score">${rating}</span>
+          <span class="username">1</span>
+          <span class="msg">하드코딩해서 바꿔야 함</span>
+          <span class="score">1111</span>
         </li>
-        <ul class="block-list">
-          <li class="block">
-              <a href="/user/${intra_id}" data-link>
-              <span class="rank">1</span>
-              <div class="space"></div>
-              <span class="profile">
-                <img src="${img}" alt="profile-image">
-              </span>
-              <span class="username">${intra_id}</span>
-              <span class="msg">${msg}</span>
-              <span class="score">${rating}</span>
-            </a>
-          </li>
-          <li class="block">
-              <a href="/user/${intra_id1}" data-link>
-              <span class="rank">2</span>
-              <div class="space"></div>
-              <span class="profile">
-                <img src="${img1}" alt="profile-image">
-              </span>
-              <span class="username">${intra_id1}</span>
-              <span class="msg">${msg1}</span>
-              <span class="score">${rating1}</span>
-            </a>
-          </li>
-          <li class="block">
-              <a href="/user/${intra_id2}" data-link>
-              <span class="rank">3</span>
-              <div class="space"></div>
-              <span class="profile">
-                <img src="${img2}" alt="profile-image">
-              </span>
-              <span class="username">${intra_id2}</span>
-              <span class="msg">${msg2}</span>
-              <span class="score">${rating2}</span>
-            </a>
-          </li>
-          <li class="block">
-              <a href="/user/${intra_id3}" data-link>
-              <span class="rank">4</span>
-              <div class="space"></div>
-              <span class="profile">
-                <img src="${img3}" alt="profile-image">
-              </span>
-              <span class="username">${intra_id3}</span>
-              <span class="msg">${msg3}</span>
-              <span class="score">${rating3}</span>
-            </a>
-          </li>
-          <li class="block">
-              <a href="/user/${intra_id4}" data-link>
-              <span class="rank">5</span>
-              <div class="space"></div>
-              <span class="profile">
-                <img src="${img4}" alt="profile-image">
-              </span>
-              <span class="username">${intra_id4}</span>
-              <span class="msg">${msg4}</span>
-              <span class="score">${rating4}</span>
-            </a>
-          </li>
-        </ul>
+        ${createRakingContents(_current_page, data.data)}
       </div>
-    </div>
     `;
+    html += createPagination(_current_page, data.last_page_index);
+    return html;
   }
+  async mounted() {}
+
   setEvent() {
     this.addEvent('click', '[data-link]', async (e) => {
       const parent = e.target.parentElement;
@@ -133,6 +63,92 @@ export default class Rank extends Component {
         await Router.navigateTo(href);
       }
     });
+    this.addEvent('click', '.page-item', async (e) => {
+      if (isNaN(e.target.dataset.page)) return;
+      if (e.target.dataset.page != this.state.current_page) {
+        this.state.current_page = e.target.dataset.page;
+      }
+    });
   }
-  async mounted() { }
+}
+
+function createRakingContents(page, jsonData) {
+  let cnt = 0;
+  let list_HTML = `
+    <div class="content">
+      <ul class="block-list">
+  `;
+  for (const item of jsonData) {
+    cnt += 1;
+    const user = item.user; // data.data[0].user
+    const intra_id = user.intra_id;
+    const msg = user.message;
+    const photo = `/public/assets/profile/${user.photo_id}.png`;
+    const rating = item.rating;
+    const rank = cnt + ((page - 1) * 5);
+    list_HTML += `
+      <li class="block">
+        <a href="/user/${intra_id}" data-link>
+          <span class="rank">${rank}</span>
+          <div class="space"></div>
+          <span class="profile">
+            <img src="${photo}" alt="profile-image">
+          </span>
+          <span class="username">${intra_id}</span>
+          <span class="msg">${msg}</span>
+          <span class="score">${rating}</span>
+        </a>
+      </li>
+    `;
+  }
+  list_HTML += `
+      </ul>
+    </div>
+  `;
+  return list_HTML;
+}
+
+function createPagination(current, last) {
+  let list_HTML = `
+    <div class="pagination-outer">
+      <ul class="pagination pagination-circle">
+        <li class="page-item">
+          <a class="page-link" data-page=${1}><<</a>
+        </li>
+    `;
+  let min = Number(current) - 5;
+  if (min < 1) {
+    min = 1;
+  }
+  list_HTML += `
+  <li class="page-item">
+  <a class="page-link" data-page=${current - 5}><</a>
+  </li>
+  `;
+  for (let i = Number(current); i <= Number(current) + 4; i ++) {
+    console.log(i, Number(current) + 2);
+    let index;
+    if (i > last) continue;
+    else index = i;
+    list_HTML += `
+    <li class="page-item">
+    <a class="page-link" data-page=${index}>${index}</a>
+    </li>
+    `;
+  }
+  let max = Number(current) + 5;
+  if (max > last) {
+    max = last;
+  }
+  list_HTML += `
+        <li class="page-item">
+          <a class="page-link" data-page=${max}>></a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" data-page=${last}>>></a>
+        </li>
+      </ul>
+    </div>
+    `;
+  return list_HTML;
 }
