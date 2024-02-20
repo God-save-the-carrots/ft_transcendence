@@ -47,6 +47,7 @@ export default class Game extends Component {
     `;
   }
   async mounted() {
+    console.log(this.state.sessionResults);
     const gameDiv = document.getElementById('game-content');
     if (this.state._alias !== null) {
       this.game.setAlias(this.state._alias);
@@ -57,7 +58,6 @@ export default class Game extends Component {
       console.log(tab_app);
       new GameTab(tab_app);
       const resultDiv = document.getElementById('game-test');
-      console.log(this.state.sessionResults);
       new GameRound(resultDiv, this.state.sessionResults);
     } else {
       const child = new GameAlias(gameDiv);
