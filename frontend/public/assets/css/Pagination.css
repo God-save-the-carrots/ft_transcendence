@@ -30,6 +30,11 @@
     transition: all 0.7s ease 0s;
 }
 
+.current-page {
+    color: black !important;
+    background-color: white !important;
+}
+
 .pagination li a.page-link:hover,
 .pagination li a.page-link:focus,
 .pagination li.active a.page-link:hover,
