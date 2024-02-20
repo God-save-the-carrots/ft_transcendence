@@ -49,6 +49,7 @@ export default class Game extends Component {
   async mounted() {
     const gameDiv = document.getElementById('game-content');
     if (this.state._alias !== null) {
+      this.game.setAlias(this.state._alias);
       gameDiv.appendChild(this.game.getRenderer().domElement);
       const tab_app = this.$target.querySelector(
           '[data-component="tab_app"]',
@@ -56,13 +57,13 @@ export default class Game extends Component {
       console.log(tab_app);
       new GameTab(tab_app);
       const resultDiv = document.getElementById('game-test');
+      console.log(this.state.sessionResults);
       new GameRound(resultDiv, this.state.sessionResults);
     } else {
       const child = new GameAlias(gameDiv);
       child.props = (text) => {
         this.state._alias = text;
       };
-      console.log(this.state._alias);
       child.render();
     }
   }
