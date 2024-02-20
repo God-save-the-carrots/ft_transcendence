@@ -112,41 +112,52 @@ function createPagination(current, last) {
   let list_HTML = `
     <div class="pagination-outer">
       <ul class="pagination pagination-circle">
-        <li class="page-item">
-          <a class="page-link" data-page=${1}><<</a>
-        </li>
     `;
-  let min = Number(current) - 5;
-  if (min < 1) {
-    min = 1;
-  }
-  list_HTML += `
-  <li class="page-item">
-  <a class="page-link" data-page=${current - 5}><</a>
-  </li>
-  `;
-  for (let i = Number(current); i <= Number(current) + 4; i ++) {
-    console.log(i, Number(current) + 2);
-    let index;
-    if (i > last) continue;
-    else index = i;
+  const start = (current % 5 == 0 ?
+    parseInt(current / 5) - 1 : parseInt(current / 5)) * 5 + 1;
+  const end = start + 5 < last ? start + 5 : last + 1;
+  const min = start - 5 > 0 ? start - 5 : 1;
+  const max = start + 5 < last ? start + 5 : last + 1;
+  if (current != 1) {
     list_HTML += `
-    <li class="page-item">
-    <a class="page-link" data-page=${index}>${index}</a>
-    </li>
+      <li class="page-item">
+        <a class="page-link" data-page=1><<</a>
+      </li>
+      `;
+  }
+  if (start != 1) {
+    list_HTML += `
+      <li class="page-item">
+        <a class="page-link" data-page=${min}><</a>
+      </li>
+      `;
+  }
+  for (let i = start; i < end; i++) {
+    let class_name = 'page-link';
+    if (i == current) {
+      class_name += ' current-page';
+    }
+    list_HTML += `
+      <li class="page-item">
+        <a class="${class_name}" data-page=${i}>${i}</a>
+      </li>
     `;
   }
-  let max = Number(current) + 5;
-  if (max > last) {
-    max = last;
+  if (end != last + 1) {
+    list_HTML += `
+      <li class="page-item">
+        <a class="page-link" data-page=${max}>></a>
+      </li>
+      `;
+  }
+  if (current != last) {
+    list_HTML += `
+      <li class="page-item">
+        <a class="page-link" data-page=${last}>>></a>
+      </li>
+      `;
   }
   list_HTML += `
-        <li class="page-item">
-          <a class="page-link" data-page=${max}>></a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" data-page=${last}>>></a>
-        </li>
       </ul>
     </div>
     `;
