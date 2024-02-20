@@ -1,7 +1,6 @@
 import Component from '../../core/Component.js';
 import PongGame from '../../game/pong/PongGame.js';
 import GameRound from './GameRound.js';
-import GameTab from './GameTab.js';
 import GameAlias from './GameAlias.js';
 
 export default class Game extends Component {
@@ -14,11 +13,8 @@ export default class Game extends Component {
     this.game = null;
     this._title = 'Game';
     const randomUserToken = Math.random().toString(36).substring(2, 7);
-    // const ratio = 1 / 2;
-    // const width = window.innerWidth - 100;
-    // const height = width * ratio;
-    const width = 1000;
-    const height = 600;
+    const width = 960;
+    const height = 530;
     this.game = new PongGame(width, height, randomUserToken);
     this.game.subscribeInfo((result) => {
       this.state.sessionResults = [...this.state.sessionResults, result];
@@ -27,7 +23,7 @@ export default class Game extends Component {
   async initState() {
     return {
       sessionResults: [],
-      _alias: null,
+      _alias: 'hello',
     };
   }
   async template() {
@@ -35,32 +31,30 @@ export default class Game extends Component {
       <link rel="stylesheet" href="${this._my_css}" type="text/css" />
       <div class="game-wrap">
         <div class="content">
+          <div id="game-alias"></div>
           <div class="game">
-            <div id="game-content"></div>
+            <div id="game-content">
+              <div id="game-body"></div>
+              <div id="game-info"></div>
+            </div>
           </div>
-          <div class="tab">
-            <div class="tab-component" data-component="tab_app"></div>
-          </div>
-          <div id="game-test"></div>
         </div>
       </div>
     `;
   }
   async mounted() {
     console.log(this.state.sessionResults);
-    const gameDiv = document.getElementById('game-content');
+    const gameDiv = document.getElementById('game-body');
     if (this.state._alias !== null) {
       this.game.setAlias(this.state._alias);
       gameDiv.appendChild(this.game.getRenderer().domElement);
-      const tab_app = this.$target.querySelector(
-          '[data-component="tab_app"]',
-      );
-      console.log(tab_app);
-      new GameTab(tab_app);
-      const resultDiv = document.getElementById('game-test');
+      const resultDiv = document.getElementById('game-info');
       new GameRound(resultDiv, this.state.sessionResults);
     } else {
-      const child = new GameAlias(gameDiv);
+      const aliasDiv = document.getElementById('game-alias');
+      const child = new GameAlias(aliasDiv);
+      const gameContentDiv = document.getElementById('game-content');
+      gameContentDiv.remove();
       child.props = (text) => {
         this.state._alias = text;
       };
