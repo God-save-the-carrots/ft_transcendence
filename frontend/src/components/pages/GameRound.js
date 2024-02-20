@@ -18,14 +18,27 @@ export default class GameRound extends Component {
             <div class='card'>
               <img class="avatar card-front" alt="Avatar"
                 src="/public/assets/profile/1.png" />
+              <h class='card-back'>DummyDummy1</h>
+            </div>
+            <div class='card'>
+              <img class="avatar card-front" alt="Avatar"
+                src="/public/assets/profile/2.png" />
+              <h class='card-back'>
+                DummyDummy2<br>
+                5200pt<br>
+              </h>
+            </div>
+            <div class='card'>
+              <img class="avatar card-front" alt="Avatar"
+                src="/public/assets/profile/3.png" />
               <h class='card-back'>Jinam</h>
             </div>
-            <img class="avatar" alt="Avatar"
-            src="/public/assets/profile/2.png" />
-            <img class="avatar" alt="Avatar"
-            src="/public/assets/profile/3.png" />
-            <img class="avatar" alt="Avatar"
-            src="/public/assets/profile/4.png" />
+            <div class='card'>
+              <img class="avatar card-front" alt="Avatar"
+                src="/public/assets/profile/4.png" />
+              <h class='card-back'>Jinam1</h>
+            </div>
+
           </div>
         </div>
         <div class='info-body'>
