@@ -137,7 +137,7 @@ async function createHistoryContents(jsonData) {
           src="/public/assets/profile/${r2.round[0].user.photo_id}.png" />
           <div class="item-time">
             <div>TIME</div>
-            <p> 01:30</p>
+            <p>${convertSecondsToMMSS(r2.second)}</p>
           </div>
           <img class="avatar" alt="Avatar"
           src="/public/assets/profile/${r2.round[1].user.photo_id}.png" />
@@ -158,7 +158,7 @@ async function createHistoryContents(jsonData) {
             src="/public/assets/profile/${r1_1.round[0].user.photo_id}.png" />
             <div class="item-time">
               <div>TIME</div>
-              <p> 01:30</p>
+              <p>${convertSecondsToMMSS(r1_1.second)}</p>
             </div>
             <img class="avatar" alt="Avatar"
             src="/public/assets/profile/${r1_1.round[1].user.photo_id}.png" />
@@ -175,7 +175,7 @@ async function createHistoryContents(jsonData) {
               src="/public/assets/profile/${r1_2.round[0].user.photo_id}.png" />
               <div class="item-time">
                 <div>TIME</div>
-                <p> 01:30</p>
+                <p>${convertSecondsToMMSS(r1_2.second)}</p>
               </div>
               <img class="avatar" alt="Avatar"
               src="/public/assets/profile/${r1_2.round[1].user.photo_id}.png" />
@@ -192,4 +192,13 @@ async function createHistoryContents(jsonData) {
   // body
   }
   return list_HTML;
+}
+
+function convertSecondsToMMSS(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  let second = seconds % 60;
+  if (second < 10) {
+    second = '0' + second;
+  }
+  return minutes + ':' + second;
 }
