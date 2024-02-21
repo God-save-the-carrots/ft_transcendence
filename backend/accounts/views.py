@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User, UserRefreshToken, Profile
 from .serializers import *
+from rest_framework import status
 
 import requests
 from django.conf import settings
@@ -17,26 +18,20 @@ from urllib.parse import urlencode
 
 # login
 class LoginAPIView(APIView):
-    def get(self, request):
+
+    def post(self, request):
         client_id = settings.CLIENT_ID
         client_secret = settings.CLIENT_SECRET
         redirect_uri = settings.REDIRECT_URI
 
-        login_serializer = LoginSerializer(data=request.query_params)
-        if not login_serializer.is_valid():
-            query_params = {
-                'client_id': client_id,
-                'redirect_uri': redirect_uri,
-                'response_type': 'code',
-            }
-            return redirect(f"https://api.intra.42.fr/oauth/authorize?{urlencode(query_params)}")
+        code = request.data.get('code')
 
         token = requests.post('https://api.intra.42.fr/oauth/token', data={
             'client_id': client_id,
             'client_secret': client_secret,
             'redirect_uri': redirect_uri,
             'grant_type': 'authorization_code',
-            'code': login_serializer.validated_data['code'],
+            'code': code,
         })
         if token.status_code != 200:
             return Response({"error": "Failed to get token"}, status=404)
@@ -58,7 +53,12 @@ class LoginAPIView(APIView):
         refresh_token_model, created = UserRefreshToken.objects.get_or_create(user_id=user_instance_model)
         refresh_token_model.refresh_token = str(refresh)
         refresh_token_model.save()
-        return Response({'access_token': str(access_token)}, status=200)
+
+        response = {
+            'access_token': str(access_token),
+            'refresh_token': str(refresh)
+        }
+        return Response(response, status=200)
 
 # logout
 class LogoutAPIView(APIView):
