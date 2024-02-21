@@ -17,6 +17,10 @@ export default class Game extends Component {
     const height = 530;
     this.game = new PongGame(width, height, randomUserToken);
     this.game.subscribeInfo((result) => {
+      if (result.cause == 'end_game_confirm'){
+        this.state._alias = null;
+        return ;
+      }
       this.state.sessionResults = [...this.state.sessionResults, result];
     });
   }
@@ -48,9 +52,15 @@ export default class Game extends Component {
     if (this.state._alias !== null) {
       this.game.setAlias(this.state._alias);
       gameDiv.appendChild(this.game.getRenderer().domElement);
-      const resultDiv = document.getElementById('game-info');
-      new GameRound(resultDiv, this.state.sessionResults);
+      if (this.state.sessionResults.length == 0) {
+        const gameContentDiv = document.getElementById('game-info');
+        gameContentDiv.remove();
+      } else {
+        const resultDiv = document.getElementById('game-info');
+        new GameRound(resultDiv, this.state.sessionResults);
+      }
     } else {
+      this.state.sessionResults = [];
       const aliasDiv = document.getElementById('game-alias');
       const child = new GameAlias(aliasDiv);
       const gameContentDiv = document.getElementById('game-content');
