@@ -28,8 +28,6 @@ export default class LoadingCircle extends GameObject {
     const geometry = new THREE.CircleGeometry(100, 100, Math.PI * 0.5, angle);
     const material = new THREE.MeshPhongMaterial({
       color: this.color,
-      transparent: true,
-      opacity: 0.2,
     });
     this.circle = new THREE.Mesh(geometry, material);
     this.add(this.circle);
