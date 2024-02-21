@@ -1,8 +1,9 @@
+@import "./userHistoryTournament.css";
 .info-card {
   margin: auto;
   /* margin-top: 1%; */
   width: 95%;
-  height: 90%;
+  height: 100%;
   /* background-color: red; */
 }
 
@@ -29,16 +30,22 @@
   width: 60px;
   height: 60px;
   border-radius: 20%;
-  background-color: white;
 }
+
 .card {
   display: inline-grid;
-  color: black;
+  color: white;
   transition: transform 0.5s;
   transform: perspective(500px) rotateY(0deg);
   transform-style: preserve-3d;
   border-radius: 20% !important;
-  color: white !important;
+  background-color: rgba(191, 85, 236, 0.5)!important;
+  border-color: rgba(255, 150, 255, 0.3)!important;
+  /* border-color: rgba(255, 255, 255, 0.8)!important; */
+}
+
+.card > h {
+  padding-top: 25%;
 }
 
 .card:active {
@@ -67,4 +74,13 @@
   overflow: visible;
   white-space: nowrap;
   text-align: center;
+}
+
+.item-card {
+  background-color: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.item-time > div {
+  background-color: rgba(191, 85, 236, 0.8)!important;
 }

@@ -3,19 +3,20 @@ body {
   font-family: "Retro Gaming";
   width: 100%;
   height: 100vh;
-  /* overflow: hidden; */
-  /* touch-action: none; */
+  -ms-overflow-style: none;
+  overflow: hidden;
+  touch-action: none;
 }
 .game-wrap {
   width: 99vw;
-  height: 90vh;
+  height: 99vh;
   background-image: url("/public/assets/bg.jpeg");
   background-repeat : no-repeat;
   background-size : cover;
   align-items: center;
 }
 .content {
-  margin: auto;
+  /* margin: auto; */
   width: 100%;
   height: 100%;
 }
@@ -27,24 +28,10 @@ body {
 
 #game-content {
   margin: auto;
-  margin-top: 3%;
+  margin-top: 2%;
   width: 1000px;
-  height: 95%;
+  height: 90%;
   border-radius: 30px;
-  /* background-color: rgba(255,255,192,0.1); */
-
-  /* background-color: rgba(255, 255, 255, 0.1); */
-  /* backdrop-filter: blur(10px); */
-  /* box-shadow: 2px 7px 15px 8px rgba(0,0,0,0.3); */
-
-  /* background: rgba(255, 255, 255, 0.32); */
-  /* border-radius: 16px; */
-  /* box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); */
-  /* backdrop-filter: blur(5.5px); */
-  /* -webkit-backdrop-filter: blur(5.0px); */
-  /* /* border: 1px solid rgba(255, 255, 255, 0.78); */ */
-  /* border: 1px solid rgba(255, 255, 255, 0.11); */
-  /*  */
 
   color: #fff;
   background-color: rgba(255,255,255,0.03);
@@ -64,21 +51,6 @@ body {
 
 #game-info {
   width : 100%;
-  height : 50%;
-}
-.block {
-  width: 100%;
-  height: 70px;
-  /* height: 70px; */
-  background-color: #FFF5DE;
-  margin: 2% 0%;
-  padding: 0.3% 4%;
-  display: flex;
-  align-items: center;
-  font-size: 24px;
+  height : 48%;
 }
 
-.block > .content {
-  width:  100%;
- 
-}
