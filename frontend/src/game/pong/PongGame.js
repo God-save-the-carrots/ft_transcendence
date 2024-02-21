@@ -187,8 +187,8 @@ export default class PongGame extends NetworkScene {
     const rect = new THREE.Vector2();
     this.camera.getViewSize(this.cameraHolder.position.z, rect);
     const ratio = {
-      x: screenX / this.renderer.domElement.width,
-      y: screenY / this.renderer.domElement.height,
+      x: screenX / this.currentWidth,
+      y: screenY / this.currentHeight,
     };
     return new THREE.Vector2(
         ratio.x * rect.x - rect.x * .5,
@@ -363,6 +363,24 @@ export default class PongGame extends NetworkScene {
     this.key = {};
     window.addEventListener('keydown', (e) => this.key[e.key] = true);
     window.addEventListener('keyup', (e) => this.key[e.key] = false);
+    window.addEventListener('keydown', (e) => {
+      if (e.key != 'f') return;
+      this.toggleFullScreen();
+    });
+    window.addEventListener('resize', (e) => {
+      if (this.getRenderer()?.domElement == null) return;
+      const elem = this.getRenderer().domElement;
+      const isFullScreen = document.fullscreenElement == elem;
+      this.currentWidth = isFullScreen ? window.innerWidth : this.width;
+      this.currentHeight = isFullScreen ? window.innerHeight : this.height;
+      this.camera.left = -(this.currentWidth / this.currentHeight);
+      this.camera.right = this.currentWidth / this.currentHeight;
+      this.camera.updateProjectionMatrix();
+      this.getRenderer().setSize(this.currentWidth, this.currentHeight);
+      if (this.composer != null) {
+        this.composer.setSize(this.currentWidth, this.currentHeight);
+      }
+    });
     const action = {move: 0};
     this.addRenderHook(() => {
       const pos = this.key['ArrowLeft'] || this.key['a'] ? 1 : 0;
@@ -375,6 +393,13 @@ export default class PongGame extends NetworkScene {
         this.send({type: 'move', data: action});
       }
     });
+  }
+
+  toggleFullScreen() {
+    const elem = this.getRenderer()?.domElement;
+    if (elem == null) return;
+    if (document.fullscreenElement == null) elem.requestFullscreen();
+    else if (document.exitFullscreen) document.exitFullscreen();
   }
 
   setAlias(alias) {
