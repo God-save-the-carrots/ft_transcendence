@@ -1,5 +1,5 @@
 import * as THREE from '../../threejs/three.js';
-import { GameObject } from '../GameObject.js';
+import {GameObject} from '../GameObject.js';
 import Text from '../common/Text.js';
 
 export default class Scoreboard extends GameObject {
@@ -11,14 +11,14 @@ export default class Scoreboard extends GameObject {
       name: '',
       score: 0,
       ...params,
-    }
+    };
 
     super(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial());
     this.position.set(params.position.x, params.position.y, params.position.z);
     this.nameText = new Text({text: params.name, opacity: params.opacity});
     this.scoreText = new Text({text: params.score, opacity: params.opacity});
     this.scoreText.position.set(0, -10, 0);
-    
+
     const group = new THREE.Group();
     group.add(this.nameText);
     group.add(this.scoreText);

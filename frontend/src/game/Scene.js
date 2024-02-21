@@ -5,7 +5,7 @@ import {EffectComposer} from '../threejs/postprocessing/EffectComposer.js';
 import {RenderPass} from '../threejs/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from '../threejs/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from '../threejs/postprocessing/OutputPass.js';
-import {color1} from "../game/preset.js";
+import {color1} from '../game/preset.js';
 
 const url = `ws://${window.location.hostname}:4444`;
 

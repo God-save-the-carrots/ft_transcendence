@@ -12,7 +12,7 @@ import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
 import Shutter from '../common/Shutter.js';
-import {color2, color3, color4} from "../preset.js";
+import {color2, color3, color4} from '../preset.js';
 
 export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
@@ -101,7 +101,7 @@ export default class PongGame extends NetworkScene {
       position: {x: 0, y: 0, z: 0},
       color: color4,
       icon: 'back.png',
-      size: {radius:8},
+      size: {radius: 8},
       callback: async () => {
         const success = await this.cancelWaitQ();
         if (success) this.loadMenu();
@@ -127,7 +127,7 @@ export default class PongGame extends NetworkScene {
       position: {x: 0, y: 0, z: 0},
       color: color4,
       icon: 'exit.png',
-      size: {radius:8},
+      size: {radius: 8},
       callback: async () => {
         this.#netInfo({
           'type': 'info',
