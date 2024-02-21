@@ -33,6 +33,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.intra_id} ({self.pk})"
 
 
+class UserRefreshToken(models.Model):
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    refresh_token = models.CharField(max_length=512, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"RefreshToken for {self.user.intra_id}"
+
+
 # profile : User와 1대1로 매칭이되는 정보 (변하는 정보)
 class Profile(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)

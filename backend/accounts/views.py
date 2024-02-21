@@ -2,12 +2,10 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponseForbidden, HttpResponseNotFound
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-from .models import User, Profile
+from .models import User, UserRefreshToken, Profile
 from .serializers import *
 
 import requests
@@ -51,15 +49,16 @@ class LoginAPIView(APIView):
         if me.status_code != 200:
             return Response({"error": "Failed to get 42 info"}, status=400)
         user_info = me.json()
-        user_instance, created = User.objects.get_or_create(intra_id=user_info['login'])
+        user_instance_model, created = User.objects.get_or_create(intra_id=user_info['login'])
 
-        refresh = TokenObtainPairSerializer.get_token(user_instance)
-        refresh['intra_id'] = user_instance.intra_id
-        response = {
-            'refresh_token': str(refresh),
-            'access_token': str(refresh.access_token),
-        }
-        return Response(response, status=200)
+        refresh = TokenObtainPairSerializer.get_token(user_instance_model)
+        refresh['intra_id'] = user_instance_model.intra_id
+        access_token = refresh.access_token
+
+        refresh_token_model, created = UserRefreshToken.objects.get_or_create(user_id=user_instance_model)
+        refresh_token_model.refresh_token = str(refresh)
+        refresh_token_model.save()
+        return Response({'access_token': str(access_token)}, status=200)
 
 # logout
 class LogoutAPIView(APIView):

@@ -3,6 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from django.utils import timezone
 from .models import Pong, GameSession, Tournament
@@ -58,6 +60,9 @@ class PongAPIView(APIView):
 
 # /rank/
 class RankAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         try:
             game_type = request.GET.get('game_type', None)
@@ -86,6 +91,9 @@ class RankAPIView(APIView):
 
 # /matches/<int:match_id>/
 class MatchesAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, match_id):
         try:
             tournament = Tournament.objects.get(id=match_id)
