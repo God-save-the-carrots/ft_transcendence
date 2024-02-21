@@ -5,6 +5,7 @@ export default class Rank extends Component {
   _title;
   _params;
   _my_css = '../../../public/assets/css/rank.css';
+  _pagination_css = '../../../public/assets/css/Pagination.css';
   constructor(params = null) {
     super(document.querySelector('#app'));
     this._title = 'Rank';
@@ -28,19 +29,9 @@ export default class Rank extends Component {
     let html = '';
     html += `
       <link rel="stylesheet" href="${this._my_css}" type="text/css">
-      <link rel="stylesheet" href="../../../public/assets/css/Pagination.css" type="text/css">
+      <link rel="stylesheet" href="${this._pagination_css}" type="text/css">
       <div class="block-wrap">
-        <div class="title">RANKING</div>
-        <li class="block mine">
-          <span class="rank">1</span>
-          <div class="space"></div>
-          <span class="profile">
-            <img src="/public/assets/profile/1.png" alt="profile-image">
-          </span>
-          <span class="username">1</span>
-          <span class="msg">하드코딩해서 바꿔야 함</span>
-          <span class="score">1111</span>
-        </li>
+        ${createMyRanking()}
         ${createRakingContents(_current_page, data.data)}
       </div>
     `;
@@ -70,6 +61,23 @@ export default class Rank extends Component {
       }
     });
   }
+}
+
+function createMyRanking() {
+  let list_HTML = `
+    <div class="title">RANKING</div>
+    <li class="block mine">
+      <span class="rank">1</span>
+      <div class="space"></div>
+      <span class="profile">
+        <img src="/public/assets/profile/1.png" alt="profile-image">
+      </span>
+      <span class="username">1</span>
+      <span class="msg">하드코딩해서 바꿔야 함</span>
+      <span class="score">1111</span>
+    </li>
+  `;
+  return list_HTML;
 }
 
 function createRakingContents(page, jsonData) {
