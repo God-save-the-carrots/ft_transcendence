@@ -13,6 +13,7 @@ export default class LoadingCircle extends GameObject {
     this.updateCircle(0);
     this.timer = params.timer;
     this.current = 0;
+    this.color = params.color;
   }
 
   update(delta) {
@@ -26,7 +27,7 @@ export default class LoadingCircle extends GameObject {
     const angle = Math.PI * 2 * percent;
     const geometry = new THREE.CircleGeometry(100, 100, Math.PI * 0.5, angle);
     const material = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
+      color: this.color,
       transparent: true,
       opacity: 0.2,
     });

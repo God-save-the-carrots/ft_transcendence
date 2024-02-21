@@ -11,6 +11,7 @@ import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
 import Shutter from '../common/Shutter.js';
+import {color2, color3} from "../preset.js";
 
 export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
@@ -85,6 +86,7 @@ export default class PongGame extends NetworkScene {
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
     this.addGameObjectTo(this.#createObject('shutter', {
+      color: color2,
       size: PongGame.SHUTTER_SIZE_LARGE,
       position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
     }), this.cameraHolder);
@@ -110,6 +112,7 @@ export default class PongGame extends NetworkScene {
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
     this.addGameObjectTo(this.#createObject('shutter', {
+      color: color2,
       size: PongGame.SHUTTER_SIZE_LARGE,
       position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
     }), this.cameraHolder);
@@ -138,6 +141,7 @@ export default class PongGame extends NetworkScene {
     this.#addTrackingMouseLight();
     this.#addButtonEvents();
     this.addGameObjectTo(this.#createObject('shutter', {
+      color: color2,
       size: PongGame.SHUTTER_SIZE_SMALL,
       position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
     }).setSize(PongGame.SHUTTER_SIZE_LARGE), this.cameraHolder);
@@ -213,7 +217,10 @@ export default class PongGame extends NetworkScene {
 
   #netReady(data) {
     const {timer} = data;
-    this.addGameObject(this.#createObject('timer', {timer}));
+    this.addGameObject(this.#createObject('timer', {
+      color: color3,
+      timer,
+    }));
   }
 
   #netMatch(data) {
@@ -279,6 +286,7 @@ export default class PongGame extends NetworkScene {
     }
 
     this.shutter = this.#createObject('shutter', {
+      color: color2,
       size: PongGame.SHUTTER_SIZE_SMALL,
       position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
     }).setSize(PongGame.SHUTTER_SIZE_HUGE);
@@ -309,6 +317,7 @@ export default class PongGame extends NetworkScene {
       this.loadDefaultScene();
       this.#addTrackingMouseLight();
       this.shutter = this.#createObject('shutter', {
+        color: color2,
         size: PongGame.SHUTTER_SIZE_LARGE,
         position: {x: 0, y: 0, z: PongGame.SHUTTER_HEIGHT},
       }).setSize(PongGame.SHUTTER_SIZE_SMALL);
