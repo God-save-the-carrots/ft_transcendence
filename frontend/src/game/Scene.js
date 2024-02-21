@@ -50,7 +50,7 @@ export class Scene extends THREE.Scene {
     );
     const bloomPass = new UnrealBloomPass(screenVector, 1.5, 0.4, 0.85);
     bloomPass.threshold = 0;
-    bloomPass.strength = 0;
+    bloomPass.strength = .125;
     bloomPass.radius = 0;
     this.composer.addPass(bloomPass);
 
