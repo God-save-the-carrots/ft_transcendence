@@ -295,7 +295,7 @@ export default class PongGame extends NetworkScene {
     this.addGameObjectTo(this.shutter, this.cameraHolder);
     this.addGameObject(this.#createObject('light', {
       position: {x: 0, y: 0, z: 42},
-      intensity: 100,
+      intensity: 500,
     }));
   }
 
