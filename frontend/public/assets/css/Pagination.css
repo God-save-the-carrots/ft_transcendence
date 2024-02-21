@@ -1,12 +1,17 @@
-
-.pagination-outer{
-    text-align: center; 
+.pagination-outer {
+    text-align: center;
 }
 
-.pagination{
+.pagination {
     display: inline-flex;
     position: relative;
+    -ms-user-select: none;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
+
 .pagination li a.page-link {
     text-align: center;
     color: white;
@@ -24,16 +29,23 @@
     z-index: 1!important;
     transition: all 0.7s ease 0s;
 }
+
+.current-page {
+    color: black !important;
+    background-color: white !important;
+}
+
 .pagination li a.page-link:hover,
 .pagination li a.page-link:focus,
 .pagination li.active a.page-link:hover,
-.pagination li.active a.page-link{
+.pagination li.active a.page-link {
     text-align: center;
     color: black;
     background: #D9D9D9;
     transform: rotate(360deg);
 }
-.pagination li a.page-link:before{
+
+.pagination li a.page-link:before {
     content: '';
     background: #D9D9D9;
     height: 100%;
@@ -48,9 +60,10 @@
     z-index: -1;
     transition: all 1.3s ease 0s;
 }
+
 .pagination li a.page-link:hover:before,
 .pagination li a.page-link:focus:before,
 .pagination li.active a.page-link:hover:before,
-.pagination li.active a.page-link:before{
+.pagination li.active a.page-link:before {
     transform: scale(1.25);
 }
