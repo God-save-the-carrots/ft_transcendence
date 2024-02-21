@@ -251,7 +251,7 @@ export default class PongGame extends NetworkScene {
     for (const player of data.players) {
       const unit = this.getNetworkObject(player.unit_id);
       this.scoreboards[player.intra_id] = new ScoreBoard({
-        name: player.intra_id,
+        name: player.alias,
         score: 0,
         opacity: 0.5,
         position: {
