@@ -1,5 +1,6 @@
 import * as THREE from '../../threejs/three.js';
-import Button from '../common/Button.js';
+import RectButton from '../common/RectButton.js';
+import CircleButton from '../common/CircleButton.js';
 import PointLight from '../common/PointLight.js';
 import {NetworkScene} from '../Scene.js';
 import Ball from './Ball.js';
@@ -11,7 +12,7 @@ import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
 import Shutter from '../common/Shutter.js';
-import {color2, color3} from "../preset.js";
+import {color2, color3, color4} from "../preset.js";
 
 export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
@@ -31,7 +32,8 @@ export default class PongGame extends NetworkScene {
       'player': Player,
       'wall': Wall,
       'ball': Ball,
-      'button': Button,
+      'rectButton': RectButton,
+      'circleButton': CircleButton,
       'light': PointLight,
       'text': Text,
       'icon': Icon,
@@ -63,7 +65,7 @@ export default class PongGame extends NetworkScene {
       this.loadReady();
       this.waitQ(this.token, type, {alias: this.alias});
     };
-    this.addGameObject(this.#createObject('button', {
+    this.addGameObject(this.#createObject('rectButton', {
       position: {x: -7, y: 0, z: 0},
       size: {width: 12, height: 12},
       color: 'lightpink',
@@ -71,7 +73,7 @@ export default class PongGame extends NetworkScene {
       buttonParam: 'pong',
       callback: ready,
     }));
-    this.addGameObject(this.#createObject('button', {
+    this.addGameObject(this.#createObject('rectButton', {
       position: {x: 7, y: 0, z: 0},
       size: {width: 12, height: 12},
       color: 'skyblue',
@@ -95,11 +97,11 @@ export default class PongGame extends NetworkScene {
   loadReady() {
     this.state = PongGame.STATE_WAIT;
     this.loadDefaultScene();
-    this.addGameObject(this.#createObject('button', {
+    this.addGameObject(this.#createObject('circleButton', {
       position: {x: 0, y: 0, z: 0},
-      color: 'gray',
-      icon: 'close.png',
-      size: {width: 12, height: 12},
+      color: color4,
+      icon: 'back.png',
+      size: {radius:8},
       callback: async () => {
         const success = await this.cancelWaitQ();
         if (success) this.loadMenu();
@@ -121,11 +123,11 @@ export default class PongGame extends NetworkScene {
   loadEndConfirm() {
     this.state = PongGame.STATE_END;
     this.loadDefaultScene();
-    this.addGameObject(this.#createObject('button', {
+    this.addGameObject(this.#createObject('circleButton', {
       position: {x: 0, y: 0, z: 0},
-      color: 'gray',
-      text: 'EXIT',
-      size: {width: 12, height: 12},
+      color: color4,
+      icon: 'exit.png',
+      size: {radius:8},
       callback: async () => {
         this.#netInfo({
           'type': 'info',
@@ -204,7 +206,7 @@ export default class PongGame extends NetworkScene {
     return this.raycaster
         .intersectObjects(this.children, false)
         .map((x) => x.object)
-        .filter((x) => x instanceof Button)[0];
+        .filter((x) => x instanceof RectButton || x instanceof CircleButton)[0];
   }
 
   #createObject(type, params) {
