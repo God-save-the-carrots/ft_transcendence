@@ -17,10 +17,17 @@ export default class GameRound extends Component {
         <div class='info-body'>
           <div class="card-body body-history">
             <div class="item">
-              <div class="item-parent">${this.createDivItemCard(this._params.filter((val) => val.tag === 'round_2_1').at(-1))}</div>
+              <div class="item-parent">
+                ${this.createDivItemCard(
+      this._params.filter((val) => val.tag === 'round_2_1').at(-1))}
+              </div>
               <div class="item-childrens">
-                <div class="item-child">${this.createDivItemCard(this._params.filter((val) => val.tag === 'round_1_1').at(-1))}</div>
-                <div class="item-child">${this.createDivItemCard(this._params.filter((val) => val.tag === 'round_1_2').at(-1))}</div>
+                <div class="item-child">
+                  ${this.createDivItemCard(
+      this._params.filter((val) => val.tag === 'round_1_1').at(-1))}</div>
+                <div class="item-child">
+                  ${this.createDivItemCard(
+      this._params.filter((val) => val.tag === 'round_1_2').at(-1))}</div>
               </div>
             </div>
           </div>
@@ -58,19 +65,19 @@ export default class GameRound extends Component {
         </div>
       </div>
     </div>
-    `
+    `;
   }
   createDivItemCard(info) {
     let time;
     let score;
-    let photo1, photo2;
-    console.trace();
+    let photo1;
+    let photo2;
     if (info == null) {
       photo1 = 1;
       photo2 = 1;
       time = 'ready';
       score = 'ready';
-    }else if (info.cause === 'start_session') {
+    } else if (info.cause === 'start_session') {
       photo1 = info.players[0].photo_id;
       photo2 = info.players[1].photo_id;
       time = 'playing';

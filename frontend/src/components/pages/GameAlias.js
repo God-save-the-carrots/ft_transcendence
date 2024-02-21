@@ -12,7 +12,7 @@ export default class GameAlias extends Component {
 
   setEvent() {
     document.getElementById('textInput')
-      .addEventListener('keypress', this.handleKeyPress.bind(this));
+        .addEventListener('keypress', this.handleKeyPress.bind(this));
   }
 
   async template() {
