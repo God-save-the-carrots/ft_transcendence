@@ -12,12 +12,12 @@ export default class Nav extends Component {
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" href="/game" data-link>
-            <img src="../../public/assets/image/game.svg"/>
+            <img src="../../public/assets/image/game.svg" draggable="false"/>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/rank" data-link>
-            <img src="../../public/assets/image/crown.svg"/>
+            <img src="../../public/assets/image/crown.svg" draggable="false"/>
           </a>
         </li>
         <li class="dropdown nav-item">
