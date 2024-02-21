@@ -18,10 +18,10 @@ body {
   height: 100vh;
 }
 
-a:link,
-a:visited,
-a:hover,
-a:active {
+#app a:link,
+#app a:visited,
+#app a:hover,
+#app a:active {
   text-decoration: none;
   color: black;
 }
