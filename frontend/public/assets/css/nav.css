@@ -91,3 +91,7 @@ body {
 .dropdown-item {
   color: white;
 }
+
+.dropdown-item:hover {
+  color: black !important;
+}
