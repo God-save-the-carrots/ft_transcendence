@@ -52,6 +52,7 @@ export class Scene extends THREE.Scene {
     bloomPass.threshold = 0;
     bloomPass.strength = .125;
     bloomPass.radius = 0;
+    this.bloomPass = bloomPass;
     this.composer.addPass(bloomPass);
 
     const outputPass = new OutputPass();

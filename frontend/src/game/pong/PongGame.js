@@ -345,6 +345,7 @@ export default class PongGame extends NetworkScene {
         position: {x: obj.position.x, y: obj.position.y},
       });
     }
+    if (this.bloomPass) this.bloomPass.strength = 0.5;
   }
 
   #netScore(data) {
@@ -404,5 +405,11 @@ export default class PongGame extends NetworkScene {
 
   setAlias(alias) {
     this.alias = alias;
+  }
+
+  update(delta) {
+    if (this.bloomPass) {
+      this.bloomPass.strength = 0.125 * 0.05 + this.bloomPass.strength * 0.95;
+    }
   }
 }
