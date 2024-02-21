@@ -25,7 +25,7 @@ class NormalGame(Rule):
         winners = result.get("grade")[:1]
         await self.broadcast(winners, {"type": "result", "result": "win"})
 
-        self.disconnect(self.players)
+        await self.disconnect(self.players)
 
     async def endsession(self, game, players):
         await asyncio.sleep(1)
