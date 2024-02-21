@@ -161,10 +161,10 @@ export default class PongGame extends NetworkScene {
     this.infoCallbacks = [];
   }
 
-  #addTrackingMouseLight() {
+  #addTrackingMouseLight(intensity=1000) {
     const light = this.addGameObject(this.#createObject('light', {
       position: {x: 0, y: 0, z: 50},
-      intensity: 1000,
+      intensity,
     }));
     this.addDomEventListener('mousemove', (e) => {
       const pos = this.#getMouseWorldPosition(e.offsetX, e.offsetY);
@@ -317,7 +317,7 @@ export default class PongGame extends NetworkScene {
   #netStep(data) {
     if (data?.level === 'start game') {
       this.loadDefaultScene();
-      this.#addTrackingMouseLight();
+      this.#addTrackingMouseLight(420);
       this.shutter = this.#createObject('shutter', {
         color: color2,
         size: PongGame.SHUTTER_SIZE_LARGE,
