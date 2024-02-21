@@ -10,10 +10,10 @@ export default class LoadingCircle extends GameObject {
     };
     super(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial());
 
-    this.updateCircle(0);
     this.timer = params.timer;
     this.current = 0;
     this.color = params.color;
+    this.updateCircle(0);
   }
 
   update(delta) {
