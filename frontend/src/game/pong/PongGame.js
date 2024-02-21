@@ -309,8 +309,8 @@ export default class PongGame extends NetworkScene {
     }
     if (data.debug.detected_wall_id != null) {
       const touchedWall = this.getNetworkObject(data.debug.detected_wall_id);
-      touchedWall.material.color.b = 1;
-      touchedWall.material.color.g = 1;
+      touchedWall.material.color.b = 0.3;
+      touchedWall.material.color.g = 0.3;
     }
   }
 
