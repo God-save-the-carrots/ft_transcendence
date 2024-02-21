@@ -5,6 +5,11 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework import status
+from jwt.exceptions import ExpiredSignatureError
+from http import HTTPStatus
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.exceptions import AuthenticationFailed
 
 from accounts.models import UserRefreshToken
 
@@ -15,22 +20,19 @@ def validate_token(token, token_type='access'):
             AccessToken(str(token)).verify()
         elif token_type == 'refresh':
             RefreshToken(str(token)).verify()
-        else:
-            raise ValueError("Unsupported token type")
         return True
-    except TokenError:
+    except Exception:
         return False
 
 class TokenValidationView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
 
     def get(self, request):
-        try:
-            refresh_token_model = UserRefreshToken.objects.get(user_id=request.user)
-            refresh_token = refresh_token_model.refresh_token
-        except UserRefreshToken.DoesNotExist:
-              return Response({"error": "User not found"}, status=404)
+        refresh_token = request.data.get('refresh_token', None)
+        access_token = request.data.get('access_token', None)
+        if refresh_token is None or access_token is None:
+            return Response({"error": "Both refresh_token and access_token are required"}, status=400)
 
         access_token = request.auth
 
@@ -41,7 +43,6 @@ class TokenValidationView(APIView):
             return Response({"error": "not logged in"}, status=401)
 
         elif not access_token_result and refresh_token_result or access_token_result and not refresh_token_result:
-            refresh_token_model.delete()
 
             new_refresh_token = RefreshToken.for_user(request.user)
             new_refresh_token_model, created = UserRefreshToken.objects.get_or_create(user_id=request.user)
@@ -49,9 +50,11 @@ class TokenValidationView(APIView):
             new_refresh_token_model.refresh_token = str(new_refresh_token)
             new_refresh_token_model.save()
 
-            access_token = new_refresh_token.access_token
-            return Response({'access_token': str(access_token)}, status=201)
+            newt_access_token = new_refresh_token.access_token
+            response = {
+                'access_token': str(newt_access_token),
+                'refresh_token': str(new_refresh_token)
+            }
+            return Response(response, status=201)
 
         return Response({"message": "Access Token is valid"}, status=200)
-
-

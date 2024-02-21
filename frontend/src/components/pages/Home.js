@@ -37,7 +37,7 @@ export default class Home extends Component {
 
   setEvent() {
     this.addEvent('click', '[login]', async (e) => {
-      const client_id = 'u-s4t2ud-fdd6b022ac73f838ea32e530b384e8142cdde216bc237e60bbe6ab0c2d527087';
+      const client_id = 'u-s4t2ud-63528798c2d1ca6b3471b90037fb70e93374cd3039832416be112b1fa70fa6b3';
       const redirect_uri = 'http://localhost/auth/ft/redirection';
       const login_api = `https://api.intra.42.fr/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`;
       location.href = login_api;

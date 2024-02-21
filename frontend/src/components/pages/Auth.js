@@ -11,8 +11,8 @@ export default class Auth extends Component {
   async template() {
     const auth_api = window.location.href;
     const code = auth_api.split('code=');
-    const login_api = `http://localhost/api/login`;
-
+    const login_api = `http://localhost/auth/ft/redirection`;
+    
     console.log(auth_api);
     fetch(login_api, {
       method: 'POST',
