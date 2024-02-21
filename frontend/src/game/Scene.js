@@ -5,6 +5,7 @@ import {EffectComposer} from '../threejs/postprocessing/EffectComposer.js';
 import {RenderPass} from '../threejs/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from '../threejs/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from '../threejs/postprocessing/OutputPass.js';
+import {color1} from "../game/preset.js";
 
 const url = `ws://${window.location.hostname}:4444`;
 
@@ -79,7 +80,7 @@ export class Scene extends THREE.Scene {
     // add background
     const background = new THREE.Mesh(
         new THREE.PlaneGeometry(1000, 1000),
-        new THREE.MeshPhongMaterial({color: 0x666666}),
+        new THREE.MeshPhongMaterial({color: color1}),
     );
     background.receiveShadow = true;
     background.castShadow = true;

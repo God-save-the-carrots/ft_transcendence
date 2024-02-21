@@ -3,7 +3,7 @@ import {GameObject} from '../GameObject.js';
 import Text from './Text.js';
 import Icon from './Icon.js';
 
-export default class Button extends GameObject {
+export default class RectButton extends GameObject {
   constructor(params) {
     params = {
       color: 0xff0000,
