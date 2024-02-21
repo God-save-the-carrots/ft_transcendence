@@ -281,16 +281,9 @@ export class NetworkScene extends Scene {
         res(false); // 인증 중이라면 대기 큐를 취소할 수 없음
         return;
       }
-      this.socket.send(JSON.stringify({
-        type: 'close',
-      }));
-      this.socket.onmessage = (e) => {
-        this.onmessage(e);
-        const data = JSON.parse(e.data);
-        if (data.status === 'success') this.socket.close();
-        this.#initSocketEvent();
-        res(data.status === 'success');
-      };
+      this.socket?.close();
+      this.#initSocketEvent();
+      res(true);
     });
   }
 
