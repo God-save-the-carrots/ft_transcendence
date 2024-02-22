@@ -23,7 +23,6 @@ export default class UserProfile extends Component {
               .querySelector('input[name="avatar"]:checked').id;
           e.preventDefault();
           if (this.state.photo_id === photo_id) {
-            console.log('hello');
             return;
           }
           const change_api = `http://localhost/api/user/${this._intra_id}/`;

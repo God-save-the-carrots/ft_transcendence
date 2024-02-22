@@ -47,7 +47,7 @@ export default class Game extends Component {
     `;
   }
   async mounted() {
-    console.log(this.state.sessionResults);
+    if (this.state.sessionResults == 'Error') return;
     const gameDiv = document.getElementById('game-body');
     if (this.state._alias !== null) {
       this.game.setAlias(this.state._alias);

@@ -97,7 +97,6 @@ export default class UserStatistics extends Component {
     const wp_api = `http://localhost/api/game/pong/score/${this._intra_id}/winning-percentage`;
     const wp_data = await fetch(wp_api,
     ).then((x) => x.json());
-    console.log(wp_data);
     html += `
 <div class="winning-percent">
   <p id="title"> Winning Percentage </p>

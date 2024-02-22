@@ -62,7 +62,6 @@ function createHistoryPagination(current, last) {
   }
 
   for (let i = Number(current); i <= Number(current) + 2; i ++) {
-    console.log(i, Number(current) + 2);
     let index;
     if (i > last) index = '+';
     else index = i;
@@ -124,7 +123,6 @@ async function createHistoryContents(jsonData) {
     const data = await fetch(
         history_api,
     ).then((x) => x.json());
-    console.log(data.game[0]);
     const r2 = data.game[0];
     const r1_1 = data.game[1];
     const r1_2 = data.game[2];
