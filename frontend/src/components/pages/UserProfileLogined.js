@@ -1,4 +1,5 @@
 import Component from '../../core/Component.js';
+import ErrorPage from './ErrorPage.js';
 
 export default class UserProfile extends Component {
   _title;

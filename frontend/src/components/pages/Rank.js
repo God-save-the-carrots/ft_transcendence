@@ -1,5 +1,6 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
+import ErrorPage from './ErrorPage.js';
 
 export default class Rank extends Component {
   _title;
