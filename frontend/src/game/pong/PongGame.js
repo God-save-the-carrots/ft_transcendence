@@ -12,7 +12,7 @@ import Text from '../common/Text.js';
 import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
 import Shutter from '../common/Shutter.js';
-import {color2, color3, color4} from "../preset.js";
+import {color2, color3, color4} from '../preset.js';
 
 export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
@@ -24,6 +24,8 @@ export default class PongGame extends NetworkScene {
   static SHUTTER_SIZE_LARGE = 10;
   static SHUTTER_SIZE_HUGE = 15;
   static SHUTTER_HEIGHT = -15;
+  static GAME_CAMERA_START_HEIGHT = 20;
+  static GAME_CAMERA_END_HEIGHT = 30;
   constructor(width, height, token) {
     super(width, height);
     this.token = token;
@@ -101,7 +103,7 @@ export default class PongGame extends NetworkScene {
       position: {x: 0, y: 0, z: 0},
       color: color4,
       icon: 'back.png',
-      size: {radius:8},
+      size: {radius: 8},
       callback: async () => {
         const success = await this.cancelWaitQ();
         if (success) this.loadMenu();
@@ -127,7 +129,7 @@ export default class PongGame extends NetworkScene {
       position: {x: 0, y: 0, z: 0},
       color: color4,
       icon: 'exit.png',
-      size: {radius:8},
+      size: {radius: 8},
       callback: async () => {
         this.#netInfo({
           'type': 'info',
@@ -161,10 +163,10 @@ export default class PongGame extends NetworkScene {
     this.infoCallbacks = [];
   }
 
-  #addTrackingMouseLight() {
+  #addTrackingMouseLight(intensity=1000) {
     const light = this.addGameObject(this.#createObject('light', {
       position: {x: 0, y: 0, z: 50},
-      intensity: 1000,
+      intensity,
     }));
     this.addDomEventListener('mousemove', (e) => {
       const pos = this.#getMouseWorldPosition(e.offsetX, e.offsetY);
@@ -187,8 +189,8 @@ export default class PongGame extends NetworkScene {
     const rect = new THREE.Vector2();
     this.camera.getViewSize(this.cameraHolder.position.z, rect);
     const ratio = {
-      x: screenX / this.renderer.domElement.width,
-      y: screenY / this.renderer.domElement.height,
+      x: screenX / this.currentWidth,
+      y: screenY / this.currentHeight,
     };
     return new THREE.Vector2(
         ratio.x * rect.x - rect.x * .5,
@@ -295,8 +297,9 @@ export default class PongGame extends NetworkScene {
     this.addGameObjectTo(this.shutter, this.cameraHolder);
     this.addGameObject(this.#createObject('light', {
       position: {x: 0, y: 0, z: 42},
-      intensity: 100,
+      intensity: 500,
     }));
+    this.cameraHolder.position.z = PongGame.GAME_CAMERA_START_HEIGHT;
   }
 
   #netUpdate(data) {
@@ -309,15 +312,15 @@ export default class PongGame extends NetworkScene {
     }
     if (data.debug.detected_wall_id != null) {
       const touchedWall = this.getNetworkObject(data.debug.detected_wall_id);
-      touchedWall.material.color.b = 1;
-      touchedWall.material.color.g = 1;
+      touchedWall.material.color.b = 0.3;
+      touchedWall.material.color.g = 0.3;
     }
   }
 
   #netStep(data) {
     if (data?.level === 'start game') {
       this.loadDefaultScene();
-      this.#addTrackingMouseLight();
+      this.#addTrackingMouseLight(420);
       this.shutter = this.#createObject('shutter', {
         color: color2,
         size: PongGame.SHUTTER_SIZE_LARGE,
@@ -345,6 +348,7 @@ export default class PongGame extends NetworkScene {
         position: {x: obj.position.x, y: obj.position.y},
       });
     }
+    if (this.bloomPass) this.bloomPass.strength = 0.5;
   }
 
   #netScore(data) {
@@ -363,6 +367,24 @@ export default class PongGame extends NetworkScene {
     this.key = {};
     window.addEventListener('keydown', (e) => this.key[e.key] = true);
     window.addEventListener('keyup', (e) => this.key[e.key] = false);
+    window.addEventListener('keydown', (e) => {
+      if (e.key != 'f') return;
+      this.toggleFullScreen();
+    });
+    window.addEventListener('resize', (e) => {
+      if (this.getRenderer()?.domElement == null) return;
+      const elem = this.getRenderer().domElement;
+      const isFullScreen = document.fullscreenElement == elem;
+      this.currentWidth = isFullScreen ? window.innerWidth : this.width;
+      this.currentHeight = isFullScreen ? window.innerHeight : this.height;
+      this.camera.left = -(this.currentWidth / this.currentHeight);
+      this.camera.right = this.currentWidth / this.currentHeight;
+      this.camera.updateProjectionMatrix();
+      this.getRenderer().setSize(this.currentWidth, this.currentHeight);
+      if (this.composer != null) {
+        this.composer.setSize(this.currentWidth, this.currentHeight);
+      }
+    });
     const action = {move: 0};
     this.addRenderHook(() => {
       const pos = this.key['ArrowLeft'] || this.key['a'] ? 1 : 0;
@@ -377,7 +399,25 @@ export default class PongGame extends NetworkScene {
     });
   }
 
+  toggleFullScreen() {
+    const elem = this.getRenderer()?.domElement;
+    if (elem == null) return;
+    if (document.fullscreenElement == null) elem.requestFullscreen();
+    else if (document.exitFullscreen) document.exitFullscreen();
+  }
+
   setAlias(alias) {
     this.alias = alias;
+  }
+
+  update(delta) {
+    if (this.bloomPass) {
+      this.bloomPass.strength = 0.125 * 0.05 + this.bloomPass.strength * 0.95;
+    }
+    if (this.cameraHolder) {
+      const {position} = this.cameraHolder;
+      if (position.z > PongGame.GAME_CAMERA_END_HEIGHT) return;
+      position.z = PongGame.GAME_CAMERA_END_HEIGHT * 0.03 + position.z * 0.97;
+    }
   }
 }

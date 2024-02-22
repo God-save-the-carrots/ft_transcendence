@@ -9,7 +9,7 @@ export default class Wall extends NetworkObject {
   constructor(net, params) {
     params = {
       scale: {x: 1, y: 1},
-      color: 0xff0000,
+      color: 0xaa0000,
       rotation: {x: 0, y: 1},
       position: {x: 0, y: 0},
       ...params,
