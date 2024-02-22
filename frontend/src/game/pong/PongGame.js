@@ -24,6 +24,8 @@ export default class PongGame extends NetworkScene {
   static SHUTTER_SIZE_LARGE = 10;
   static SHUTTER_SIZE_HUGE = 15;
   static SHUTTER_HEIGHT = -15;
+  static GAME_CAMERA_START_HEIGHT = 20;
+  static GAME_CAMERA_END_HEIGHT = 30;
   constructor(width, height, token) {
     super(width, height);
     this.token = token;
@@ -297,6 +299,7 @@ export default class PongGame extends NetworkScene {
       position: {x: 0, y: 0, z: 42},
       intensity: 500,
     }));
+    this.cameraHolder.position.z = PongGame.GAME_CAMERA_START_HEIGHT;
   }
 
   #netUpdate(data) {
@@ -410,6 +413,11 @@ export default class PongGame extends NetworkScene {
   update(delta) {
     if (this.bloomPass) {
       this.bloomPass.strength = 0.125 * 0.05 + this.bloomPass.strength * 0.95;
+    }
+    if (this.cameraHolder) {
+      const {position} = this.cameraHolder;
+      if (position.z > PongGame.GAME_CAMERA_END_HEIGHT) return;
+      position.z = PongGame.GAME_CAMERA_END_HEIGHT * 0.03 + position.z * 0.97;
     }
   }
 }
