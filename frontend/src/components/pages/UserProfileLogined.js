@@ -1,3 +1,4 @@
+import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
 
 export default class UserProfile extends Component {
@@ -26,7 +27,8 @@ export default class UserProfile extends Component {
             console.log('hello');
             return;
           }
-          const change_api = `http://localhost/api/user/${this._intra_id}/`;
+          const endpoint = pubEnv.API_SERVER;
+          const change_api = `${endpoint}/api/user/${this._intra_id}/`;
           await fetch(change_api, {
             method: 'PATCH',
             headers: {
@@ -41,7 +43,8 @@ export default class UserProfile extends Component {
 
   async template() {
     if (this.state.photo_id > 8) return;
-    const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
+    const endpoint = pubEnv.API_SERVER;
+    const profile_api = `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
     const data = await fetch(profile_api,
     ).then((x) => x.json());
     const img = `/public/assets/profile/${data.user.photo_id}.png`;

@@ -1,5 +1,7 @@
+import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class UserHistory extends Component {
   _title;
   _intra_id;
@@ -17,7 +19,7 @@ export default class UserHistory extends Component {
   async template() {
     const _current_page = this.state.current_page;
     let html = '';
-    const history_api = `http://localhost/api/game/pong/score/${this._intra_id}`;
+    const history_api = `${endpoint}/api/game/pong/score/${this._intra_id}`;
     const data = await fetch(
         history_api + '?' + `page=${_current_page}&page_size=1`,
     ).then((x) => x.json());
@@ -120,7 +122,7 @@ async function createHistoryContents(jsonData) {
           <div class="card-body body-history">
             <div class="item">
 `;
-    const history_api = `http://localhost/api/game/pong/matches/${match_id}`;
+    const history_api = `${endpoint}/api/game/pong/matches/${match_id}`;
     const data = await fetch(
         history_api,
     ).then((x) => x.json());

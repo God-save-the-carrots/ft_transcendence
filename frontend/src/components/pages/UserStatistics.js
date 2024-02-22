@@ -1,5 +1,7 @@
+import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class UserStatistics extends Component {
   _title;
   _intra_id;
@@ -10,7 +12,7 @@ export default class UserStatistics extends Component {
     this._intra_id = params;
   }
   async template() {
-    const playtime_api = `http://localhost/api/game/pong/score/${this._intra_id}/play-time`;
+    const playtime_api = `${endpoint}/api/game/pong/score/${this._intra_id}/play-time`;
     const playtime_data = await fetch(playtime_api,
     ).then((x) => x.json());
 
@@ -31,7 +33,7 @@ export default class UserStatistics extends Component {
         </div>
     `;
 
-    const winning_api = `http://localhost/api/game/pong/score/${this._intra_id}/winning-rate`;
+    const winning_api = `${endpoint}/api/game/pong/score/${this._intra_id}/winning-rate`;
     const winning_data = await fetch(winning_api,
     ).then((x) => x.json());
     const winning_ratio =
@@ -59,7 +61,7 @@ export default class UserStatistics extends Component {
         </div>
       </div>
     `;
-    const goal_api = `http://localhost/api/game/pong/score/${this._intra_id}/goals-against-average`;
+    const goal_api = `${endpoint}/api/game/pong/score/${this._intra_id}/goals-against-average`;
     const goal_data = await fetch(goal_api,
     ).then((x) => x.json());
     const goal_ratio =
@@ -94,7 +96,7 @@ export default class UserStatistics extends Component {
         </div>
     `;
     }
-    const wp_api = `http://localhost/api/game/pong/score/${this._intra_id}/winning-percentage`;
+    const wp_api = `${endpoint}/api/game/pong/score/${this._intra_id}/winning-percentage`;
     const wp_data = await fetch(wp_api,
     ).then((x) => x.json());
     console.log(wp_data);

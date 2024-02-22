@@ -1,5 +1,7 @@
+import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class UserProfile extends Component {
   _title;
   _intra_id;
@@ -14,7 +16,7 @@ export default class UserProfile extends Component {
     };
   }
   async template() {
-    const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
+    const profile_api = `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
     this.state.data = await fetch(profile_api,
     ).then((x) => x.json());
     const data = this.state.data;
