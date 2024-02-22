@@ -24,10 +24,10 @@ export default class User extends Component {
           <div class="stats_test"> </div>
           <div class="stats_link"> 
             <a href="statistics">
-              <p data-link>statistics</p></a>
+              <p userpage-link>statistics</p></a>
           </div>
           <div class="history_link"> 
-            <a href="history" data-link>history</a>
+            <a href="history" userpage-link>history</a>
           </div>
         </div>
         <div class="user-page" data-component="test-app2"></div>
@@ -51,11 +51,11 @@ export default class User extends Component {
   }
 
   setEvent() {
-    this.addEvent('click', '[data-link]', async (e) => {
+    this.addEvent('click', '[userpage-link]', async (e) => {
       const _test_app2 = this.$target.querySelector(
           '[data-component="test-app2"]',
       );
-      if (e.target.matches('[data-link]')) {
+      if (e.target.matches('[userpage-link]')) {
         e.preventDefault();
         const href = e.target.getAttribute('href');
         const intra_id = this._params.intra_id;
