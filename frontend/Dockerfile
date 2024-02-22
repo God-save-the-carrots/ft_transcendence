@@ -8,7 +8,9 @@ RUN apk update \
 
 COPY ./public/ /usr/share/nginx/html/
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./server_certificate.pem /etc/ssl/certs/server.crt
+COPY ./server_private_key.pem /etc/ssl/certs/private.key
 
-EXPOSE 80
+EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]
