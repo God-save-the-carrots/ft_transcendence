@@ -57,7 +57,11 @@ class LoginAPIView(APIView):
         refresh_token_model.save()
         print("access :", str(access_token))
         print("refresh :", str(refresh_token))
-        return Response({'access': str(access_token)}, status=status.HTTP_200_OK)
+        response = {
+            "access": str(access_token),
+            "refresh": str(refresh_token)
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
 # logout
 class LogoutAPIView(APIView):
