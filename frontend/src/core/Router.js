@@ -38,7 +38,6 @@ class Router {
     if (url != undefined && url !== location.href) {
       history.pushState({}, title, url);
     } else {
-      console.log('sadkajdlkasjdasd');
       history.replaceState({}, title, url);
     }
     const view = await this.router();
