@@ -11,8 +11,8 @@ export default class Auth extends Component {
   async template() {
     const auth_api = window.location.href;
     const code = auth_api.split('code=');
-    const login_api = `http://localhost/auth/ft/redirection`;
-    
+    const login_api = `http://localhost:8000/api/login`;
+
     console.log(auth_api);
     fetch(login_api, {
       method: 'POST',
@@ -26,4 +26,39 @@ export default class Auth extends Component {
     return ``;
   }
   async mounted() {}
+}
+
+function setCookie(name, value, options = {}) {
+  options = {
+    path: '/',
+    'max-age': '3600',
+    expires: 3600
+  };
+
+  if (options.expires instanceof Date) {
+    options.expires = options.expires.toUTCString();
+  }
+  if (options['max-age'] instanceof Date) {
+    options['max-age'] = options.expires.toUTCString();
+  }
+
+  let updatedCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+
+  for (let optionKey in options) {
+    updatedCookie += '; ' + optionKey;
+    let optionValue = options[optionKey];
+    if (optionValue !== true) {
+      updatedCookie += '=' + optionValue;
+    }
+  }
+
+  document.cookie = updatedCookie;
+}
+
+function setToken(data) {
+  const token_arr = Object.entries(data);
+  const access = token_arr[0];
+  const refresh = token_arr[1];
+  setCookie(access[0], access[1]);
+  setCookie(refresh[0], refresh[1]);
 }
