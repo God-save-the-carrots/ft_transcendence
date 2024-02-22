@@ -26,7 +26,7 @@ class LoginAPIView(APIView):
 
         code = request.data.get('code', None)
         if code is None:
-            return Response({"error": "Code is required"}, status=400)
+            return Response({"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         token = requests.post('https://api.intra.42.fr/oauth/token', data={
             'client_id': client_id,
@@ -36,70 +36,28 @@ class LoginAPIView(APIView):
             'code': code,
         })
         if token.status_code != 200:
-            return Response({"error": "Failed to get token"}, status=404)
+            return Response({"error": "Failed to get token"}, status=status.HTTP_404_NOT_FOUND)
 
         token_serializer = TokenSerializer(data=token.json())
         if not token_serializer.is_valid():
-            return Response({"error": "Invalid token"}, status=400)
+            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
 
         me = requests.get('https://api.intra.42.fr/v2/me', headers={'Authorization': f"Bearer {token.json()['access_token']}"})
         if me.status_code != 200:
-            return Response({"error": "Failed to get 42 info"}, status=400)
+            return Response({"error": "Failed to get 42 info"}, status=status.HTTP_400_BAD_REQUEST)
         user_info = me.json()
         user_instance_model, created = User.objects.get_or_create(intra_id=user_info['login'])
 
-        refresh = TokenObtainPairSerializer.get_token(user_instance_model)
-        refresh['intra_id'] = user_instance_model.intra_id
-        access_token = refresh.access_token
+        refresh_token = TokenObtainPairSerializer.get_token(user_instance_model)
+        refresh_token['intra_id'] = user_instance_model.intra_id
+        access_token = refresh_token.access_token
 
         refresh_token_model, created = UserRefreshToken.objects.get_or_create(user_id=user_instance_model)
-        refresh_token_model.refresh_token = str(refresh)
+        refresh_token_model.refresh_token = str(refresh_token)
         refresh_token_model.save()
-        return Response({'access_token': str(access_token)}, status=200)
-
-
-    def get(self, request):
-        client_id = settings.CLIENT_ID
-        client_secret = settings.CLIENT_SECRET
-        redirect_uri = settings.REDIRECT_URI
-
-        login_serializer = LoginSerializer(data=request.query_params)
-        if not login_serializer.is_valid():
-            query_params = {
-                'client_id': client_id,
-                'redirect_uri': redirect_uri,
-                'response_type': 'code',
-            }
-            return redirect(f"https://api.intra.42.fr/oauth/authorize?{urlencode(query_params)}")
-
-        token = requests.post('https://api.intra.42.fr/oauth/token', data={
-            'client_id': client_id,
-            'client_secret': client_secret,
-            'redirect_uri': redirect_uri,
-            'grant_type': 'authorization_code',
-            'code': login_serializer.validated_data['code'],
-        })
-        if token.status_code != 200:
-            return Response({"error": "Failed to get token"}, status=404)
-
-        token_serializer = TokenSerializer(data=token.json())
-        if not token_serializer.is_valid():
-            return Response({"error": "Invalid token"}, status=400)
-
-        me = requests.get('https://api.intra.42.fr/v2/me', headers={'Authorization': f"Bearer {token.json()['access_token']}"})
-        if me.status_code != 200:
-            return Response({"error": "Failed to get 42 info"}, status=400)
-        user_info = me.json()
-        user_instance_model, created = User.objects.get_or_create(intra_id=user_info['login'])
-
-        refresh = TokenObtainPairSerializer.get_token(user_instance_model)
-        refresh['intra_id'] = user_instance_model.intra_id
-        access_token = refresh.access_token
-
-        refresh_token_model, created = UserRefreshToken.objects.get_or_create(user_id=user_instance_model)
-        refresh_token_model.refresh_token = str(refresh)
-        refresh_token_model.save()
-        return Response({'access_token': str(access_token)}, status=200)
+        print("access :", str(access_token))
+        print("refresh :", str(refresh_token))
+        return Response({'access': str(access_token)}, status=status.HTTP_200_OK)
 
 # logout
 class LogoutAPIView(APIView):
@@ -107,7 +65,6 @@ class LogoutAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # user/<str:intra_id>/
-# TODO : 아래와 같은 형식으로 권한처리 필요.
 class UserAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -118,7 +75,7 @@ class UserAPIView(APIView):
             serializer = CustomUserSerializer(user_model)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     
     def patch(self, request, intra_id):
         if str(request.user.intra_id) != intra_id:
@@ -126,11 +83,11 @@ class UserAPIView(APIView):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
         except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         try:
             profile_instance = user_instance.profile
         except Profile.DoesNotExist:
-            return Response({"error": "Profile not found"}, status=404)
+            return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         if 'photo_id' in request.data:
             profile_instance.photo_id = request.data['photo_id']
         if 'message' in request.data:
@@ -139,4 +96,4 @@ class UserAPIView(APIView):
         profile_instance.save()
 
         serializer = CustomUserSerializer(user_instance)
-        return Response(serializer.data, status=200)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -50,4 +50,7 @@ class Profile(models.Model):
     rating = models.IntegerField(default=1024)
     message = models.CharField(max_length=30, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.user_id.intra_id} ({self.pk})"
+
 
