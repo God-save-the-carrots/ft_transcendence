@@ -1,11 +1,11 @@
-import ErrorPage from '../components/pages/ErrorPage.js';
+// import ErrorPage from '../components/pages/ErrorPage.js';
 
 class Router {
   #routes;
   #errorPage;
   #view;
   constructor() {
-    this.#errorPage = {path: '/404', view: ErrorPage};
+    this.#errorPage = {path: '/404', view: 'ErrorPage'};
     this.#routes = [
       {path: '/', view: 'Home'},
       {path: '/user/:intra_id', view: 'User'},
@@ -34,7 +34,6 @@ class Router {
   }
 
   async navigateTo(url, title = null) {
-    console.log(url, location.href);
     if (url != undefined && url !== location.href) {
       history.pushState({}, title, url);
     } else {
@@ -71,7 +70,11 @@ class Router {
     this.#view = await import(`../components/pages/${match.route.view}.js`)
         .then(
             async ({default: Page}) => {
-              return new Page(this.getParams(match));
+              let params = null;
+              if (match.route.view !== 'ErrorPage') {
+                params = this.getParams(match);
+              }
+              return new Page(params);
             },
         );
     return this.#view;
