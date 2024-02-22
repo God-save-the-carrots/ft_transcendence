@@ -27,7 +27,7 @@ export default class Game extends Component {
   async initState() {
     return {
       sessionResults: [],
-      _alias: 'hello',
+      _alias: null,
     };
   }
   async template() {

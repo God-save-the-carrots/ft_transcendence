@@ -34,7 +34,12 @@ class Router {
   }
 
   async navigateTo(url, title = null) {
-    if (url !== location.href) history.pushState({}, title, url);
+    console.log(url, location.href);
+    if (url != undefined && url !== location.href) {
+      history.pushState({}, title, url);
+    } else {
+      history.replaceState({}, title, url);
+    }
     const view = await this.router();
     return view;
   }
