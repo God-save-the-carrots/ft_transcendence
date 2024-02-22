@@ -22,11 +22,11 @@ export default class ErrorPage extends Component {
     <div class="content">
       <p> ${this._params.code} </p>
       <div class="img-wrap">
-        <img src="/public/assets/image/pacman.png" alt="" class="one">
-        <img src="/public/assets/image/ghost1.png" alt="" class="one">
-        <img src="/public/assets/image/ghost2.png" alt="" class="one">
-        <img src="/public/assets/image/ghost3.png" alt="" class="one">
-        <img src="/public/assets/image/ghost4.png" alt="" class="one">
+        <img src="/public/assets/image/pacman.png" alt="" class="two">
+        <img src="/public/assets/image/ghost1.png" alt="" class="two">
+        <img src="/public/assets/image/ghost2.png" alt="" class="two">
+        <img src="/public/assets/image/ghost3.png" alt="" class="two">
+        <img src="/public/assets/image/ghost4.png" alt="" class="two">
       </div>
       <p>
         <span>${this._params.msg}</span>
