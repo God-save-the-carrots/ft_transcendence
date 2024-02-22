@@ -10,6 +10,8 @@ export default class User extends Component {
   _title;
   _params;
   _myCss = '../../../public/assets/css/user.css';
+  _statistics = null;
+  _history = null;
   constructor(params = null) {
     super(document.querySelector('#app'));
     this._title = 'User';
@@ -47,7 +49,11 @@ export default class User extends Component {
     } else {
       new UserProfile(_test_app1, this._params.intra_id);
     }
-    new UserStatistics(_test_app2, this._params.intra_id);
+    if (this._statistics == null) {
+      this._statistics = new UserStatistics(_test_app2, this._params.intra_id);
+    } else {
+      this._statistics.render();
+    }
   }
 
   setEvent() {
@@ -59,8 +65,11 @@ export default class User extends Component {
         e.preventDefault();
         const href = e.target.getAttribute('href');
         const intra_id = this._params.intra_id;
-        if (href === 'history') new UserHistory(_test_app2, intra_id);
-        else new UserStatistics(_test_app2, intra_id);
+        if (href === 'history') {
+          if (this._history == null) {
+            this._history = new UserHistory(_test_app2, intra_id);
+          } else this._history.render();
+        } else this._statistics.render();
       }
     });
   }

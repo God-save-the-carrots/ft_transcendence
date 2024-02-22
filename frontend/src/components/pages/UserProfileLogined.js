@@ -26,7 +26,7 @@ export default class UserProfile extends Component {
             return;
           }
           const change_api = `http://localhost/api/user/${this._intra_id}/`;
-          await fetch(change_api, {
+          const res = await fetch(change_api, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -34,6 +34,10 @@ export default class UserProfile extends Component {
             body: JSON.stringify({
               'photo_id': Number(photo_id)}),
           });
+          if (res.status != 200) {
+            new ErrorPage({code: res.status, msg: res.statusText});
+            return;
+          }
           this.state.photo_id = photo_id;
         });
   }
@@ -41,8 +45,12 @@ export default class UserProfile extends Component {
   async template() {
     if (this.state.photo_id > 8) return;
     const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
-    const data = await fetch(profile_api,
-    ).then((x) => x.json());
+    const res = await fetch(profile_api);
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
     const img = `/public/assets/profile/${data.user.photo_id}.png`;
     return `
 <link rel="stylesheet" href="${this._my_css}" type="text/css" />
