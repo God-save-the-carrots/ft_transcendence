@@ -34,6 +34,10 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend']
 # CSRF 잠시 무효화
 CSRF_TRUSTED_ORIGINS = ['http://localhost:80', "https://api.intra.42.fr"]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost",  # 또는 프론트엔드 호스트의 도메인
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -60,7 +64,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -162,10 +166,12 @@ CLIENT_ID = os.environ.get('CLIENT_ID')
 CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 REDIRECT_URI = 'http://localhost/auth/ft/redirection'
 
+APPEND_SLASH = False
+
 SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
     'ALGORITHM': 'HS256',
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'JWT_ALLOW_REFRESH': True,
 }
