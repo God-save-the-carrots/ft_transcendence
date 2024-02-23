@@ -60,6 +60,7 @@ class LoginAPIView(APIView):
             "access": str(access_token),
             "refresh": str(refresh_token)
         }
+        print(response) # debug
         return Response(response, status=status.HTTP_200_OK)
 
 # logout

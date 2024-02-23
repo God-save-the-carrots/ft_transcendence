@@ -2,7 +2,11 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework import status
+
+from accounts.models import User, UserRefreshToken, Profile
 
 def validate_token(token, token_type='access'):
     try:
@@ -32,8 +36,30 @@ class TokenRefreshAPIView(APIView):
         elif not access_token_result and refresh_token_result:
             try:
                 refresh_token = RefreshToken(refresh_token_str)
-                new_access_token = refresh_token.access_token
-                return Response({'access': str(new_access_token)}, status=status.HTTP_201_CREATED) 
+                intra_id = refresh_token.payload.get('intra_id')
+                if intra_id is None:
+                    return Response({"error": "Invalid refresh_token"}, status=status.HTTP_401_UNAUTHORIZED)
+                
+                user_instance_model = User.objects.get(intra_id=intra_id)
+                new_refresh_token_model = UserRefreshToken.objects.get(user_id=user_instance_model.id)
+
+                if str(refresh_token) != new_refresh_token_model.refresh_token:
+                    return Response({"error": "Mismatched refresh tokens"}, status=status.HTTP_401_UNAUTHORIZED)
+
+                new_refresh_token = TokenObtainPairSerializer.get_token(user_instance_model)
+                new_refresh_token['intra_id'] = user_instance_model.intra_id
+                new_access_token = new_refresh_token.access_token
+
+                new_refresh_token_model.refresh_token = str(new_refresh_token)
+                new_refresh_token_model.save()
+
+                response = {
+                    "access": str(new_access_token),
+                    "refresh": str(new_refresh_token)
+                }
+                return Response(response, status=status.HTTP_201_CREATED) 
+            except User.DoesNotExist or UserRefreshToken.DoesNotExist:
+                return Response({"error": "Invalid refresh_token"}, status=status.HTTP_401_UNAUTHORIZED)
             except Exception:
                 return Response({"error": "not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response({"message": "Access granted"}, status=status.HTTP_200_OK)
