@@ -1,18 +1,21 @@
-import { pubEnv } from '../../const.js';
+import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
 
 const endpoint = pubEnv.API_SERVER;
+
 export default class UserProfile extends Component {
   _title;
   _intra_id;
+  _my_css = '../../../public/assets/css/userProfile.css';
   constructor(target, intra_id) {
     super(target);
     this._intra_id = intra_id;
     this._title = 'UserProfile';
   }
   async template() {
-    const profile_api = `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
+    const profile_api =
+      `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
     const res = await fetch(profile_api);
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
@@ -21,6 +24,7 @@ export default class UserProfile extends Component {
     const data = await res.json();
     const img = `/public/assets/profile/${data.user.photo_id}.png`;
     return `
+<link rel="stylesheet" href="${this._my_css}" type="text/css" />
 <div class="profile">
   <div class="profile-heading"></div>
   <div class="profile-body">
