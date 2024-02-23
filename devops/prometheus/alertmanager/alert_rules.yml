@@ -1,0 +1,20 @@
+groups:
+- name: test # 그룹 이름
+  rules: 
+  - alert: test-alert # 알림 이름
+    expr: java_lang_memory_heapmemoryusage_used{job="java"} > 1000000000 #알림 조건 설정
+    for: 5m
+    labels: # 필요한 label들을 설정할 수 있다.
+       severity: warning
+    annotations:
+      summary: "{{ $labels.groups }} {{ $labels.instance }}"
+      description: "{{ $labels.instance }}의 힙 메모리 사용량이 증가합니다. (current value: {{ humanize $value }}"
+   
+  - alert: jvm-heap-memory-over-1.5GB
+     expr: java_lang_memory_heapmemoryusage_used{job="java"} > 1500000000
+     for: 5m
+     labels: 
+        severity: warning
+     annotations:
+       summary: "{{ $labels.groups }} {{ $labels.instance }}"
+       description: "{{ $labels.instance }}의 힙 메모리 사용량이 증가합니다. (current value: {{ humanize $value }}"
