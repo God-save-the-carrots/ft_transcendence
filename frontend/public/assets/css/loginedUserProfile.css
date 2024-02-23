@@ -1,23 +1,23 @@
 @import "./userProfile.css";
 
 .bi-pencil-fill{
-    font-size: 20px;
-    color: #555555;
-    display: flex;
+  font-size: 20px;
+  color: #555555;
+  display: flex;
 }
 
 .input-hidden {
-    position: absolute;
-    left: -9999px;
+  position: absolute;
+  left: -9999px;
 }
 
 input[type=radio] ~ label>img {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    margin: 5px;
-    border-radius: 50%;
-    background-color: black;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  margin: 5px;
+  border-radius: 50%;
+  background-color: #F4E4D9;
 }
 
 input[type=radio]:checked + label>img {
