@@ -3,16 +3,15 @@ import Component from '../../core/Component.js';
 export default class ErrorPage extends Component {
   _title;
   _params;
-  constructor(params = null) {
+  constructor(params = {}) {
     super(document.querySelector('#app'));
     this._title = 'Error';
-    if (params != null) this._params = params;
-    else {
-      this._params = {
-        code: '404',
-        msg: 'Not found',
-      };
+    this._params = {
+      code: '404',
+      msg: 'Not found',
+      ...params,      
     }
+  }
   }
   async template() {
     return `
