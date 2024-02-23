@@ -1,4 +1,4 @@
-import { pubEnv } from '../../const.js';
+import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
 
