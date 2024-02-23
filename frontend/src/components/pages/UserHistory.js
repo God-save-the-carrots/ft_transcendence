@@ -1,5 +1,6 @@
 import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
+import ErrorPage from './ErrorPage.js';
 
 const endpoint = pubEnv.API_SERVER;
 export default class UserHistory extends Component {
@@ -20,10 +21,13 @@ export default class UserHistory extends Component {
     const _current_page = this.state.current_page;
     let html = '';
     const history_api = `${endpoint}/api/game/pong/score/${this._intra_id}`;
-    const data = await fetch(
-        history_api + '?' + `page=${_current_page}&page_size=1`,
-    ).then((x) => x.json());
-    // card
+    const res = await fetch(
+        history_api + '?' + `page=${_current_page}&page_size=1`);
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
     const last_page_index = data.last_page_index;
     html += `
      <link rel="stylesheet" href="${this._my_css}" type="text/css" />
@@ -38,7 +42,7 @@ export default class UserHistory extends Component {
   async mounted() {}
 
   setEvent() {
-    this.addEvent('click', '.page-item', async (e) => {
+    this.addEvent('click', '.history-page-item', async (e) => {
       if (isNaN(e.target.dataset.page)) return;
       if (e.target.dataset.page != '+') {
         this.state.current_page = e.target.dataset.page;
@@ -57,19 +61,18 @@ function createHistoryPagination(current, last) {
     if (i > 0) index = i;
     else index = '+';
     list_HTML +=` 
-      <li class="page-item">
+      <li class="history-page-item">
         <a class="page-link" data-page=${index}>${index}</a>
       </li>
   `;
   }
 
   for (let i = Number(current); i <= Number(current) + 2; i ++) {
-    console.log(i, Number(current) + 2);
     let index;
     if (i > last) index = '+';
     else index = i;
     list_HTML += `
-      <li class="page-item">
+      <li class="history-page-item">
         <a class="page-link" data-page=${index}>${index}</a>
       </li>
     `;
@@ -123,10 +126,12 @@ async function createHistoryContents(jsonData) {
             <div class="item">
 `;
     const history_api = `${endpoint}/api/game/pong/matches/${match_id}`;
-    const data = await fetch(
-        history_api,
-    ).then((x) => x.json());
-    console.log(data.game[0]);
+    const res = await fetch(history_api);
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
     const r2 = data.game[0];
     const r1_1 = data.game[1];
     const r1_2 = data.game[2];

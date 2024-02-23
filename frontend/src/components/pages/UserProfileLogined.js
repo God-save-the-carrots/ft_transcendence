@@ -1,5 +1,6 @@
 import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
+import ErrorPage from './ErrorPage.js';
 
 export default class UserProfile extends Component {
   _title;
@@ -24,12 +25,11 @@ export default class UserProfile extends Component {
               .querySelector('input[name="avatar"]:checked').id;
           e.preventDefault();
           if (this.state.photo_id === photo_id) {
-            console.log('hello');
             return;
           }
           const endpoint = pubEnv.API_SERVER;
           const change_api = `${endpoint}/api/user/${this._intra_id}/`;
-          await fetch(change_api, {
+          const res = await fetch(change_api, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -37,6 +37,10 @@ export default class UserProfile extends Component {
             body: JSON.stringify({
               'photo_id': Number(photo_id)}),
           });
+          if (res.status != 200) {
+            new ErrorPage({code: res.status, msg: res.statusText});
+            return;
+          }
           this.state.photo_id = photo_id;
         });
   }
@@ -45,8 +49,12 @@ export default class UserProfile extends Component {
     if (this.state.photo_id > 8) return;
     const endpoint = pubEnv.API_SERVER;
     const profile_api = `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
-    const data = await fetch(profile_api,
-    ).then((x) => x.json());
+    const res = await fetch(profile_api);
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
     const img = `/public/assets/profile/${data.user.photo_id}.png`;
     return `
 <link rel="stylesheet" href="${this._my_css}" type="text/css" />

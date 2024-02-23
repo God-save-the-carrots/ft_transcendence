@@ -1,11 +1,11 @@
-import ErrorPage from '../components/pages/ErrorPage.js';
+import * as Utils from './Utils.js';
 
 class Router {
   #routes;
   #errorPage;
   #view;
   constructor() {
-    this.#errorPage = {path: '/404', view: ErrorPage};
+    this.#errorPage = {path: '/404', view: 'ErrorPage'};
     this.#routes = [
       {path: '/', view: 'Home'},
       {path: '/user/:intra_id', view: 'User'},
@@ -34,7 +34,6 @@ class Router {
   }
 
   async navigateTo(url, title = null) {
-    console.log(url, location.href);
     if (url != undefined && url !== location.href) {
       history.pushState({}, title, url);
     } else {
@@ -68,10 +67,18 @@ class Router {
         result: [location.pathname],
       };
     }
+    let params = null;
+    if (match.route.view !== 'ErrorPage') params = this.getParams(match);
+    if (match.route.view === 'User' &&
+      await Utils.isValidIntra(params.intra_id) === false) {
+      match.route.view = 'ErrorPage';
+      params.code = 404;
+      params.msg = 'User not found';
+    }
     this.#view = await import(`../components/pages/${match.route.view}.js`)
         .then(
             async ({default: Page}) => {
-              return new Page(this.getParams(match));
+              return new Page(params);
             },
         );
     return this.#view;
