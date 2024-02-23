@@ -82,7 +82,7 @@ class UserAPIView(APIView):
     
     def patch(self, request, intra_id):
         if str(request.user.intra_id) != intra_id:
-            return Response({"error": "Permission denied. You can only update your own profile."}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"error": "Permission denied. You can only update your own profile."}, status=status.HTTP_401_UNAUTHORIZED)
         try:
             user_instance = User.objects.get(intra_id=intra_id)
         except User.DoesNotExist:
