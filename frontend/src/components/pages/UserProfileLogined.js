@@ -77,7 +77,7 @@ export default class UserProfile extends Component {
     if (this.state.photo_id > 8 || this.state.msg == 'error') return;
     const endpoint = pubEnv.API_SERVER;
     const profile_api =
-        `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
+      `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
     const res = await fetch(profile_api);
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
