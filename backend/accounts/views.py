@@ -8,6 +8,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User, UserRefreshToken, Profile
 from .serializers import *
 from rest_framework import status
+from django.utils.html import escape
 
 import requests
 from django.conf import settings
@@ -95,8 +96,8 @@ class UserAPIView(APIView):
         if 'photo_id' in request.data:
             profile_instance.photo_id = request.data['photo_id']
         if 'message' in request.data:
-            profile_instance.message = request.data['message']
-    
+            profile_instance.message = escape(request.data['message'])
+        
         profile_instance.save()
 
         serializer = CustomUserSerializer(user_instance)
