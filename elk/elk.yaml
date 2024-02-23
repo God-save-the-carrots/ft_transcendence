@@ -2,13 +2,12 @@ version: "3.8"
 
 services:
   certs:
-    user: "0"
-    image: elasticsearch:${STACK_VERSION}
+    image: elasticsearch:${ELK_VERSION:-8.12.2}
     volumes:
       - ./certs:/usr/share/elasticsearch/config/certs
     environment:
+      - ELASTIC_PORT=${ELASTIC_PORT?Elasticsearch port is required}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
-      - KIBANA_PASSWORD=${KIBANA_PASSWORD?Kibana password is required}
     command: >
       bash -c '
         if [ ! -f config/certs/ca.zip ]; then
@@ -18,6 +17,27 @@ services:
         fi;
         if [ ! -f config/certs/certs.zip ]; then
           echo "Creating certs";
+          echo -ne \
+          "instances:\n"\
+          "  - name: elasticsearch\n"\
+          "    dns:\n"\
+          "      - elasticsearch\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          "  - name: kibana\n"\
+          "    dns:\n"\
+          "      - kibana\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          "  - name: logstash\n"\
+          "    dns:\n"\
+          "      - logstash\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          > config/certs/instances.yml;
           bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
           unzip config/certs/certs.zip -d config/certs;
         fi;
@@ -26,9 +46,36 @@ services:
         find . -type d -exec chmod 750 \{\} \;;
         find . -type f -exec chmod 640 \{\} \;;
         echo "Waiting for Elasticsearch availability";
-        until curl -s --cacert config/certs/ca/ca.crt https://elasticsearch:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
+        until curl -s \
+          --cacert config/certs/ca/ca.crt \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT} | grep -q "missing authentication credentials"; do sleep 10;
+        done;
         echo "Setting kibana_system password";
-        until curl -s -X POST --cacert config/certs/ca/ca.crt -u elastic:${ELASTIC_PASSWORD} -H "Content-Type: application/json" https://elasticsearch:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        until curl -s -X POST \
+          --cacert config/certs/ca/ca.crt \
+          -u elastic:${ELASTIC_PASSWORD} \
+          -H "Content-Type: application/json" \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}/_security/user/kibana_system/_password \
+          -d "{\"password\":\"${ELASTIC_PASSWORD}\"}" | grep -q "^{}"; do sleep 10;
+        done;
+        echo "Setting logstash_writer role"
+        until curl -s -X POST \
+          --cacert config/certs/ca/ca.crt \
+          -u elastic:${ELASTIC_PASSWORD} \
+          -H "Content-Type: application/json" \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}/_security/role/logstash_writer \
+          -d "{\"cluster\":[\"manage_index_templates\",\"monitor\",\"manage_ilm\"],\"indices\":[{\"names\":[\"logstash-*\"],\"privileges\":[\"write\",\"create\",\"create_index\",\"manage\",\"manage_ilm\"]}]}"; do sleep 10;
+        done;
+        echo ""
+        echo "Setting logstash_internal user";
+        until curl -s -X POST \
+          --cacert config/certs/ca/ca.crt \
+          -u elastic:${ELASTIC_PASSWORD} \
+          -H "Content-Type: application/json" \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}/_security/user/logstash_internal \
+          -d "{\"password\":\"${ELASTIC_PASSWORD}\",\"roles\":[\"logstash_writer\"]}"; do sleep 10;
+        done;
+        echo ""
         echo "All done!";
       '
     healthcheck:
@@ -41,10 +88,10 @@ services:
     depends_on:
       certs:
         condition: service_healthy
-    container_name: elasticsearch
-    image: elasticsearch:${STACK_VERSION}
+    container_name: ${ELASTIC_CONTAINER_NAME?Elatic container name is required}
+    image: elasticsearch:${ELK_VERSION:-8.12.2}
     ports:
-      - ${ES_PORT}:9200
+      - ${ELASTIC_PORT}:9200
     volumes:
       - ./certs:/usr/share/elasticsearch/config/certs
       - ./elasticsearch:/usr/share/elasticsearch/data
@@ -63,7 +110,7 @@ services:
         - xpack.security.http.ssl.certificate=certs/elasticsearch/elasticsearch.crt
         - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
         - xpack.security.http.ssl.verification_mode=certificate
-        - xpack.license.self_generated.type=${LICENSE}
+        - xpack.license.self_generated.type=${ELK_LICENSE}
     mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
@@ -81,10 +128,12 @@ services:
 
   kibana:
     depends_on:
+      certs:
+        condition: service_completed_successfully
       elasticsearch:
         condition: service_healthy
-    container_name: kibana
-    image: kibana:${STACK_VERSION}
+    container_name: ${KIBANA_CONTAINER_NAME?Kibana container name is required}
+    image: kibana:${ELK_VERSION:-8.12.2}
     ports:
       - ${KIBANA_PORT}:5601
     volumes:
@@ -92,21 +141,52 @@ services:
       - ./kibana:/usr/share/kibana/data
     environment:
       - SERVERNAME=kibana
-      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}
       - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD?Kibana password is required}
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
       - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/certs/ca/ca.crt
       - MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED=true
       - SERVER_SSL_ENABLED=true
       - SERVER_SSL_KEY=/usr/share/kibana/config/certs/kibana/kibana.key
       - SERVER_SSL_CERTIFICATE=/usr/share/kibana/config/certs/kibana/kibana.crt
       - SERVER_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/certs/ca/ca.crt
+      - XPACK_REPORTING_ROLES_ENABLED=false
     mem_limit: ${MEM_LIMIT}
     healthcheck:
       test:
         [
           "CMD-SHELL",
           "curl -s --cacert config/certs/ca/ca.crt https://localhost:5601",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  logstash:
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+      elasticsearch:
+        condition: service_healthy
+    container_name: ${LOGSTASH_CONTAINER_NAME?Logstash container name is required}
+    image: logstash:${ELK_VERSION:-8.12.2}
+    ports:
+      - ${LOGSTASH_PORT}:5044
+    volumes:
+      - ./certs:/usr/share/logstash/config/certs
+      - ./logstash/data:/usr/share/logstash/data
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - SERVERNAME=logstash
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
+      - XPACK_MONITORING_ENABLED=false
+      - MONITORING_ELASTICSEARCH_HOSTS=https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}
+    mem_limit: ${MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s http://localhost:9600",
         ]
       interval: 10s
       timeout: 10s
