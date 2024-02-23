@@ -87,6 +87,8 @@ services:
       - GF_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - ./devops/grafana/src/grafana.ini:/etc/grafana/grafana.ini
+      - ./devops/grafana/src/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./devops/grafana/src/dashboards.yaml:/usr/share/grafana/conf/provisioning/dashboards/dashboards.yaml
 
   prometheus:
     image: prom/prometheus:latest
@@ -100,6 +102,7 @@ services:
     restart: unless-stopped
     volumes:
       - ${PROMETHEUS_VOLUME}:/etc/prometheus
+      - ${PROMETHEUS_VOLUME}/alertmanager:/etc/alertmanager/
       - prom_data:/etc/prometheus
 
 volumes:
