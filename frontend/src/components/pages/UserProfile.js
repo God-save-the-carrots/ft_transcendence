@@ -1,4 +1,5 @@
 import Component from '../../core/Component.js';
+import ErrorPage from './ErrorPage.js';
 
 export default class UserProfile extends Component {
   _title;
@@ -8,16 +9,14 @@ export default class UserProfile extends Component {
     this._intra_id = intra_id;
     this._title = 'UserProfile';
   }
-  async initState() {
-    return {
-      data: {},
-    };
-  }
   async template() {
     const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
-    this.state.data = await fetch(profile_api,
-    ).then((x) => x.json());
-    const data = this.state.data;
+    const res = await fetch(profile_api);
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
     const img = `/public/assets/profile/${data.user.photo_id}.png`;
     return `
 <div class="profile">

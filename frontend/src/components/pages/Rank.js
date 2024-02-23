@@ -1,5 +1,6 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
+import ErrorPage from './ErrorPage.js';
 
 export default class Rank extends Component {
   _title;
@@ -21,10 +22,13 @@ export default class Rank extends Component {
     const rank_api = `http://localhost/api/game/pong/rank/`;
 
     const _current_page = this.state.current_page;
-    const data = await fetch(
-        rank_api + '?' + `page=${_current_page}&page_size=5`,
-    ).then((x) => x.json());
-
+    const res = await fetch(
+        rank_api + '?' + `page=${_current_page}&page_size=5`);
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
     // TODO: block mine 로그인 연동하면 바꿔야 함
     let html = '';
     html += `
@@ -64,7 +68,7 @@ export default class Rank extends Component {
 }
 
 function createMyRanking() {
-  let list_HTML = `
+  const list_HTML = `
     <div class="title">RANKING</div>
     <li class="block mine">
       <span class="rank">1</span>
