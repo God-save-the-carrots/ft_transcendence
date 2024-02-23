@@ -9,9 +9,8 @@ export default class ErrorPage extends Component {
     this._params = {
       code: '404',
       msg: 'Not found',
-      ...params,      
-    }
-  }
+      ...params,
+    };
   }
   async template() {
     return `
