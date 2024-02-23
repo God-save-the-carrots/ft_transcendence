@@ -1,0 +1,27 @@
+global:
+  resolve_timeout: 10s
+
+route: #라우트 경로 설정
+  group_by: ["groups", "<label_name>"] # prometheus.yml의 targets -labels의 label_name을 의미합니다.
+  group_wait: 10s  # inhibit 조건 발생에 대한 중복을 방지하기 위한 알림 발생 전 대기시간, 
+  group_interval: 5s # 알림 간 시간 간격 설정
+  repeat_interval: 2m # 알림 재발생 
+  receiver: 'webhook' # 알림 설정 대상
+  routes: # 라우트 대상 설정
+  - match:
+       alertname: 'test-alram' # alertname이 일치하는 경우 알림 발송 
+    receiver: 'webhook'
+
+receivers:
+- name: 'webhook'
+  webhook_configs:
+  - url: 'http://localhost:9090'
+    send_resolved: true
+    max_alerts: 200 # 최대 알림 수 설정
+
+inhibit_rules: # 중복된 알림이 발생할 경우 중복 금지를 위한 규칙 설정
+    - source_match: # inhibit rule을 적용하기 위해 존재해야 하는 조건
+        severity: 'critical' 
+      target_match: # 음소거가 되어야 할 대상
+        severity: 'warning'
+      # equal: ['<label_name>'] #value값과 동일한 값을 갖는 경우 inhibit rule 적용
