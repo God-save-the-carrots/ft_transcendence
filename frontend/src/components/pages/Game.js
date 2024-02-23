@@ -55,8 +55,9 @@ export default class Game extends Component {
       if (this.state.sessionResults.length == 0) {
         const gameContentDiv = document.getElementById('game-info');
         gameContentDiv.remove();
-        document.getElementById('game-content').style.height = '45%';
-        document.getElementById('game-content').style.paddingTop = '7%';
+        document.getElementById('game-body').style.height = '550px';
+        document.getElementById('game-body').style.margin = 'auto';
+        document.getElementById('game-content').style.height = '550px';
       } else {
         const resultDiv = document.getElementById('game-info');
         new GameRound(resultDiv, this.state.sessionResults);
