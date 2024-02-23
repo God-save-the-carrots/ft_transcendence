@@ -3,6 +3,8 @@ import UserProfile from './UserProfile.js';
 import UserProfileLogined from './UserProfileLogined.js';
 import UserStatistics from './UserStatistics.js';
 import UserHistory from './UserHistory.js';
+import NewUser from './NewUser.js';
+import {pubEnv} from '../../const.js';
 
 const g_logined_test = true;
 
@@ -38,6 +40,20 @@ export default class User extends Component {
   }
 
   async mounted() {
+    const endpoint = pubEnv.API_SERVER;
+    const profile_api =
+      `${endpoint}/api/game/pong/score/${this._params.intra_id}/play-time`;
+    const res = await fetch(profile_api);
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
+    console.log(data);
+    if (data.play_time_rank == -1) {
+      new NewUser(this._params);
+      return;
+    }
     const _test_app1 = this.$target.querySelector(
         '[data-component="test-app1"]',
     );
