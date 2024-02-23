@@ -10,11 +10,13 @@ cryptography==41.0.7
 daphne==4.0.0
 Django==5.0
 django-cors-headers==4.3.1
+django-prometheus==2.3.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
 hyperlink==21.0.0
 idna==3.6
 incremental==22.10.0
+prometheus_client==0.20.0
 psycopg==3.1.16
 psycopg2-binary==2.9.9
 pyasn1==0.5.1
