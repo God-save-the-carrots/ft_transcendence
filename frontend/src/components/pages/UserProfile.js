@@ -1,6 +1,8 @@
+import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class UserProfile extends Component {
   _title;
   _intra_id;
@@ -10,7 +12,7 @@ export default class UserProfile extends Component {
     this._title = 'UserProfile';
   }
   async template() {
-    const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
+    const profile_api = `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
     const res = await fetch(profile_api);
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});

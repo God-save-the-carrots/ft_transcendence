@@ -1,6 +1,8 @@
+import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class UserStatistics extends Component {
   _title;
   _intra_id;
@@ -11,7 +13,7 @@ export default class UserStatistics extends Component {
     this._intra_id = params;
   }
   async template() {
-    const playtime_api = `http://localhost/api/game/pong/score/${this._intra_id}/play-time`;
+    const playtime_api = `${endpoint}/api/game/pong/score/${this._intra_id}/play-time`;
     const playtime_res = await fetch(playtime_api);
     if (playtime_res.status != 200) {
       new ErrorPage({code: playtime_res.status, msg: playtime_res.statusText});
@@ -35,7 +37,7 @@ export default class UserStatistics extends Component {
         </div>
     `;
 
-    const winning_api = `http://localhost/api/game/pong/score/${this._intra_id}/winning-rate`;
+    const winning_api = `${endpoint}/api/game/pong/score/${this._intra_id}/winning-rate`;
     const winning_res = await fetch(winning_api);
     if (winning_res.status != 200) {
       new ErrorPage({code: winning_res.status, msg: winning_res.statusText});
@@ -67,15 +69,13 @@ export default class UserStatistics extends Component {
         </div>
       </div>
     `;
-    const goal_api = `http://localhost/api/game/pong/score/${this._intra_id}/goals-against-average`;
+    const goal_api = `${endpoint}/api/game/pong/score/${this._intra_id}/goals-against-average`;
     const goal_res = await fetch(goal_api);
     if (goal_res.status != 200) {
       new ErrorPage({code: goal_res.status, msg: goal_res.statusText});
       return;
     }
     const goal_data = await goal_res.json();
-
-
     const goal_ratio =
         calculateRatio(goal_data.user_score, goal_data.enemy_score);
     if (goal_ratio.value1Ratio == 0) {
@@ -108,7 +108,7 @@ export default class UserStatistics extends Component {
         </div>
     `;
     }
-    const wp_api = `http://localhost/api/game/pong/score/${this._intra_id}/winning-percentage`;
+    const wp_api = `${endpoint}/api/game/pong/score/${this._intra_id}/winning-percentage`;
     const wp_res = await fetch(wp_api);
     if (wp_res.status != 200) {
       new ErrorPage({code: wp_res.status, msg: wp_res.statusText});

@@ -1,7 +1,9 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
+import { pubEnv } from '../../const.js';
 import ErrorPage from './ErrorPage.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class Rank extends Component {
   _title;
   _params;
@@ -19,7 +21,7 @@ export default class Rank extends Component {
   }
 
   async template() {
-    const rank_api = `http://localhost/api/game/pong/rank/`;
+    const rank_api = `${endpoint}/api/game/pong/rank/`;
 
     const _current_page = this.state.current_page;
     const res = await fetch(
