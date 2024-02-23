@@ -19,4 +19,5 @@ COPY --chmod=777 ./dashboards/*.json /etc/grafana/dashboards/
 COPY ./src/dashboards.yaml /etc/grafana/provisioning/dashboards/dashboards.yaml
 
 COPY --chmod=777 src/entrypoint.sh /entrypoint.sh
+
 CMD ["/entrypoint.sh" ]
