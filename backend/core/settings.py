@@ -166,8 +166,6 @@ CLIENT_ID = os.environ.get('CLIENT_ID')
 CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
 REDIRECT_URI = 'http://localhost/auth/ft/redirection'
 
-APPEND_SLASH = False
-
 SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
     'ALGORITHM': 'HS256',
