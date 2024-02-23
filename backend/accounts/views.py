@@ -55,9 +55,8 @@ class LoginAPIView(APIView):
         refresh_token_model, created = UserRefreshToken.objects.get_or_create(user_id=user_instance_model)
         refresh_token_model.refresh_token = str(refresh_token)
         refresh_token_model.save()
-        print("access :", str(access_token))
-        print("refresh :", str(refresh_token))
         response = {
+            "intra_id": user_instance_model.intra_id,
             "access": str(access_token),
             "refresh": str(refresh_token)
         }
@@ -83,7 +82,7 @@ class UserAPIView(APIView):
     
     def patch(self, request, intra_id):
         if str(request.user.intra_id) != intra_id:
-            return Response({"error": "Permission denied. You can only update your own profile."}, status=401)
+            return Response({"error": "Permission denied. You can only update your own profile."}, status=status.HTTP_403_FORBIDDEN)
         try:
             user_instance = User.objects.get(intra_id=intra_id)
         except User.DoesNotExist:
