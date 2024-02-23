@@ -212,19 +212,6 @@ export default class UserProfile extends Component {
           </div>
         </div>
       </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
     </div>
     <div class="profile__rank">
       <h1> ${data.rank} </h1>
