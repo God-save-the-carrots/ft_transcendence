@@ -1,5 +1,6 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
+import { getCookie } from './Auth.js';
 
 export default class Rank extends Component {
   _title;
@@ -19,12 +20,18 @@ export default class Rank extends Component {
 
   async template() {
     const rank_api = `http://localhost/api/game/pong/rank/`;
-
     const _current_page = this.state.current_page;
-    const data = await fetch(
-        rank_api + '?' + `page=${_current_page}&page_size=5`,
-    ).then((x) => x.json());
-
+    const access = getCookie('access');
+    if (access === undefined) {
+      // go to login page
+    }
+    const data = await fetch(rank_api + '?' + `page=${_current_page}&page_size=5`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      }
+    })
+      .then((x) => x.json());
     // TODO: block mine 로그인 연동하면 바꿔야 함
     let html = '';
     html += `
