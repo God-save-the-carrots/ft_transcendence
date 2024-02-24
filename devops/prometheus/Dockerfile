@@ -1,3 +1,7 @@
 FROM prom/prometheus:latest
 
-COPY ./src/prometheus.yml /etc/prometheus/prometheus.yml
+ENV PROMETHEUS_CONFIG_FILE=/etc/prometheus/prometheus.yml
+
+COPY ./src/ /etc/prometheus/
+
+CMD ["--config.file=/etc/prometheus/prometheus.yml"]
