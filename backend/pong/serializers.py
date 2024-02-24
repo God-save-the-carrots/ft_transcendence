@@ -1,7 +1,7 @@
 from django.apps import apps
 from rest_framework import serializers
 from .models import Pong, GameSession, Tournament
-from accounts.models import Profile
+from accounts.models import User, Profile
 
 from accounts.serializers import CustomUserSerializer
 
@@ -79,3 +79,9 @@ class CustomMatchesSerializer(serializers.ModelSerializer):
         model = Tournament
         fields = ['match_id', 'game_type', 'game']
 
+class CustomTicketSerializer(serializers.ModelSerializer):
+    photo_id = serializers.IntegerField(source='profile.photo_id')
+
+    class Meta:
+        model = User
+        fields = ['intra_id', 'photo_id']
