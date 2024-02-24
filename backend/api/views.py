@@ -18,7 +18,7 @@ def validate_token(token, token_type='access'):
     except Exception:
         return False
 
-class TokenRefreshAPIView(APIView):
+class TokenVerifyAPIView(APIView):
 
     def post(self, request):
         refresh_token_str = request.data.get('refresh')

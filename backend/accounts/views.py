@@ -24,8 +24,8 @@ class LoginAPIView(APIView):
         client_secret = settings.CLIENT_SECRET
         redirect_uri = settings.REDIRECT_URI
 
-        code = request.data.get('code', None)
-        if code is None:
+        code = request.data.get('code')
+        if not code:
             return Response({"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         token = requests.post('https://api.intra.42.fr/oauth/token', data={
