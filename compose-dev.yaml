@@ -93,17 +93,14 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: ${PROMETHEUS_CONTAINER_NAME}
-    build:
-      context: ./devops/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
     env_file:
       - .env
     ports:
       - 9090:9090
-    restart: unless-stopped
     volumes:
-      - ${PROMETHEUS_VOLUME}:/etc/prometheus
-      - ${PROMETHEUS_VOLUME}/alertmanager:/etc/alertmanager/
-      - prom_data:/etc/prometheus
+      - ./devops/prometheus/src:/etc/prometheus
 
 volumes:
   run_vol:

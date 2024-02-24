@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend']
+ALLOWED_HOSTS = ['*']
 
 # CSRF 잠시 무효화
 CSRF_TRUSTED_ORIGINS = ['http://localhost:80', "https://api.intra.42.fr"]
