@@ -4,6 +4,10 @@
   background-color: black;
 }
 
+.boxs .empty {
+  margin-top: 50px;
+}
+
 .boxs .playtime {
   width: 20%;
   height: 45%;

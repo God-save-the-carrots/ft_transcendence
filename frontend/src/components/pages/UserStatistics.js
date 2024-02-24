@@ -1,5 +1,8 @@
+import { pubEnv } from '../../const.js';
 import Component from '../../core/Component.js';
+import ErrorPage from './ErrorPage.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class UserStatistics extends Component {
   _title;
   _intra_id;
@@ -10,10 +13,13 @@ export default class UserStatistics extends Component {
     this._intra_id = params;
   }
   async template() {
-    const playtime_api = `http://localhost/api/game/pong/score/${this._intra_id}/play-time`;
-    const playtime_data = await fetch(playtime_api,
-    ).then((x) => x.json());
-
+    const playtime_api = `${endpoint}/api/game/pong/score/${this._intra_id}/play-time`;
+    const playtime_res = await fetch(playtime_api);
+    if (playtime_res.status != 200) {
+      new ErrorPage({code: playtime_res.status, msg: playtime_res.statusText});
+      return;
+    }
+    const playtime_data = await playtime_res.json();
     let html = `
       <link rel="stylesheet" href="${this._my_css}" type="text/css" />
       <div class="boxs">
@@ -31,9 +37,13 @@ export default class UserStatistics extends Component {
         </div>
     `;
 
-    const winning_api = `http://localhost/api/game/pong/score/${this._intra_id}/winning-rate`;
-    const winning_data = await fetch(winning_api,
-    ).then((x) => x.json());
+    const winning_api = `${endpoint}/api/game/pong/score/${this._intra_id}/winning-rate`;
+    const winning_res = await fetch(winning_api);
+    if (winning_res.status != 200) {
+      new ErrorPage({code: winning_res.status, msg: winning_res.statusText});
+      return;
+    }
+    const winning_data = await winning_res.json();
     const winning_ratio =
         calculateRatio(winning_data.winning_round, winning_data.losing_round);
 
@@ -59,9 +69,13 @@ export default class UserStatistics extends Component {
         </div>
       </div>
     `;
-    const goal_api = `http://localhost/api/game/pong/score/${this._intra_id}/goals-against-average`;
-    const goal_data = await fetch(goal_api,
-    ).then((x) => x.json());
+    const goal_api = `${endpoint}/api/game/pong/score/${this._intra_id}/goals-against-average`;
+    const goal_res = await fetch(goal_api);
+    if (goal_res.status != 200) {
+      new ErrorPage({code: goal_res.status, msg: goal_res.statusText});
+      return;
+    }
+    const goal_data = await goal_res.json();
     const goal_ratio =
         calculateRatio(goal_data.user_score, goal_data.enemy_score);
     if (goal_ratio.value1Ratio == 0) {
@@ -94,10 +108,13 @@ export default class UserStatistics extends Component {
         </div>
     `;
     }
-    const wp_api = `http://localhost/api/game/pong/score/${this._intra_id}/winning-percentage`;
-    const wp_data = await fetch(wp_api,
-    ).then((x) => x.json());
-    console.log(wp_data);
+    const wp_api = `${endpoint}/api/game/pong/score/${this._intra_id}/winning-percentage`;
+    const wp_res = await fetch(wp_api);
+    if (wp_res.status != 200) {
+      new ErrorPage({code: wp_res.status, msg: wp_res.statusText});
+      return;
+    }
+    const wp_data = await wp_res.json();
     html += `
 <div class="winning-percent">
   <p id="title"> Winning Percentage </p>
