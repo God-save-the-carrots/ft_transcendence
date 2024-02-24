@@ -13,15 +13,9 @@ rule_files:
 
 scrape_configs:
   - job_name: 'prometheus'
-    metrics_path: /metrics
-    scheme: http
     static_configs:
-      - targets:
-        - localhost:9090
+      - targets: ['localhost:9090']
 
-  - job_name: 'django'
-    metrics_path: /monitor/metrics
-    scheme: http
+  - job_name: 'backend'
     static_configs:
-      - targets:
-        - localhost:8000
+      - targets: ['host.docker.internal:8000']
