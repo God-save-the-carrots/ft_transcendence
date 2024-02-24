@@ -13,7 +13,10 @@ import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
 import Shutter from '../common/Shutter.js';
 import {color2, color3, color4} from '../preset.js';
+import {pubEnv} from '../../const.js';
+import {getCookie} from '../../components/pages/Auth.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
   static STATE_WAIT = 1;
@@ -26,10 +29,8 @@ export default class PongGame extends NetworkScene {
   static SHUTTER_HEIGHT = -15;
   static GAME_CAMERA_START_HEIGHT = 20;
   static GAME_CAMERA_END_HEIGHT = 30;
-  constructor(width, height, token) {
+  constructor(width, height) {
     super(width, height);
-    this.token = token;
-    this.intraId = token; // TODO: get intraId in jwt token
     this.factory = {
       'player': Player,
       'wall': Wall,
@@ -63,9 +64,19 @@ export default class PongGame extends NetworkScene {
   loadMenu() {
     this.state = PongGame.STATE_MENU;
     this.loadDefaultScene();
-    const ready = (type) => {
+    const ready = async (type) => {
       this.loadReady();
-      this.waitQ(this.token, type, {alias: this.alias});
+      const token = getCookie('access');
+      this.token = await fetch(`${endpoint}/api/game/pong/ticket/`, {
+        headers: {'Authorization': `Bearer ${token}`},
+      }).then((x) => x.json()).then((x) => x.ticket).catch((x) => null);
+      if (this.token == null) {
+        this.loadMenu();
+        return;
+      }
+      this.intraId = 'yonshin';
+      const wait = await this.waitQ(this.token, type, {alias: this.alias});
+      if (wait == false) this.loadMenu();
     };
     this.addGameObject(this.#createObject('rectButton', {
       position: {x: -7, y: 0, z: 0},
