@@ -10,7 +10,8 @@ services:
     tty: true
     working_dir: /src
     ports:
-      - "80:80"
+      - "80:80" # TODO: remove
+      - 443:443
     volumes:
       - ./frontend:/src
     depends_on:

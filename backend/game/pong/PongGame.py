@@ -65,6 +65,9 @@ class PongGame(Game):
         self.move_player(delta)
 
         if self.is_end():
+            for player_obj in self.player_objs:
+                player_obj.set_acc(position=Vector2(0, 0))
+                await self.broadcast_updated_data(self.player_objs)
             return False
         if await self.ready(delta):
             await self.broadcast_updated_data([])

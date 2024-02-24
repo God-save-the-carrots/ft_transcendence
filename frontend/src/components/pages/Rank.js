@@ -1,7 +1,10 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
 import Cookie from '../../core/Cookie.js';
+import { pubEnv } from '../../const.js';
+import ErrorPage from './ErrorPage.js';
 
+const endpoint = pubEnv.API_SERVER;
 export default class Rank extends Component {
   _title;
   _params;
@@ -25,13 +28,18 @@ export default class Rank extends Component {
     if (access === undefined) {
       // go to login page
     }
-    const data = await fetch(rank_api + '?' + `page=${_current_page}&page_size=5`, {
+    const res = await fetch(rank_api + '?' + `page=${_current_page}&page_size=5`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${access}`,
       }
-    })
-      .then((x) => x.json());
+    });
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
+      // .then((response) => response.json());
     // TODO: block mine 로그인 연동하면 바꿔야 함
     let html = '';
     html += `
@@ -71,7 +79,7 @@ export default class Rank extends Component {
 }
 
 function createMyRanking() {
-  let list_HTML = `
+  const list_HTML = `
     <div class="title">RANKING</div>
     <li class="block mine">
       <span class="rank">1</span>

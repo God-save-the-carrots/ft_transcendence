@@ -1,4 +1,6 @@
+import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
+import ErrorPage from './ErrorPage.js';
 
 export default class UserProfile extends Component {
   _title;
@@ -9,25 +11,28 @@ export default class UserProfile extends Component {
     this._intra_id = intra_id;
     this._title = 'UserProfile';
     this.state.photo_id;
+    this.state.msg;
   }
   async initState() {
     return {
       photo_id: 0,
+      msg: null,
     };
   }
 
   setEvent() {
+    // avatar
     this.$target.querySelector('.avatar-form')
         .addEventListener('submit', async (e) => {
           const photo_id = document
               .querySelector('input[name="avatar"]:checked').id;
           e.preventDefault();
           if (this.state.photo_id === photo_id) {
-            console.log('hello');
             return;
           }
-          const change_api = `http://localhost/api/user/${this._intra_id}/`;
-          await fetch(change_api, {
+          const endpoint = pubEnv.API_SERVER;
+          const change_api = `${endpoint}/api/user/${this._intra_id}/`;
+          const res = await fetch(change_api, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -35,15 +40,50 @@ export default class UserProfile extends Component {
             body: JSON.stringify({
               'photo_id': Number(photo_id)}),
           });
+          if (res.status != 200) {
+            new ErrorPage({code: res.status, msg: res.statusText});
+            return;
+          }
           this.state.photo_id = photo_id;
+        });
+    // msg
+    this.$target.querySelector('.msg-form')
+        .addEventListener('submit', async (e) => {
+          const msg= document
+              .querySelector('.msg-input').value;
+          e.preventDefault();
+          if (this.state.msg === msg) {
+            return;
+          }
+          const endpoint = pubEnv.API_SERVER;
+          const change_api = `${endpoint}/api/user/${this._intra_id}/`;
+          const res = await fetch(change_api, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              'message': msg}),
+          });
+          if (res.status != 200) {
+            new ErrorPage({code: res.status, msg: res.statusText});
+            return;
+          }
+          this.state.msg = msg;
         });
   }
 
   async template() {
-    if (this.state.photo_id > 8) return;
-    const profile_api = `http://localhost/api/game/pong/score/${this._intra_id}/profile`;
-    const data = await fetch(profile_api,
-    ).then((x) => x.json());
+    if (this.state.photo_id > 8 || this.state.msg == 'error') return;
+    const endpoint = pubEnv.API_SERVER;
+    const profile_api =
+      `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
+    const res = await fetch(profile_api);
+    if (res.status != 200) {
+      new ErrorPage({code: res.status, msg: res.statusText});
+      return;
+    }
+    const data = await res.json();
     const img = `/public/assets/profile/${data.user.photo_id}.png`;
     return `
 <link rel="stylesheet" href="${this._my_css}" type="text/css" />
@@ -56,16 +96,19 @@ export default class UserProfile extends Component {
       <img src="${img}" class="float-end rounded-circle mb-3"
         style="width: 180px; margin-right: 10px;"
         alt="Avatar"/>
-      <button type="button" data-bs-toggle="modal" data-bs-target="#editmodal">
-        <i class="bi bi-pencil-fill"></i>
+      <button type="button" data-bs-toggle="modal" data-bs-target="#edit-a">
       </button>
     </div>
     <div class="profile__user">
       <div class="profile__intra"> ${data.user.intra_id}</div>
-      <div class="profile__text"> HELLO ! ${data.user.message} </div>
+      <div class="profile__text"> 
+        <button type="button" data-bs-toggle="modal" data-bs-target="#edit-m">
+        </button>
+        <p> ${data.user.message} </p>
+      </div>
 
-      <!-- Modal -->
-      <div class="modal fade" id="editmodal" tabindex="-1"
+      <!-- avatar Modal -->
+      <div class="modal fade" id="edit-a" tabindex="-1"
       aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -134,7 +177,41 @@ export default class UserProfile extends Component {
           </div>
         </div>
       </div>
+      <!-- msg Modal -->
+      <div class="modal fade" id="edit-m" tabindex="-1"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+              change my message
+              </h1>
+              <button type="button" class="btn-close" 
+                data-bs-dismiss="modal" aria-label="Close">
+              </button>
+            </div>
+            <div class="modal-body">
 
+              <div class="input-form col-md-12 mx-auto">
+                <form class="msg-form" novalidate>
+                  <div class="row">
+                    <div class="col-md-12 mb-3">
+                      <input class="msg-input col-md-12 "
+                        type="text" maxlength='30' class="form-control"
+                        id="name" placeholder="30자 까지 입력 가능" value="" required>
+                    </div>
+                  </div>
+                  <!-- submit button -->
+                  <button type="Submit" class="btn btn-primary"
+                    data-bs-dismiss="modal">Save changes</button>
+                  <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Close</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="profile__rank">
       <h1> ${data.rank} </h1>

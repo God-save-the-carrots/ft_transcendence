@@ -6,7 +6,7 @@ export default class Shutter extends GameObject {
     params = {
       size: 10,
       count: 6,
-      color: "gray",
+      color: 'gray',
       position: {x: 0, y: 0, z: 0},
       ...params,
     };
@@ -27,23 +27,23 @@ export default class Shutter extends GameObject {
       const rect = new THREE.Mesh(geometry, material);
       rect.position.set(Math.sin(angle) * rectSize * 0.5, Math.cos(angle) * rectSize * 0.5, 0);
       const axis = new THREE.Vector3(rect.position.x, rect.position.y, rect.position.z).normalize();
-      rect.rotateOnAxis(axis, Math.PI / count);
+      rect.rotateOnAxis(axis, Math.PI / count * .75);
       rect.rotateOnAxis(new THREE.Vector3(0, 0, 1), -angle);
       const object = new THREE.Object3D();
-      object.add(rect)
+      object.add(rect);
       const {x, y} = {x: Math.sin(angle), y: Math.cos(angle)};
       object.normalPosition = {x, y};
       object.position.set(x * this.size, y * this.size);
       this.add(object);
       this.items.push(object);
     }
-    
+
     window.test = this;
   }
 
   update() {
     for (const item of this.items) {
-      const { normalPosition } = item;
+      const {normalPosition} = item;
       item.position.x = item.position.x * 0.8 + normalPosition.x * this.size * 0.2;
       item.position.y = item.position.y * 0.8 + normalPosition.y * this.size * 0.2;
     }

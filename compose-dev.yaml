@@ -12,7 +12,9 @@ services:
     tty: true
     working_dir: /src
     ports:
-      - 80:80
+      - 80:80 # TODO: remove
+      - 443:443
+      - 4000:4000
     volumes:
       - ./frontend:/var/www/html
       - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -32,7 +34,6 @@ services:
     working_dir: /src
     ports:
       - 8000:8000
-      - 4444:4444
     volumes:
       - ./backend:/src
       - run_vol:/var/run

@@ -5,14 +5,17 @@ import {EffectComposer} from '../threejs/postprocessing/EffectComposer.js';
 import {RenderPass} from '../threejs/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from '../threejs/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from '../threejs/postprocessing/OutputPass.js';
+import {color1} from '../game/preset.js';
 
-const url = `ws://${window.location.hostname}:4444`;
+const url = `wss://${window.location.hostname}:4000`;
 
 export class Scene extends THREE.Scene {
   constructor(width, height) {
     super();
     this.width = width;
     this.height = height;
+    this.currentWidth = width;
+    this.currentHeight = height;
     /**
      * key is threejs uuid
      * @type {Map<String, Object3D>}
@@ -34,24 +37,28 @@ export class Scene extends THREE.Scene {
     this.domEvents = {};
     this.renderHooks = [];
     this.renderHandleEvent = 0;
-    this.renderer = new THREE.WebGLRenderer();
+    this.renderer = new THREE.WebGLRenderer({antialias: true});
 
     this.composer = new EffectComposer(this.renderer);
 
     const renderScene = new RenderPass(this, this.camera);
     this.composer.addPass(renderScene);
 
-    const screenVector = new THREE.Vector2(width, height);
+    const screenVector = new THREE.Vector2(
+        this.currentWidth,
+        this.currentHeight,
+    );
     const bloomPass = new UnrealBloomPass(screenVector, 1.5, 0.4, 0.85);
     bloomPass.threshold = 0;
-    bloomPass.strength = 0;
+    bloomPass.strength = .125;
     bloomPass.radius = 0;
+    this.bloomPass = bloomPass;
     this.composer.addPass(bloomPass);
 
     const outputPass = new OutputPass();
     this.composer.addPass(outputPass);
 
-    this.composer.setSize(width, height);
+    this.composer.setSize(this.currentWidth, this.currentHeight);
   }
 
   loadDefaultScene() {
@@ -66,11 +73,14 @@ export class Scene extends THREE.Scene {
     this.removeAllDomEventListener();
 
     // init render camera
-    const aspect = this.width / this.height;
+    const aspect = this.currentWidth / this.currentHeight;
     this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
-    this.renderer.setSize(this.width, this.height);
+    this.renderer.setSize(this.currentWidth, this.currentHeight);
     this.renderer.shadowMap.enabled = true;
-    this.composer.passes[0].camera = this.camera;
+    if (this.composer != null) {
+      this.composer.passes[0].camera = this.camera;
+      this.composer.setSize(this.currentWidth, this.currentHeight);
+    }
     this.cameraHolder = new THREE.Object3D();
     this.cameraHolder.position.z = 42;
     this.cameraHolder.add(this.camera);
@@ -79,7 +89,7 @@ export class Scene extends THREE.Scene {
     // add background
     const background = new THREE.Mesh(
         new THREE.PlaneGeometry(1000, 1000),
-        new THREE.MeshPhongMaterial({color: 0x666666}),
+        new THREE.MeshPhongMaterial({color: color1}),
     );
     background.receiveShadow = true;
     background.castShadow = true;
@@ -281,16 +291,9 @@ export class NetworkScene extends Scene {
         res(false); // 인증 중이라면 대기 큐를 취소할 수 없음
         return;
       }
-      this.socket.send(JSON.stringify({
-        type: 'close',
-      }));
-      this.socket.onmessage = (e) => {
-        this.onmessage(e);
-        const data = JSON.parse(e.data);
-        if (data.status === 'success') this.socket.close();
-        this.#initSocketEvent();
-        res(data.status === 'success');
-      };
+      this.socket?.close();
+      this.#initSocketEvent();
+      res(true);
     });
   }
 
