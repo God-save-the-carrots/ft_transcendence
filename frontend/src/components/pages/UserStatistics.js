@@ -1,4 +1,4 @@
-import { pubEnv } from '../../const.js';
+import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
 
@@ -13,7 +13,8 @@ export default class UserStatistics extends Component {
     this._intra_id = params;
   }
   async template() {
-    const playtime_api = `${endpoint}/api/game/pong/score/${this._intra_id}/play-time`;
+    const playtime_api =
+      `${endpoint}/api/game/pong/score/${this._intra_id}/play-time`;
     const playtime_res = await fetch(playtime_api);
     if (playtime_res.status != 200) {
       new ErrorPage({code: playtime_res.status, msg: playtime_res.statusText});
@@ -24,20 +25,23 @@ export default class UserStatistics extends Component {
       <link rel="stylesheet" href="${this._my_css}" type="text/css" />
       <div class="boxs">
         <div class="playtime">
-          <p class="title"> Playtime </p>
+          <p class="title" data-detect='playtime'>Play time</p>
           <p align="center" class="playtime_hour"> 
             ${convertToHoursMinutes(playtime_data.minutes)}
           </p>
           <p align="center" class="playtime_day">
             ${convertToDaysHoursMinutes(playtime_data.minutes)}
           </p>
+          <p align="center" data-detect='rank'>
+          </p>
           <p align="center" class="playtime_rank">
-            RANK ${playtime_data.play_time_rank}
+            ${playtime_data.play_time_rank}
           </p>
         </div>
     `;
 
-    const winning_api = `${endpoint}/api/game/pong/score/${this._intra_id}/winning-rate`;
+    const winning_api =
+      `${endpoint}/api/game/pong/score/${this._intra_id}/winning-rate`;
     const winning_res = await fetch(winning_api);
     if (winning_res.status != 200) {
       new ErrorPage({code: winning_res.status, msg: winning_res.statusText});
@@ -49,27 +53,40 @@ export default class UserStatistics extends Component {
 
     html += `
       <div class="winning">
-        <p class="title"> Winning Rate </p>
+        <p class="title"data-detect='winning_rate'> Winning Rate </p>
         <div class="winning_chart">
-          <p class="title"> TOTAL ${winning_data.total_round} Rounds</p>
+            <p class="title" 
+              data-detect='total_rounds' style='float: left;'></p>
+            <p class="title">  : ${winning_data.total_round} R</p>
           <div class="progress">
             <div class="progress-bar" role="progressbar"
               style="width: ${winning_ratio.value1Ratio}%;"
               aria-valuenow="${winning_ratio.value1Ratio}"
-              aria-valuemin="0" aria-valuemax="100">
-              win ${winning_data.winning_round}R
+              aria-valuemin="0" aria-valuemax="100 ">
+              <div style="display: flex;">
+                <p data-detect='win' style='width: 50%; margin: 0;'></p>
+                <p style='width: 50%; margin: 0;'>
+                  ${winning_data.winning_round}R
+                </p>
+              </div>
             </div>
             <div class="progress-bar bg-info" role="progressbar" 
               style="width: ${winning_ratio.value2Ratio}%;" 
               aria-valuenow="${winning_ratio.value2Ratio}"
               aria-valuemin="0" aria-valuemax="100">
-              lose ${winning_data.losing_round}R
+              <div style="display: flex;">
+                <p data-detect='lose' style='width: 50%; margin: 0;'></p>
+                <p style='width: 50%; margin: 0;'>
+                  ${winning_data.losing_round}R
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     `;
-    const goal_api = `${endpoint}/api/game/pong/score/${this._intra_id}/goals-against-average`;
+    const goal_api =
+      `${endpoint}/api/game/pong/score/${this._intra_id}/goals-against-average`;
     const goal_res = await fetch(goal_api);
     if (goal_res.status != 200) {
       new ErrorPage({code: goal_res.status, msg: goal_res.statusText});
@@ -81,14 +98,17 @@ export default class UserStatistics extends Component {
     if (goal_ratio.value1Ratio == 0) {
       html += `
       <div class="goal-against">
-        <p class="title"> Goals Against Average </p>
-        NO DATA
+        <p class="title" data-detect='goals_against_average'>
+          Goals Against Average
+        </p>
       </div>
     `;
     } else {
       html += `
         <div class="goal-against">
-          <p class="title"> Goals Against Average </p>
+          <p class="title" data-detect='goals_against_average'> 
+            Goals Against Average
+          </p>
           <div class="goal_chart">
             <div class="progress">
               <div class="progress-bar" role="progressbar" 
@@ -108,7 +128,8 @@ export default class UserStatistics extends Component {
         </div>
     `;
     }
-    const wp_api = `${endpoint}/api/game/pong/score/${this._intra_id}/winning-percentage`;
+    const wp_api =
+      `${endpoint}/api/game/pong/score/${this._intra_id}/winning-percentage`;
     const wp_res = await fetch(wp_api);
     if (wp_res.status != 200) {
       new ErrorPage({code: wp_res.status, msg: wp_res.statusText});
@@ -117,7 +138,7 @@ export default class UserStatistics extends Component {
     const wp_data = await wp_res.json();
     html += `
 <div class="winning-percent">
-  <p id="title"> Winning Percentage </p>
+  <p id="title" data-detect='winning_percentage'> Winning Percentage </p>
   <div class="winning-percent-chart">
     <div class="progress">
       <div class="progress-bar user" role="progressbar"
@@ -134,7 +155,12 @@ export default class UserStatistics extends Component {
         aria-valuenow="${wp_data.average_winning_percentage}"
         aria-valuemin="0" aria-valuemax="100"
         style="width:${wp_data.average_winning_percentage}">
-        Average ${wp_data.average_winning_percentage}%
+        <div style="display: flex;">
+          <p data-detect='average' style='float: left;'></p>
+          <p style='width: 50%; margin: 2%;'> 
+            ${wp_data.average_winning_percentage}%
+          </p>
+        </div>
       </div>
     </div>
 
@@ -143,7 +169,13 @@ export default class UserStatistics extends Component {
         aria-valuenow="${wp_data.highest_winning_percentage.winning_percentage}"
         aria-valuemin="0" aria-valuemax="100"
         style="width:${wp_data.highest_winning_percentage.winning_percentage}%">
-        Highest ${wp_data.highest_winning_percentage.winning_percentage}%
+
+        <div style="display: flex;">
+          <p data-detect='highest' style='float: left;'></p>
+          <p style='width: 50%; margin: 2%;'>
+            ${wp_data.highest_winning_percentage.winning_percentage}%
+          </p>
+        <div>
       </div>
     </div>
   </div>

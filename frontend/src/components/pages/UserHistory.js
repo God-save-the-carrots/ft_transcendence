@@ -143,7 +143,7 @@ async function createHistoryContents(jsonData) {
           <img class="avatar" alt="Avatar"
           src="/public/assets/profile/${r2.round[0].user.photo_id}.png" />
           <div class="item-time">
-            <div>TIME</div>
+            <div data-detect='time'>TIME</div>
             <p>${convertSecondsToMMSS(r2.second)}</p>
           </div>
           <img class="avatar" alt="Avatar"
@@ -164,7 +164,7 @@ async function createHistoryContents(jsonData) {
             <img class="avatar" alt="Avatar"
             src="/public/assets/profile/${r1_1.round[0].user.photo_id}.png" />
             <div class="item-time">
-              <div>TIME</div>
+              <div data-detect='time'>TIME</div>
               <p>${convertSecondsToMMSS(r1_1.second)}</p>
             </div>
             <img class="avatar" alt="Avatar"
@@ -181,7 +181,7 @@ async function createHistoryContents(jsonData) {
               <img class="avatar" alt="Avatar"
               src="/public/assets/profile/${r1_2.round[0].user.photo_id}.png" />
               <div class="item-time">
-                <div>TIME</div>
+                <div data-detect='time'>TIME</div>
                 <p>${convertSecondsToMMSS(r1_2.second)}</p>
               </div>
               <img class="avatar" alt="Avatar"

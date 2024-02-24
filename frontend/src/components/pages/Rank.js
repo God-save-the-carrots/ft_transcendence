@@ -1,6 +1,6 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
-import { pubEnv } from '../../const.js';
+import {pubEnv} from '../../const.js';
 import ErrorPage from './ErrorPage.js';
 
 const endpoint = pubEnv.API_SERVER;
@@ -71,7 +71,7 @@ export default class Rank extends Component {
 
 function createMyRanking() {
   const list_HTML = `
-    <div class="title">RANKING</div>
+    <div class="title" data-detect='ranking'>RANKING</div>
     <li class="block mine">
       <span class="rank">1</span>
       <div class="space"></div>

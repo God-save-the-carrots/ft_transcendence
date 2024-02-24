@@ -1,4 +1,5 @@
 import {observable, observe} from './observer.js';
+import * as Lang from '../Lang.js';
 
 export default class Component {
   /**
@@ -33,6 +34,7 @@ export default class Component {
 
   async render() {
     this.$target.innerHTML = await this.template();
+    Lang.loadLanguage();
   }
 
   setEvent() {}
