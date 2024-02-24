@@ -1,6 +1,6 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
-import { getCookie } from './Auth.js';
+import Cookie from '../../core/Cookie.js';
 
 export default class Rank extends Component {
   _title;
@@ -21,7 +21,7 @@ export default class Rank extends Component {
   async template() {
     const rank_api = `http://localhost/api/game/pong/rank/`;
     const _current_page = this.state.current_page;
-    const access = getCookie('access');
+    const access = Cookie.getCookie('access');
     if (access === undefined) {
       // go to login page
     }
