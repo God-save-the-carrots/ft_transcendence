@@ -1,6 +1,7 @@
 import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
+import Router from '../../core/Router.js';
 
 const endpoint = pubEnv.API_SERVER;
 export default class UserHistory extends Component {
@@ -46,6 +47,20 @@ export default class UserHistory extends Component {
       if (isNaN(e.target.dataset.page)) return;
       if (e.target.dataset.page != '+') {
         this.state.current_page = e.target.dataset.page;
+      }
+    });
+
+    this.addEvent('click', '[history-link]', async (e) => {
+      const parent = e.target.parentElement;
+      e.preventDefault();
+      if (e.target.matches('[history-link]')) {
+        e.preventDefault();
+        const href = e.target.href;
+        await Router.navigateTo(href);
+      } else if (parent.matches('[history-link]')) {
+        e.preventDefault();
+        const href = parent.href;
+        await Router.navigateTo(href);
       }
     });
   }
@@ -100,7 +115,7 @@ async function createHistoryContents(jsonData) {
 
       if (scoreItem.rank === 1) {
         list_HTML += `
-              <a class="parent-image" href="/user/${user}">
+              <a class="parent-image" href="/user/${user}" history-link>
                 <img class="avatar" alt="Avatar"
                 src="/public/assets/profile/${photo}.png" />
                 <img class="crown-icon"
@@ -109,7 +124,7 @@ async function createHistoryContents(jsonData) {
         `;
       } else {
         list_HTML += `
-              <a href="/user/${user}">
+              <a href="/user/${user}" history-link>
               <img class="avatar" alt="Avatar"
               src="/public/assets/profile/${photo}.png" /></a>
         `;
