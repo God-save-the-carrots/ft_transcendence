@@ -170,9 +170,9 @@ export default class UserStatistics extends Component {
         aria-valuemin="0" aria-valuemax="100"
         style="width:${wp_data.highest_winning_percentage.winning_percentage}%">
 
-        <div style="display: flex;">
-          <p data-detect='highest' style='float: left;'></p>
-          <p style='width: 50%; margin: 2%;'>
+        <div style="display: flex; margin: auto;">
+          <p data-detect='highest' style='float: left; margin-right: 5%;'></p>
+          <p>
             ${wp_data.highest_winning_percentage.winning_percentage}%
           </p>
         <div>
