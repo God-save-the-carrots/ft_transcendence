@@ -35,11 +35,11 @@ export default class UserProfile extends Component {
     </div>
     <div class="profile__user">
       <div class="profile__intra">${data.user.intra_id}</div>
-      <div class="profile__text"> HELLO ! ${data.user.message} </div>
+      <div class="profile__text"> ${data.user.message} </div>
     </div>
     <div class="profile__rank">
       <h1> ${data.rank} </h1>
-      <h2> RANK </h2>
+      <h2 data-detect='rank'> RANK </h2>
     </div>
   </div>
 </div>

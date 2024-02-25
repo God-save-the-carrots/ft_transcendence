@@ -34,12 +34,14 @@ main {
 }
 
 .stats_link {
+  width: 250px;
   float : left;
   background-color: black;
   padding-right: 2%;
 }
 
 .history_link {
+  width: 250px;
   float : left;
   background-color: black;
   padding-right: 2%;
@@ -59,7 +61,6 @@ main {
   color: white !important;
   font-weight:bold;
   font-size:2em;
-  padding-right: 5%;
 }
 
 .history_link > a:focus {
