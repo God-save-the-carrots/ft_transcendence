@@ -23,6 +23,7 @@ const multiLang = {
     highest: '신',
     time: '시간',
     input_your_nick: '닉네임 입력해..!',
+    empty: '텅 빔',
   },
   'en': {
     welcometolibft: 'Welcome to LIBFT',
@@ -47,6 +48,7 @@ const multiLang = {
     highest: 'highest',
     time: 'TIME',
     input_your_nick: 'Input your nickname....!',
+    empty: 'empty',
   },
   'cn': {
     welcometolibft: '어쩌구 저쩌구 LIBFT',
@@ -71,6 +73,7 @@ const multiLang = {
     highest: '크크',
     time: '삥',
     input_your_nick: '쿠쿠루삥뽕삥뽕....!',
+    empty: '이소라최고',
   },
 
 };
