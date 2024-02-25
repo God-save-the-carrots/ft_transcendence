@@ -1,3 +1,4 @@
+import jwt
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -5,11 +6,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
+from datetime import datetime, timedelta
+from django.conf import settings
 
 from django.utils import timezone
 from .models import Pong, GameSession, Tournament
 from accounts.models import User, Profile
-from .serializers import CustomRankSerializer, CustomMatchesSerializer, CustomTicketSerializer
+from .serializers import CustomRankSerializer, CustomMatchesSerializer
 
 import math
 
@@ -47,7 +50,7 @@ class PongAPIView(APIView):
                 rank = player_dict.get(intra_id, 0)
                 score = score_data.get('score', 0)
 
-                pong = Pong.objects.create(
+                Pong.objects.create(
                     game_session_id=game_session,
                     user_id=user_id,
                     rank=rank,
@@ -65,7 +68,6 @@ class RankAPIView(APIView):
 
     def get(self, request):
         try:
-            game_type = request.GET.get('game_type', None)
             page = int(request.GET.get('page', 1))
             page_size = int(request.GET.get('page_size', 20))
 
@@ -113,8 +115,12 @@ class TicketAPIView(APIView):
             intra_id = request.user.intra_id
             user_model = User.objects.get(intra_id=intra_id)
 
-            serializer = CustomTicketSerializer(user_model)
-            response = serializer.data
-            return Response(response, status=status.HTTP_200_OK)
+            payload = {
+                'intra_id': user_model.intra_id,
+                'photo_id': user_model.profile.photo_id,
+                'exp': datetime.utcnow() + timedelta(minutes=15)
+            }
+            token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+            return Response({'ticket': token}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
