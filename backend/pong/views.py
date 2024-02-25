@@ -114,11 +114,12 @@ class TicketAPIView(APIView):
         try:
             intra_id = request.user.intra_id
             user_model = User.objects.get(intra_id=intra_id)
-
+            current_time = datetime.utcnow()
             payload = {
+                'exp': current_time + timedelta(minutes=15),
+                'iat': current_time,
                 'intra_id': user_model.intra_id,
                 'photo_id': user_model.profile.photo_id,
-                'exp': datetime.utcnow() + timedelta(minutes=15)
             }
             token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
             return Response({'ticket': token}, status=status.HTTP_200_OK)
