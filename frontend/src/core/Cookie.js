@@ -38,10 +38,7 @@ class Cookie {
       const arr = item.split('=');
       const item_name = arr[0];
       const item_value = arr[1];
-      // console.log(item_name, item_value);
       if (name === item_name.trim() && item_value.trim() !== '') {
-        console.log(item_name, item_value);
-        console.log('found!');
         res = item_value;
       }
     });
@@ -52,6 +49,18 @@ class Cookie {
     this.setCookie(name, '', {
       'expires': new Date('Thu, 01 Jan 1970 00:00:00 UTC'),
       'max-age': new Date('Thu, 01 Jan 1970 00:00:00 UTC'),
+    });
+  }
+
+  setToken(data) {
+    const token_arr = Object.entries(data);
+    token_arr.forEach((arr) => {
+      this.setCookie(arr[0], arr[1],
+          {
+            'expires': new Date(),
+            'max-age': new Date(),
+          },
+      );
     });
   }
 }
