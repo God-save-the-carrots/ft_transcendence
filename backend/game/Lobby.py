@@ -43,7 +43,7 @@ class Lobby:
             if user in q:
                 q.remove(user)
             await user.send_json({"type":"close","status":"success"})
-            await user.socket.close()
+            await user.close()
             print(user.socket.id, "leave lobby")
 
     async def match(self):
