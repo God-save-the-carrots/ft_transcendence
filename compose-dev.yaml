@@ -94,6 +94,9 @@ services:
     image: prom/prometheus:latest
     container_name: ${PROMETHEUS_CONTAINER_NAME}
     command:
+      - '--storage.tsdb.path=/prometheus/data'
+      - '--storage.tsdb.retention.time=30d'
+      - '--storage.tsdb.retention.size=5GB'
       - '--config.file=/etc/prometheus/prometheus.yml'
     env_file:
       - .env
