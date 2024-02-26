@@ -102,6 +102,8 @@ class UserAPIView(APIView):
             else:
                 truncated_message = message
             profile_instance.message = truncated_message
+        if 'lang_type' in request.data:
+            profile_instance.lang_type = request.data['lang_type']
         
         profile_instance.save()
 

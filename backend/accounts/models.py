@@ -45,10 +45,21 @@ class UserRefreshToken(models.Model):
 
 # profile : User와 1대1로 매칭이되는 정보 (변하는 정보)
 class Profile(models.Model):
+    KO = 'ko'
+    EN = 'en'
+    CN = 'cn'
+    
+    LANG_TYPE_CHOICES = [
+        (KO, 'ko'),
+        (EN, 'en'),
+        (CN, 'cn'),
+    ]
+
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)
     photo_id = models.IntegerField(default=1)
     rating = models.IntegerField(default=1024)
     message = models.CharField(max_length=30, blank=True, null=True)
+    lang_type = models.CharField(max_length=10, choices=LANG_TYPE_CHOICES, blank=True, default=EN)
 
     def __str__(self):
         return f"{self.user_id.intra_id} ({self.pk})"

@@ -30,4 +30,4 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'intra_id', 'photo_id', 'message', 'rating']
+        fields = ['id', 'intra_id', 'photo_id', 'message', 'rating', 'lang_type']
