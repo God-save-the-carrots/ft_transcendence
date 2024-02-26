@@ -76,11 +76,9 @@ class Router {
       params.msg = 'User not found';
     }
     this.#view = await import(`../components/pages/${match.route.view}.js`)
-        .then(
-            async ({default: Page}) => {
-              return new Page(params);
-            },
-        );
+        .then(async ({default: Page}) => {
+          return new Page(document.querySelector('#app'), params);
+        });
     return this.#view;
   }
 }

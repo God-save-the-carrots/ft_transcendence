@@ -8,8 +8,8 @@ export default class Game extends Component {
   _params;
   _my_css = '../../../public/assets/css/game.css';
   _tournamentData = {};
-  constructor(params = null) {
-    super(document.querySelector('#app'));
+  constructor($target, params = null) {
+    super($target);
     this.game = null;
     this._title = 'Game';
     const randomUserToken = Math.random().toString(36).substring(2, 7);

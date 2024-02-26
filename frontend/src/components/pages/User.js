@@ -14,8 +14,8 @@ export default class User extends Component {
   _myCss = '../../../public/assets/css/user.css';
   _statistics = null;
   _history = null;
-  constructor(params = null) {
-    super(document.querySelector('#app'));
+  constructor($target, params = null) {
+    super($target);
     this._title = 'User';
     this._params = params;
   }
