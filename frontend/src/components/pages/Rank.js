@@ -5,6 +5,7 @@ import { pubEnv } from '../../const.js';
 import ErrorPage from './ErrorPage.js';
 
 const endpoint = pubEnv.API_SERVER;
+
 export default class Rank extends Component {
   _title;
   _params;
@@ -22,7 +23,7 @@ export default class Rank extends Component {
   }
 
   async template() {
-    const rank_api = `http://localhost/api/game/pong/rank/`;
+    const rank_api = `${endpoint}/api/game/pong/rank/`;
     const _current_page = this.state.current_page;
     const access = Cookie.getCookie('access');
     if (access === undefined) {
@@ -32,7 +33,7 @@ export default class Rank extends Component {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${access}`,
-      }
+      },
     });
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
