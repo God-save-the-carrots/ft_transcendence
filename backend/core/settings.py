@@ -164,12 +164,12 @@ REST_FRAMEWORK = {
 
 CLIENT_ID = os.environ.get('CLIENT_ID')
 CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
-REDIRECT_URI = 'http://localhost/auth/ft/redirection'
+REDIRECT_URI = 'https://localhost/auth/ft/redirection'
 
 SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
     'ALGORITHM': 'HS256',
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'JWT_ALLOW_REFRESH': True,
 }
