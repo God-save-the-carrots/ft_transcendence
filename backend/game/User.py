@@ -66,3 +66,10 @@ class User:
         for event in reversed(self.onclose):
             await event(self)
         print(self.socket.id, "close")
+
+    async def close(self):
+        self.connected = False
+        await self.socket.close()
+
+    def is_open(self):
+        return self.socket.closed == False

@@ -28,6 +28,6 @@ class Rule:
     async def disconnect(self, players):
         for player in players:
             try:
-                await player.socket.close()
+                await player.close()
             except:
                 pass
