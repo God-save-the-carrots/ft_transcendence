@@ -96,7 +96,12 @@ class UserAPIView(APIView):
         if 'photo_id' in request.data:
             profile_instance.photo_id = request.data['photo_id']
         if 'message' in request.data:
-            profile_instance.message = escape(request.data['message'])
+            message = escape(request.data['message'])
+            if len(message) > 30:
+                truncated_message = message[:30]
+            else:
+                truncated_message = message
+            profile_instance.message = truncated_message
         
         profile_instance.save()
 
