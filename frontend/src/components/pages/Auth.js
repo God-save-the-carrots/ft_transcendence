@@ -16,53 +16,20 @@ export default class Auth extends Component {
     this._params = params;
   }
   async template() {
-    if (isCookieExist() === false) {
-      const auth_api = window.location.href;
-      const code = auth_api.split('code=');
-      // const login_api = `${endpoint}:8000/api/login`;
-      const login_api = `http://localhost:8000/api/login`;
+    const auth_api = window.location.href;
+    const code = auth_api.split('code=')[1];
+    const login_api = `${endpoint}/api/login`;
 
-      console.log(auth_api);
-      fetch(login_api, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({code}),
-      })
-          .then((x) => x.json())
-          .then((data) => verifyCookie(data));
-    } else { // debug
-      const verify_api = `http://localhost:8000/api/token/verify/`;
-      const access = Cookie.getCookie(access_token);
-      const refresh = Cookie.getCookie(refresh_token);
-      const intra_id = Cookie.getCookie('intra_id');
-      console.log(access, refresh);
-      fetch(verify_api, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          access: `${access}`,
-          refresh: `${refresh}`,
-        }),
-      })
-          .then((response) => {
-            if (response.ok) {
-              console.log(response.json);
-              // Router.navigateTo(`/rank`);
-              // Router.navigateTo(`/user/${intra_id}`);
-            } else if (response.status == 201) {
-              console.log(response.json);
-            } else if (response.status == 401 || response.status == 400) {
-              // Cookie.deleteCookie(access_token);
-              // Cookie.deleteCookie(refresh_token);
-              // Cookie.deleteCookie('intra_id');
-              Router.navigateTo('/');
-            }
-          });
-    }
+    console.log(code);
+    fetch(login_api, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({code}),
+    })
+        .then((x) => x.json())
+        .then((data) => verifyCookie(data));
     return ``;
   }
   async mounted() {}
@@ -71,16 +38,13 @@ export default class Auth extends Component {
 function setToken(data) {
   const token_arr = Object.entries(data);
   token_arr.forEach((arr) => {
-    // console.log(arr[0]);
-    // console.log(arr[1]);
     Cookie.setCookie(arr[0], arr[1],
         {
           'expires': new Date(),
           'max-age': new Date(),
         },
     );
-  },
-  );
+  });
 }
 
 function isCookieExist() {
@@ -88,40 +52,22 @@ function isCookieExist() {
   const refresh = Cookie.getCookie(refresh_token);
   const intra_id = Cookie.getCookie('intra_id');
   if (access === undefined || refresh === undefined || intra_id === undefined) {
-    console.log('isCookie not exist');
     return false;
   }
-  console.log('cookie exist');
   return true;
-  // access = getCookie(${access_token});
-  // const uri = `http://localhost:8000/api/game/pong/rank/`;
-  // fetch(uri, {
-  //   method: 'GET',
-  //   headers: {
-  //     'Authorization': `Bearer ${access}`,
-  //   }
-  // })
-  //   .then(function(response) {
-  //     if (response.ok) {
-  //       console.log('response ok', response);
-  //       redirection_uri = `http://localhost/rank/`;
-  //       //Response.redirect(redirection_uri);
-  //       Router.navigateTo('/rank');
-  //     }
-  //   })
 }
 
-function verifyCookie(data) {
+async function verifyCookie(data) {
   if (isCookieExist() === false) {
     console.log('create cookie');
     setToken(data);
   }
-  const verify_api = `http://localhost:8000/api/token/verify/`;
+  const verify_api = `${endpoint}/api/token/verify/`;
   const access = Cookie.getCookie(access_token);
   const refresh = Cookie.getCookie(refresh_token);
   const intra_id = Cookie.getCookie('intra_id');
   console.log(access, refresh);
-  fetch(verify_api, {
+  const res = await fetch(verify_api, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -130,19 +76,21 @@ function verifyCookie(data) {
       access: `${access}`,
       refresh: `${refresh}`,
     }),
-  })
-      .then((response) => {
-        if (response.ok) {
-          console.log(response.json);
-          // Router.navigateTo(`/rank`);
-          // Router.navigateTo(`/user/${intra_id}`);
-        } else if (response.status == 201) {
-          console.log(response.json);
-        } else if (response.status == 401 || response.status == 400) {
-          // Cookie.deleteCookie(access_token);
-          // Cookie.deleteCookie(refresh_token);
-          // Cookie.deleteCookie('intra_id');
-          // Router.navigateTo('/');
-        }
-      });
+  });
+  if (res.ok) {
+    Router.navigateTo(`/user/${intra_id}`);
+    return;
+  }
+  const response_data = await res.json();
+  if (res.status === 201) {
+    console.log('201 resetting data');
+    console.log(response_data.data);
+    verifyCookie(response_data.data);
+    return;
+  } else if (res.status === 401) {
+    Cookie.deleteCookie(access_token);
+    Cookie.deleteCookie(refresh_token);
+    Cookie.deleteCookie('intra_id');
+    Router.navigateTo('/');
+  }
 }
