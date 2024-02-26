@@ -100,7 +100,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - ./devops/prometheus/src:/etc/prometheus
+      - ./devops/prometheus:/etc/prometheus
 
 volumes:
   run_vol:
