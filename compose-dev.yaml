@@ -99,7 +99,10 @@ services:
       - '--storage.tsdb.path=/prometheus/data'
       - '--storage.tsdb.retention.time=30d'
       - '--storage.tsdb.retention.size=5GB'
+<<<<<<< HEAD
       - '--web.config.file=/etc/prometheus/web-config.yml'
+=======
+>>>>>>> feat: :zap: prometheus - "데이터 보존 및 저장 전략을 보장" 추가
       - '--config.file=/etc/prometheus/prometheus.yml'
     env_file:
       - .env
