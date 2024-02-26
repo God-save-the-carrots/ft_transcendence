@@ -14,31 +14,30 @@ export default class EmptyUserStatistics extends Component {
       <div class="boxs">
         <div class="empty"></div>
         <div class="playtime">
-          <p class="title"> Playtime </p>
-          <p align="center" class="playtime_hour"> 
+          <p class="title" data-detect='playtime'>Play time</p>
+          <p align="center" class="playtime_hour" data-detect='empty'> 
               empty
           </p>
         </div>
 
       <div class="winning">
-        <p class="title"> Winning Rate </p>
-        <p align="center" class="playtime_hour"> 
+        <p class="title"data-detect='winning_rate'> Winning Rate </p>
+        <p align="center" class="playtime_hour" data-detect='empty'> 
             empty
         </p>
 
       </div>
 
       <div class="goal-against">
-        <p class="title"> Goals Against Average </p>
-        <p align="center" class="playtime_hour"> 
+        <p class="title" data-detect='goals_against_average'></p>
+        <p align="center" class="playtime_hour" data-detect='empty'> 
             empty
         </p>
       </div>
 
       <div class="winning-percent">
-        <p id="title"> Winning Percentage </p>
-        <p align="center" class="playtime_hour"> 
-            empty
+        <p id="title" data-detect='winning_percentage'></p>
+        <p align="center" class="playtime_hour" data-detect='empty'> 
         </p>
       </div>
       </div>

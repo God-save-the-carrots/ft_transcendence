@@ -6,9 +6,8 @@ const endpoint = pubEnv.API_SERVER;
 export default class Home extends Component {
   _title;
   _params;
-  _my_css;
-  constructor(params = null) {
-    super(document.querySelector('#app'));
+  constructor($target, params = null) {
+    super($target);
     this._title = 'Home';
     this._params = params;
     this._my_css = '../../public/assets/css/home.css';
@@ -28,7 +27,7 @@ export default class Home extends Component {
         <img src="../../public/assets/image/monster.svg" alt=""
           class="three" draggable="false">
       </div>
-      <p>
+      <p data-detect='welcometolibft'>
         <span>Welcome</span>
         <span>to</span>
         <span class="title">LIBFT!</span>

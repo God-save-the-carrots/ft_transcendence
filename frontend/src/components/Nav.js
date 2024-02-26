@@ -1,5 +1,6 @@
 import Component from '../core/Component.js';
 import Router from '../core/Router.js';
+import * as Lang from '../Lang.js';
 
 export default class Nav extends Component {
   async template() {
@@ -33,7 +34,9 @@ export default class Nav extends Component {
             <li><a class="dropdown-item" href="/user/dummy1" data-link>
               Profile</a></li>
             <li><a class="dropdown-item" href="/home" data-link>Logout</a></li>
-            <li><a class="dropdown-item" href="/test" data-link>Test</a></li>
+            <li><a class="dropdown-item" data-lang=ko lang-link>KOREAN</a></li>
+            <li><a class="dropdown-item" data-lang=en lang-link>ENGLISH</a></li>
+            <li><a class="dropdown-item" data-lang=cn lang-link>CHINA</a></li>
             </ul>
         </li>
       </ul>
@@ -55,6 +58,9 @@ export default class Nav extends Component {
         const href = parent.href;
         await Router.navigateTo(href);
       }
+    });
+    this.addEvent('click', '[lang-link]', async (e) => {
+      Lang.setLanguage(e.target.dataset.lang);
     });
   }
 }

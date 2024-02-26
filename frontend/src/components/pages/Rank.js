@@ -1,7 +1,7 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
 import Cookie from '../../core/Cookie.js';
-import { pubEnv } from '../../const.js';
+import {pubEnv} from '../../const.js';
 import ErrorPage from './ErrorPage.js';
 
 const endpoint = pubEnv.API_SERVER;
@@ -11,8 +11,8 @@ export default class Rank extends Component {
   _params;
   _my_css = '../../../public/assets/css/rank.css';
   _pagination_css = '../../../public/assets/css/Pagination.css';
-  constructor(params = null) {
-    super(document.querySelector('#app'));
+  constructor($target, params = null) {
+    super($target);
     this._title = 'Rank';
     this._params = params;
   }
@@ -81,7 +81,7 @@ export default class Rank extends Component {
 
 function createMyRanking() {
   const list_HTML = `
-    <div class="title">RANKING</div>
+    <div class="title" data-detect='ranking'>RANKING</div>
     <li class="block mine">
       <span class="rank">1</span>
       <div class="space"></div>

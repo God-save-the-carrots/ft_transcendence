@@ -122,7 +122,8 @@ export default class UserProfile extends Component {
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">
+              <h1 class="modal-title fs-5" id="exampleModalLabel" 
+                data-detect='change_my_avatar'>
               change my avatar
               </h1>
               <button type="button" class="btn-close" 
@@ -178,9 +179,11 @@ export default class UserProfile extends Component {
                 </div>
                 <!-- submit button -->
                 <button type="Submit" class="btn btn-primary"
-                  data-bs-dismiss="modal">Save changes</button>
+                  data-bs-dismiss="modal"data-detect='save_changes'>
+                    Save changes
+                </button>
                 <button type="button" class="btn btn-secondary"
-                  data-bs-dismiss="modal">Close</button>
+                  data-bs-dismiss="modal"data-detect='close'>Close</button>
               </form>
             </div>
           </div>
@@ -192,7 +195,8 @@ export default class UserProfile extends Component {
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">
+              <h1 class="modal-title fs-5" id="exampleModalLabel" 
+                data-detect='change_my_message'>
               change my message
               </h1>
               <button type="button" class="btn-close" 
@@ -212,9 +216,11 @@ export default class UserProfile extends Component {
                   </div>
                   <!-- submit button -->
                   <button type="Submit" class="btn btn-primary"
-                    data-bs-dismiss="modal">Save changes</button>
+                    data-bs-dismiss="modal" data-detect='save_changes'>
+                    Save changes
+                  </button>
                   <button type="button" class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
+                    data-bs-dismiss="modal" data-detect='close'>Close</button>
                 </form>
               </div>
             </div>
@@ -224,7 +230,7 @@ export default class UserProfile extends Component {
     </div>
     <div class="profile__rank">
       <h1> ${data.rank} </h1>
-      <h2> RANK </h2>
+      <h2 data-detect='rank'> RANK </h2>
     </div>
   </div>
 </div>

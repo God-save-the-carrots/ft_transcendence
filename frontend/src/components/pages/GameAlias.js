@@ -20,7 +20,7 @@ export default class GameAlias extends Component {
     <link rel="stylesheet" href="${this._my_css}" type="text/css" />
     <div class='alias inputbox'> 
       <div class='typewriter'>
-        <h1>Input your nickname....!</h1>
+        <h1 data-detect='input_your_nick'>Input your nickname....!</h1>
       </div>
       <div class="nickname-box">
         <input type="text" id='textInput' class="form-control form-control-lg"
