@@ -1,6 +1,11 @@
 import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
+import Cookie from '../../core/Cookie.js';
+
+const endpoint = pubEnv.API_SERVER;
+const access_token = pubEnv.TOKEN_ACCESS;
+const refresh_token = pubEnv.TOKEN_REFRESH;
 
 export default class UserProfile extends Component {
   _title;
@@ -30,7 +35,6 @@ export default class UserProfile extends Component {
           if (this.state.photo_id === photo_id) {
             return;
           }
-          const endpoint = pubEnv.API_SERVER;
           const change_api = `${endpoint}/api/user/${this._intra_id}/`;
           const res = await fetch(change_api, {
             method: 'PATCH',
@@ -75,10 +79,15 @@ export default class UserProfile extends Component {
 
   async template() {
     if (this.state.photo_id > 8 || this.state.msg == 'error') return;
-    const endpoint = pubEnv.API_SERVER;
     const profile_api =
       `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
-    const res = await fetch(profile_api);
+    const access = Cookie.getCookie('access');
+    const res = await fetch(profile_api, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
+    });
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
       return;
