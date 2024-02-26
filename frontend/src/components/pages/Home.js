@@ -3,8 +3,8 @@ import Component from '../../core/Component.js';
 export default class Home extends Component {
   _title;
   _params;
-  constructor(params = null) {
-    super(document.querySelector('#app'));
+  constructor($target, params = null) {
+    super($target);
     this._title = 'Home';
     this._params = params;
   }

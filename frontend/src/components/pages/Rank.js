@@ -9,8 +9,8 @@ export default class Rank extends Component {
   _params;
   _my_css = '../../../public/assets/css/rank.css';
   _pagination_css = '../../../public/assets/css/Pagination.css';
-  constructor(params = null) {
-    super(document.querySelector('#app'));
+  constructor($target, params = null) {
+    super($target);
     this._title = 'Rank';
     this._params = params;
   }

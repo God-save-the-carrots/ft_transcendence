@@ -8,8 +8,12 @@ function debounceFrame(callback) {
   };
 }
 
-export async function observe(fn) {
+export async function observe(fn, obj) {
   currentObserver = debounceFrame(fn);
+  for (const key in obj) {
+    if (Object.hasOwn(obj, key) == false) continue;
+    obj[key];
+  }
   await fn();
   currentObserver = null;
 }

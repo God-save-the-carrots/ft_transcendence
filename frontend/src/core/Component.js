@@ -20,7 +20,7 @@ export default class Component {
       await this.render();
       this.setEvent();
       await this.mounted();
-    });
+    }, this.state);
   }
 
   async initState() {
