@@ -58,6 +58,7 @@ class LoginAPIView(APIView):
         refresh_token_model.save()
         response = {
             "intra_id": user_instance_model.intra_id,
+            "lang_type": user_instance_model.profile.lang_type,
             "access": str(access_token),
             "refresh": str(refresh_token)
         }
@@ -102,6 +103,8 @@ class UserAPIView(APIView):
             else:
                 truncated_message = message
             profile_instance.message = truncated_message
+        if 'lang_type' in request.data:
+            profile_instance.lang_type = request.data['lang_type']
         
         profile_instance.save()
 
