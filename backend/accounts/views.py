@@ -58,6 +58,7 @@ class LoginAPIView(APIView):
         refresh_token_model.save()
         response = {
             "intra_id": user_instance_model.intra_id,
+            "lang_type": user_instance_model.profile.lang_type,
             "access": str(access_token),
             "refresh": str(refresh_token)
         }
