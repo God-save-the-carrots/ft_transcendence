@@ -2,8 +2,9 @@ import Component from '../../core/Component.js';
 import UserProfile from './UserProfile.js';
 import UserProfileLogined from './UserProfileLogined.js';
 import EmptyUserStatistics from './EmptyUserStatistics.js';
+import Cookie from '../../core/Cookie.js';
+import {pubEnv} from '../../const.js';
 
-const g_logined_test = true;
 
 export default class NewUser extends Component {
   _title;
@@ -31,7 +32,7 @@ export default class NewUser extends Component {
     const _test_app2 = this.$target.querySelector(
         '[data-component="test-app2"]',
     );
-    if (g_logined_test == true) {
+    if (Cookie.getCookie(pubEnv.TOKEN_INTRA_ID) === this._params.intra_id) {
       new UserProfileLogined(_test_app1, this._params.intra_id);
     } else {
       new UserProfile(_test_app1, this._params.intra_id);
