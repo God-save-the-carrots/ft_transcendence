@@ -14,7 +14,7 @@ import LoadingCircle from '../common/LoadingCircle.js';
 import Shutter from '../common/Shutter.js';
 import {color2, color3, color4} from '../preset.js';
 import {pubEnv} from '../../const.js';
-import {getCookie} from '../../components/pages/Auth.js';
+import Cookie from '../../core/Cookie.js';
 
 const endpoint = pubEnv.API_SERVER;
 export default class PongGame extends NetworkScene {
@@ -66,7 +66,7 @@ export default class PongGame extends NetworkScene {
     this.loadDefaultScene();
     const ready = async (type) => {
       this.loadReady();
-      const token = getCookie('access');
+      const token = Cookie.getCookie('access');
       this.token = await fetch(`${endpoint}/api/game/pong/ticket/`, {
         headers: {'Authorization': `Bearer ${token}`},
       }).then((x) => x.json()).then((x) => x.ticket).catch((x) => null);
