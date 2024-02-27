@@ -1,9 +1,11 @@
 import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
+import Cookie from '../../core/Cookie.js';
 import {pubEnv} from '../../const.js';
 import ErrorPage from './ErrorPage.js';
 
 const endpoint = pubEnv.API_SERVER;
+
 export default class Rank extends Component {
   _title;
   _params;
@@ -22,15 +24,23 @@ export default class Rank extends Component {
 
   async template() {
     const rank_api = `${endpoint}/api/game/pong/rank/`;
-
     const _current_page = this.state.current_page;
-    const res = await fetch(
-        rank_api + '?' + `page=${_current_page}&page_size=5`);
+    const access = Cookie.getCookie('access');
+    if (access === undefined) {
+      // go to login page
+    }
+    const res = await fetch(rank_api + '?' + `page=${_current_page}&page_size=5`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
+    });
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
       return;
     }
     const data = await res.json();
+      // .then((response) => response.json());
     // TODO: block mine 로그인 연동하면 바꿔야 함
     let html = '';
     html += `

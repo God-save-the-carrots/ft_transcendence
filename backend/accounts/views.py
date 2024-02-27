@@ -2,9 +2,12 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
-from .models import User, Profile
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import User, UserRefreshToken, Profile
 from .serializers import *
+from rest_framework import status
 
 import requests
 from django.conf import settings
@@ -14,31 +17,26 @@ from urllib.parse import urlencode
 # Create your views here.
 
 # login
-# oauth 후 작업필요.
 class LoginAPIView(APIView):
-    def get(self, request):
+
+    def post(self, request):
         client_id = settings.CLIENT_ID
         client_secret = settings.CLIENT_SECRET
         redirect_uri = settings.REDIRECT_URI
 
-        login_serializer = LoginSerializer(data=request.query_params)
-        if not login_serializer.is_valid():
-            query_params = {
-                'client_id': client_id,
-                'redirect_uri': redirect_uri,
-                'response_type': 'code',
-            }
-            return redirect(f"https://api.intra.42.fr/oauth/authorize?{urlencode(query_params)}")
+        code = request.data.get('code')
+        if not code:
+            return Response({"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         token = requests.post('https://api.intra.42.fr/oauth/token', data={
             'client_id': client_id,
             'client_secret': client_secret,
             'redirect_uri': redirect_uri,
             'grant_type': 'authorization_code',
-            'code': login_serializer.validated_data['code'],
+            'code': code,
         })
         if token.status_code != 200:
-            return Response({"error": "Failed to get token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Failed to get token"}, status=status.HTTP_404_NOT_FOUND)
 
         token_serializer = TokenSerializer(data=token.json())
         if not token_serializer.is_valid():
@@ -47,21 +45,34 @@ class LoginAPIView(APIView):
         me = requests.get('https://api.intra.42.fr/v2/me', headers={'Authorization': f"Bearer {token.json()['access_token']}"})
         if me.status_code != 200:
             return Response({"error": "Failed to get 42 info"}, status=status.HTTP_400_BAD_REQUEST)
-        user_instance = User.objects.get_or_create(intra_id=me.json()['login'])
+        user_info = me.json()
+        user_instance_model, created = User.objects.get_or_create(intra_id=user_info['login'])
 
-        # todo: return jwt token
-        custom_user_serializer = CustomUserSerializer(user_instance[0])
-        response_data = custom_user_serializer.data
-        return Response(response_data, status=status.HTTP_200_OK)
+        refresh_token = TokenObtainPairSerializer.get_token(user_instance_model)
+        refresh_token['intra_id'] = user_instance_model.intra_id
+        access_token = refresh_token.access_token
+
+        refresh_token_model, created = UserRefreshToken.objects.get_or_create(user_id=user_instance_model)
+        refresh_token_model.refresh_token = str(refresh_token)
+        refresh_token_model.save()
+        response = {
+            "intra_id": user_instance_model.intra_id,
+            "access": str(access_token),
+            "refresh": str(refresh_token)
+        }
+        print(response) # debug
+        return Response(response, status=status.HTTP_200_OK)
 
 # logout
-# oauth 후 작업필요.
 class LogoutAPIView(APIView):
     def post(self, request):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # user/<str:intra_id>/
 class UserAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, intra_id):
         try:
             user_model = User.objects.get(intra_id=intra_id)
@@ -71,6 +82,8 @@ class UserAPIView(APIView):
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     
     def patch(self, request, intra_id):
+        if str(request.user.intra_id) != intra_id:
+            return Response({"error": "Permission denied. You can only update your own profile."}, status=status.HTTP_401_UNAUTHORIZED)
         try:
             user_instance = User.objects.get(intra_id=intra_id)
         except User.DoesNotExist:
@@ -83,7 +96,7 @@ class UserAPIView(APIView):
             profile_instance.photo_id = request.data['photo_id']
         if 'message' in request.data:
             profile_instance.message = request.data['message']
-        
+    
         profile_instance.save()
 
         serializer = CustomUserSerializer(user_instance)

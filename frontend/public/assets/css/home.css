@@ -14,6 +14,14 @@ body {
   font-family: "Retro Gaming";
 }
 
+span {
+  -ms-user-select: none;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .background .map {
   position: absolute;
   left: 50%;
@@ -31,6 +39,7 @@ body {
   width: 659px;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 .img-wrap {
@@ -65,15 +74,11 @@ body {
   font-size: 100px;
 }
 
-.btn-wrap {
-  display: flex;
-  justify-content: center;
-}
-
 .login-btn {
   width: 328px;
   height: 68px;
   font-size: 36px;
   border-radius: 10px;
   border: none;
+  display: block;
 }

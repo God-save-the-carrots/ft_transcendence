@@ -3,11 +3,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from django.utils import timezone
 from .models import Pong, GameSession, Tournament
 from accounts.models import User, Profile
-from .serializers import CustomRankSerializer, CustomMatchesSerializer
+from .serializers import CustomRankSerializer, CustomMatchesSerializer, CustomTicketSerializer
 
 import math
 
@@ -58,6 +60,9 @@ class PongAPIView(APIView):
 
 # /rank/
 class RankAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         try:
             game_type = request.GET.get('game_type', None)
@@ -86,6 +91,9 @@ class RankAPIView(APIView):
 
 # /matches/<int:match_id>/
 class MatchesAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, match_id):
         try:
             tournament = Tournament.objects.get(id=match_id)
@@ -94,3 +102,19 @@ class MatchesAPIView(APIView):
             return Response(response_data, status=status.HTTP_200_OK)
         except Tournament.DoesNotExist:
             return Response({"error": "match_id not found"}, status=status.HTTP_404_NOT_FOUND)
+
+# /ticket/
+class TicketAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            intra_id = request.user.intra_id
+            user_model = User.objects.get(intra_id=intra_id)
+
+            serializer = CustomTicketSerializer(user_model)
+            response = serializer.data
+            return Response(response, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)

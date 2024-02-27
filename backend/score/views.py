@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import models
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import User, Profile
 from pong.models import Pong, Tournament
@@ -14,38 +16,40 @@ import math
 
 # game/pong/score/<str:intra_id>/
 class ScoreAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, intra_id):
+        page = int(request.GET.get('page', 1))
+        page_size = int(request.GET.get('page_size', 20))
+        start_index = page_size * (page - 1)
+        end_index = page_size * (page)
         try:
-            game_type = request.GET.get('game_type', None)
-            page = int(request.GET.get('page', 1))
-            page_size = int(request.GET.get('page_size', 20))
-
-            start_index = page_size * (page - 1)
-            end_index = page_size * (page)
-
             user = User.objects.get(intra_id=intra_id)
-            user_tournaments = Tournament.objects.filter(
-                gamesession__pong__user_id=user
-            ).distinct()
-            content_length = len(user_tournaments)
-            if start_index < 0:
-                return Response({"error": "Invalid page index"}, status=status.HTTP_400_BAD_REQUEST)
-            serializer = CustomScoreSerializer(user_tournaments[start_index:end_index], many=True)
-            response_data = {
-                'page': page,
-                'page_size': page_size,
-                'last_page_index': math.ceil(content_length / page_size),
-                'content_length': content_length,
-                'data' : serializer.data,
-            }
-            return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        user_tournaments = Tournament.objects.filter(
+            gamesession__pong__user_id=user
+        ).distinct()
+        content_length = len(user_tournaments)
+        if start_index < 0:
+            return Response({"error": "Invalid page index"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = CustomScoreSerializer(user_tournaments[start_index:end_index], many=True)
+        response_data = {
+            'page': page,
+            'page_size': page_size,
+            'last_page_index': math.ceil(content_length / page_size),
+            'content_length': content_length,
+            'data' : serializer.data,
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
-# TODO : view 파일 분리 필요.
 # api/game/pong/score/<str:intra_id>/profile :
 class ScoreProfileAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
@@ -64,6 +68,9 @@ class ScoreProfileAPIView(APIView):
 
 # api/game/pong/score/<str:intra_id>/play-time : 게임 시간.
 class ScorePlayTimeAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
@@ -96,6 +103,9 @@ class ScorePlayTimeAPIView(APIView):
 
 # api/game/pong/score/<str:intra_id>/winning-rate : 승률.
 class ScoreWinningRateAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
@@ -115,6 +125,9 @@ class ScoreWinningRateAPIView(APIView):
 
 # api/game/pong/score/<str:intra_id>/goals-against-average : 내가 낸 점수와 상대가 낸 점수를 더한 결과비
 class ScoreGoalsAgainstAverageAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)
@@ -134,6 +147,9 @@ class ScoreGoalsAgainstAverageAPIView(APIView):
 
 # api/game/pong/score/<str:intra_id>/winning-percentage : 개인 승률, 전체유저의 평균 승률, 1등 유저의 승률
 class ScoreWinningPercentageAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, intra_id):
         try:
             user_instance = User.objects.get(intra_id=intra_id)

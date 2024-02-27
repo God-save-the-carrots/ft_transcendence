@@ -5,9 +5,13 @@ import UserStatistics from './UserStatistics.js';
 import UserHistory from './UserHistory.js';
 import NewUser from './NewUser.js';
 import {pubEnv} from '../../const.js';
+import Cookie from '../../core/Cookie.js';
+import Router from '../../core/Router.js';
 
 const g_logined_test = true;
-
+const endpoint = pubEnv.API_SERVER;
+const access_token = pubEnv.TOKEN_ACCESS;
+const refresh_token = pubEnv.TOKEN_REFRESH;
 export default class User extends Component {
   _title;
   _params;
@@ -40,10 +44,17 @@ export default class User extends Component {
   }
 
   async mounted() {
+    await verifyCookie();
     const endpoint = pubEnv.API_SERVER;
     const profile_api =
       `${endpoint}/api/game/pong/score/${this._params.intra_id}/play-time`;
-    const res = await fetch(profile_api);
+    const access = Cookie.getCookie('access');
+    const res = await fetch(profile_api, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
+    });
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
       return;
@@ -87,5 +98,35 @@ export default class User extends Component {
         } else this._statistics.render();
       }
     });
+  }
+}
+
+async function verifyCookie() {
+  const verify_api = `${endpoint}/api/token/verify/`;
+  const access = Cookie.getCookie(access_token);
+  const refresh = Cookie.getCookie(refresh_token);
+  const intra_id = Cookie.getCookie('intra_id');
+  const response = await fetch(verify_api, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      access: `${access}`,
+      refresh: `${refresh}`,
+    }),
+  });
+  const response_data = await response.json();
+  console.log(response.status);
+  if (response.status === 201) {
+    console.log('201 resetting data');
+    console.log(response_data);
+    Cookie.setToken(response_data);
+    Router.navigateTo(`/user/${intra_id}`);
+  } else if (response.status === 401) {
+    Cookie.deleteCookie(access_token);
+    Cookie.deleteCookie(refresh_token);
+    Cookie.deleteCookie('intra_id');
+    Router.navigateTo('/');
   }
 }
