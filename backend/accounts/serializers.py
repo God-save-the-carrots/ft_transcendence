@@ -27,6 +27,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     photo_id = serializers.IntegerField(source='profile.photo_id')
     message = serializers.CharField(source='profile.message')
     rating = serializers.IntegerField(source='profile.rating')
+    lang_type = serializers.CharField(source='profile.lang_type')
 
     class Meta:
         model = User
