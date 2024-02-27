@@ -26,7 +26,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     photo_id = serializers.IntegerField(source='profile.photo_id')
     message = serializers.CharField(source='profile.message')
+    rating = serializers.IntegerField(source='profile.rating')
 
     class Meta:
         model = User
-        fields = ['id', 'intra_id', 'photo_id', 'message']
+        fields = ['id', 'intra_id', 'photo_id', 'message', 'rating']
