@@ -13,10 +13,9 @@ import Icon from '../common/Icon.js';
 import LoadingCircle from '../common/LoadingCircle.js';
 import Shutter from '../common/Shutter.js';
 import {color2, color3, color4} from '../preset.js';
-import {pubEnv} from '../../const.js';
 import Cookie from '../../core/Cookie.js';
+import {authReq} from '../../connect.js';
 
-const endpoint = pubEnv.API_SERVER;
 export default class PongGame extends NetworkScene {
   static STATE_MENU = 0;
   static STATE_WAIT = 1;
@@ -66,11 +65,10 @@ export default class PongGame extends NetworkScene {
     this.loadDefaultScene();
     const ready = async (type) => {
       this.loadReady();
-      const token = Cookie.getCookie('access');
-      this.token = await fetch(`${endpoint}/api/game/pong/ticket/`, {
-        headers: {'Authorization': `Bearer ${token}`},
-      }).then((x) => x.json()).then((x) => x.ticket).catch((x) => null);
-      if (this.token == null) {
+      try {
+        const [, json] = await authReq('get', `/api/game/pong/ticket/`);
+        this.token = json.ticket;
+      } catch (e) {
         this.loadMenu();
         return;
       }

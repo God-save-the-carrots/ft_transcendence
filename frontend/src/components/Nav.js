@@ -3,12 +3,8 @@ import Component from '../core/Component.js';
 import Cookie from '../core/Cookie.js';
 import Router from '../core/Router.js';
 import * as Lang from '../Lang.js';
-import ErrorPage from './pages/ErrorPage.js';
 import {isCookieExist} from '../core/Utils.js';
 
-const endpoint = pubEnv.API_SERVER;
-const access_token = pubEnv.TOKEN_ACCESS;
-const refresh_token = pubEnv.TOKEN_REFRESH;
 const intra_token = pubEnv.TOKEN_INTRA_ID;
 
 export default class Nav extends Component {
@@ -36,22 +32,9 @@ export default class Nav extends Component {
 </nav>
       `;
     } else {
-      await verifyCookie();
       const intra_id = Cookie.getCookie(intra_token);
-      const profile_api =
-        `${endpoint}/api/game/pong/score/${intra_id}/profile/`;
-      const access = Cookie.getCookie(access_token);
-      const res = await fetch(profile_api, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${access}`,
-        },
-      });
-      if (res.status != 200) {
-        new ErrorPage({code: res.status, msg: res.statusText});
-        return;
-      }
-      const data = await res.json();
+      const profile_api = `/api/game/pong/score/${intra_id}/profile/`;
+      const [, data] = await this.authReq('GET', profile_api);
       return `
 <link rel="stylesheet" type="text/css" href="../../public/assets/css/nav.css" />
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -113,32 +96,5 @@ export default class Nav extends Component {
     this.addEvent('click', '[lang-link]', async (e) => {
       Lang.setLanguage(e.target.dataset.lang);
     });
-  }
-}
-
-async function verifyCookie() {
-  const verify_api = `${endpoint}/api/token/verify/`;
-  const access = Cookie.getCookie(access_token);
-  const refresh = Cookie.getCookie(refresh_token);
-  const href = window.location.href.split(endpoint)[1];
-  const res = await fetch(verify_api, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      access: `${access}`,
-      refresh: `${refresh}`,
-    }),
-  });
-  const res_data = await res.json();
-  if (res.status === 201) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
-    Cookie.setToken(res_data);
-    Router.navigateTo(href);
-    return;
-  } else if (res.status === 401) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
-    Router.navigateTo('/');
   }
 }

@@ -1,13 +1,4 @@
-import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
-import Cookie from '../../core/Cookie.js';
-import ErrorPage from './ErrorPage.js';
-import Router from '../../core/Router.js';
-
-const endpoint = pubEnv.API_SERVER;
-const access_token = pubEnv.TOKEN_ACCESS;
-const refresh_token = pubEnv.TOKEN_REFRESH;
-const intra_token = pubEnv.TOKEN_INTRA_ID;
 
 export default class UserProfile extends Component {
   _title;
@@ -19,21 +10,13 @@ export default class UserProfile extends Component {
     this._title = 'UserProfile';
   }
   async template() {
-    await verifyCookie(this._intra_id);
     const profile_api =
-      `${endpoint}/api/game/pong/score/${this._intra_id}/profile/`;
-    const access = Cookie.getCookie(access_token);
-    const res = await fetch(profile_api, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${access}`,
-      },
-    });
-    if (res.status != 200) {
-      new ErrorPage({code: res.status, msg: res.statusText});
+      `/api/game/pong/score/${this._intra_id}/profile/`;
+    const [res, data] = await this.authReq('get', profile_api);
+    if (res.status !== 200) {
+      // TODO: load error page;
       return;
     }
-    const data = await res.json();
     const img = `/public/assets/profile/${data.user.photo_id}.png`;
     return `
 <link rel="stylesheet" href="${this._my_css}" type="text/css" />
@@ -56,31 +39,5 @@ export default class UserProfile extends Component {
   </div>
 </div>
     `;
-  }
-}
-
-async function verifyCookie(intra_id) {
-  const verify_api = `${endpoint}/api/token/verify/`;
-  const access = Cookie.getCookie(access_token);
-  const refresh = Cookie.getCookie(refresh_token);
-  const res = await fetch(verify_api, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      access: `${access}`,
-      refresh: `${refresh}`,
-    }),
-  });
-  const res_data = await res.json();
-  if (res.status === 201) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
-    Cookie.setToken(res_data);
-    Router.navigateTo(`/rank/${intra_id}`);
-    return;
-  } else if (res.status === 401) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
-    Router.navigateTo('/');
   }
 }

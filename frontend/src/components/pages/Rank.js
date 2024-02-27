@@ -2,12 +2,10 @@ import Component from '../../core/Component.js';
 import Router from '../../core/Router.js';
 import Cookie from '../../core/Cookie.js';
 import {pubEnv} from '../../const.js';
-import ErrorPage from './ErrorPage.js';
 
-const endpoint = pubEnv.API_SERVER;
-const access_token = pubEnv.TOKEN_ACCESS;
-const refresh_token = pubEnv.TOKEN_REFRESH;
 const intra_token = pubEnv.TOKEN_INTRA_ID;
+
+const authReq = Component.prototype.authReq;
 
 export default class Rank extends Component {
   _title;
@@ -26,22 +24,14 @@ export default class Rank extends Component {
   }
 
   async template() {
-    await verifyCookie();
-    const rank_api = `${endpoint}/api/game/pong/rank/`;
+    const rank_api = `/api/game/pong/rank/`;
     const _current_page = this.state.current_page;
-    const access = Cookie.getCookie(access_token);
-    const res = await fetch(
-        rank_api + '?' + `page=${_current_page}&page_size=5`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${access}`,
-          },
-        });
-    if (res.status != 200) {
-      new ErrorPage({code: res.status, msg: res.statusText});
+    const paging_uri = rank_api + '?' + `page=${_current_page}&page_size=5`;
+    const [res, data] = await this.authReq('GET', paging_uri);
+    if (res.status !== 200) {
+      // TODO: load error page
       return;
     }
-    const data = await res.json();
     // TODO: block mine 로그인 연동하면 바꿔야 함
     let html = '';
     html += `
@@ -82,20 +72,12 @@ export default class Rank extends Component {
 
 async function createMyRanking() {
   const intra_id = Cookie.getCookie(intra_token);
-  const profile_api =
-      `${endpoint}/api/game/pong/score/${intra_id}/profile/`;
-  const access = Cookie.getCookie(access_token);
-  const res = await fetch(profile_api, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${access}`,
-    },
-  });
-  if (res.status != 200) {
-    new ErrorPage({code: res.status, msg: res.statusText});
+  const profile_api = `/api/game/pong/score/${intra_id}/profile/`;
+  const [res, data] = await authReq('get', profile_api);
+  if (res.status !== 200) {
+    // TODO: load error page
     return;
   }
-  const data = await res.json();
   const list_HTML = `
     <div class="title" data-detect='ranking'>RANKING</div>
     <li class="block mine">
@@ -205,30 +187,4 @@ function createPagination(current, last) {
     </div>
     `;
   return list_HTML;
-}
-
-async function verifyCookie() {
-  const verify_api = `${endpoint}/api/token/verify/`;
-  const access = Cookie.getCookie(access_token);
-  const refresh = Cookie.getCookie(refresh_token);
-  const res = await fetch(verify_api, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      access: `${access}`,
-      refresh: `${refresh}`,
-    }),
-  });
-  const res_data = await res.json();
-  if (res.status === 201) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
-    Cookie.setToken(res_data);
-    Router.navigateTo(`/rank`);
-    return;
-  } else if (res.status === 401) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
-    Router.navigateTo('/');
-  }
 }

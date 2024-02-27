@@ -1,5 +1,6 @@
 import {observable, observe} from './observer.js';
 import * as Lang from '../Lang.js';
+import {authReq} from '../connect.js';
 
 export default class Component {
   /**
@@ -50,3 +51,5 @@ export default class Component {
 
   async unmounted() {}
 }
+
+Component.prototype.authReq = authReq;
