@@ -99,6 +99,7 @@ services:
       - '--storage.tsdb.path=/prometheus/data'
       - '--storage.tsdb.retention.time=30d'
       - '--storage.tsdb.retention.size=5GB'
+      - '--web.config.file=/etc/prometheus/web-config.yml'
       - '--config.file=/etc/prometheus/prometheus.yml'
     env_file:
       - .env
