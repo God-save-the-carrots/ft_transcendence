@@ -12,6 +12,8 @@ const g_logined_test = true;
 const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
 const refresh_token = pubEnv.TOKEN_REFRESH;
+const intra_token = pubEnv.TOKEN_INTRA_ID;
+
 export default class User extends Component {
   _title;
   _params;
@@ -30,11 +32,11 @@ export default class User extends Component {
         <div class="page-profile" data-component="test-app1"></div>
         <div class="user-menu">
           <div class="stats_test"> </div>
-          <div class="stats_link"> 
+          <div class="stats_link">
             <a href="statistics" data-detect='statistics'
               userpage-link>statistics</a>
           </div>
-          <div class="history_link"> 
+          <div class="history_link">
             <a href="history" data-detect='history' userpage-link>history</a>
           </div>
         </div>
@@ -105,8 +107,8 @@ async function verifyCookie() {
   const verify_api = `${endpoint}/api/token/verify/`;
   const access = Cookie.getCookie(access_token);
   const refresh = Cookie.getCookie(refresh_token);
-  const intra_id = Cookie.getCookie('intra_id');
-  const response = await fetch(verify_api, {
+  const intra_id = Cookie.getCookie(intra_token);
+  const res = await fetch(verify_api, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -116,17 +118,15 @@ async function verifyCookie() {
       refresh: `${refresh}`,
     }),
   });
-  const response_data = await response.json();
-  console.log(response.status);
-  if (response.status === 201) {
+  const res_data = await res.json();
+  console.log(res.status);
+  if (res.status === 201) {
     console.log('201 resetting data');
-    console.log(response_data);
-    Cookie.setToken(response_data);
+    console.log(res_data);
+    Cookie.setToken(res_data);
     Router.navigateTo(`/user/${intra_id}`);
-  } else if (response.status === 401) {
-    Cookie.deleteCookie(access_token);
-    Cookie.deleteCookie(refresh_token);
-    Cookie.deleteCookie('intra_id');
+  } else if (res.status === 401) {
+    Cookie.deleteCookie(access_token, refresh_token, intra_token);
     Router.navigateTo('/');
   }
 }
