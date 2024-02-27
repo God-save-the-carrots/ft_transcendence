@@ -2,8 +2,13 @@ import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
 import Router from '../../core/Router.js';
+import Cookie from '../../core/Cookie.js';
 
 const endpoint = pubEnv.API_SERVER;
+const access_token = pubEnv.TOKEN_ACCESS;
+const refresh_token = pubEnv.TOKEN_REFRESH;
+const intra_token = pubEnv.TOKEN_INTRA_ID;
+
 export default class UserHistory extends Component {
   _title;
   _intra_id;
@@ -19,11 +24,19 @@ export default class UserHistory extends Component {
     };
   }
   async template() {
+    await verifyCookie(this._intra_id);
     const _current_page = this.state.current_page;
     let html = '';
     const history_api = `${endpoint}/api/game/pong/score/${this._intra_id}`;
+    const access = Cookie.getCookie('access');
     const res = await fetch(
-        history_api + '?' + `page=${_current_page}&page_size=1`);
+      history_api + '?' + `page=${_current_page}&page_size=1`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${access}`,
+        },
+      }
+    );
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
       return;
@@ -36,7 +49,6 @@ export default class UserHistory extends Component {
       ${await createHistoryContents(data.data)}
       </div>
     `;
-    // paginataion
     html += createHistoryPagination(_current_page, last_page_index);
     return html;
   }
@@ -75,7 +87,7 @@ function createHistoryPagination(current, last) {
     let index;
     if (i > 0) index = i;
     else index = '+';
-    list_HTML +=` 
+    list_HTML +=`
       <li class="history-page-item">
         <a class="page-link" data-page=${index}>${index}</a>
       </li>
@@ -141,7 +153,13 @@ async function createHistoryContents(jsonData) {
             <div class="item">
 `;
     const history_api = `${endpoint}/api/game/pong/matches/${match_id}`;
-    const res = await fetch(history_api);
+    const access = Cookie.getCookie('access');
+    const res = await fetch(history_api, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
+    });
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
       return;
@@ -223,4 +241,30 @@ function convertSecondsToMMSS(seconds) {
     second = '0' + second;
   }
   return minutes + ':' + second;
+}
+
+async function verifyCookie(intra_id) {
+  const verify_api = `${endpoint}/api/token/verify/`;
+  const access = Cookie.getCookie(access_token);
+  const refresh = Cookie.getCookie(refresh_token);
+  const res = await fetch(verify_api, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      access: `${access}`,
+      refresh: `${refresh}`,
+    }),
+  });
+  const res_data = await res.json();
+  if (res.status === 201) {
+    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.setToken(res_data);
+    Router.navigateTo(`/user/${intra_id}`);
+    return;
+  } else if (res.status === 401) {
+    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Router.navigateTo('/');
+  }
 }

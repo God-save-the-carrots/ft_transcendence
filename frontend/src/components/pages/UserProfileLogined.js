@@ -36,10 +36,13 @@ export default class UserProfile extends Component {
             return;
           }
           const change_api = `${endpoint}/api/user/${this._intra_id}/`;
+          const access = Cookie.getCookie(access_token);
+          await verifyCookie(this._intra_id);
           const res = await fetch(change_api, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${access}`,
             },
             body: JSON.stringify({
               'photo_id': Number(photo_id)}),
@@ -61,10 +64,13 @@ export default class UserProfile extends Component {
           }
           const endpoint = pubEnv.API_SERVER;
           const change_api = `${endpoint}/api/user/${this._intra_id}/`;
+          const access = Cookie.getCookie(access_token);
+          await verifyCookie(this._intra_id);
           const res = await fetch(change_api, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${access}`,
             },
             body: JSON.stringify({
               'message': msg}),
@@ -78,10 +84,11 @@ export default class UserProfile extends Component {
   }
 
   async template() {
+    await verifyCookie(this._intra_id);
     if (this.state.photo_id > 8 || this.state.msg == 'error') return;
     const profile_api =
       `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
-    const access = Cookie.getCookie('access');
+    const access = Cookie.getCookie(access_token);
     const res = await fetch(profile_api, {
       method: 'GET',
       headers: {
@@ -110,7 +117,7 @@ export default class UserProfile extends Component {
     </div>
     <div class="profile__user">
       <div class="profile__intra"> ${data.user.intra_id}</div>
-      <div class="profile__text"> 
+      <div class="profile__text">
         <button type="button" data-bs-toggle="modal" data-bs-target="#edit-m">
         </button>
         <p> ${data.user.message} </p>
@@ -122,11 +129,11 @@ export default class UserProfile extends Component {
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel" 
+              <h1 class="modal-title fs-5" id="exampleModalLabel"
                 data-detect='change_my_avatar'>
               change my avatar
               </h1>
-              <button type="button" class="btn-close" 
+              <button type="button" class="btn-close"
                 data-bs-dismiss="modal" aria-label="Close">
               </button>
             </div>
@@ -134,44 +141,44 @@ export default class UserProfile extends Component {
               <!-- avatar 선택 -->
               <form class="avatar-form">
                 <div>
-                  <input type="radio" 
+                  <input type="radio"
                   name="avatar" id="1" class="input-hidden" />
                   <label for="1">
                     <img src="/public/assets/profile/1.png"/>
                   </label>
-                  <input type="radio" 
+                  <input type="radio"
                   name="avatar" id="2" class="input-hidden" />
                   <label for="2">
                     <img src="/public/assets/profile/2.png"/>
                   </label>
-                  <input type="radio" 
+                  <input type="radio"
                   name="avatar" id="3" class="input-hidden" />
                   <label for="3">
                     <img src="/public/assets/profile/3.png"/>
                   </label>
-                  <input type="radio" 
+                  <input type="radio"
                   name="avatar" id="4" class="input-hidden" />
                   <label for="4">
                     <img src="/public/assets/profile/4.png"/>
                   </label>
                 </div>
                 <div>
-                  <input type="radio" 
+                  <input type="radio"
                   name="avatar" id="5" class="input-hidden" />
                   <label for="5">
                     <img src="/public/assets/profile/5.png"/>
                   </label>
-                  <input type="radio" 
+                  <input type="radio"
                   name="avatar" id="6" class="input-hidden" />
                   <label for="6">
                     <img src="/public/assets/profile/6.png"/>
                   </label>
-                  <input type="radio" 
+                  <input type="radio"
                   name="avatar" id="7" class="input-hidden" />
                   <label for="7">
                     <img src="/public/assets/profile/7.png"/>
                   </label>
-                  <input type="radio" 
+                  <input type="radio"
                   name="avatar" id="8" class="input-hidden" />
                   <label for="8">
                     <img src="/public/assets/profile/8.png"/>
@@ -195,11 +202,11 @@ export default class UserProfile extends Component {
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel" 
+              <h1 class="modal-title fs-5" id="exampleModalLabel"
                 data-detect='change_my_message'>
               change my message
               </h1>
-              <button type="button" class="btn-close" 
+              <button type="button" class="btn-close"
                 data-bs-dismiss="modal" aria-label="Close">
               </button>
             </div>
@@ -235,5 +242,29 @@ export default class UserProfile extends Component {
   </div>
 </div>
     `;
+  }
+}
+
+async function verifyCookie(intra_id) {
+  const verify_api = `${endpoint}/api/token/verify/`;
+  const access = Cookie.getCookie(access_token);
+  const refresh = Cookie.getCookie(refresh_token);
+  const res = await fetch(verify_api, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      access: `${access}`,
+      refresh: `${refresh}`,
+    }),
+  });
+  const res_data = await res.json();
+  if (res.status === 201) {
+    Cookie.setToken(res_data);
+    Router.navigateTo(`/user/${intra_id}`);
+  } else if (res.status === 401) {
+    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Router.navigateTo('/');
   }
 }

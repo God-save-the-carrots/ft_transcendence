@@ -1,8 +1,13 @@
 import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
 import ErrorPage from './ErrorPage.js';
+import Cookie from '../../core/Cookie.js';
 
 const endpoint = pubEnv.API_SERVER;
+const access_token = pubEnv.TOKEN_ACCESS;
+const refresh_token = pubEnv.TOKEN_REFRESH;
+const intra_token = pubEnv.TOKEN_INTRA_ID;
+
 export default class UserStatistics extends Component {
   _title;
   _intra_id;
@@ -13,9 +18,16 @@ export default class UserStatistics extends Component {
     this._intra_id = params;
   }
   async template() {
+    await verifyCookie(this._intra_id);
     const playtime_api =
       `${endpoint}/api/game/pong/score/${this._intra_id}/play-time`;
-    const playtime_res = await fetch(playtime_api);
+    const access = Cookie.getCookie(access_token);
+    const playtime_res = await fetch(playtime_api, {
+      method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${access}`,
+        },
+    });
     if (playtime_res.status != 200) {
       new ErrorPage({code: playtime_res.status, msg: playtime_res.statusText});
       return;
@@ -26,7 +38,7 @@ export default class UserStatistics extends Component {
       <div class="boxs">
         <div class="playtime">
           <p class="title" data-detect='playtime'>Play time</p>
-          <p align="center" class="playtime_hour"> 
+          <p align="center" class="playtime_hour">
             ${convertToHoursMinutes(playtime_data.minutes)}
           </p>
           <p align="center" class="playtime_day">
@@ -42,7 +54,12 @@ export default class UserStatistics extends Component {
 
     const winning_api =
       `${endpoint}/api/game/pong/score/${this._intra_id}/winning-rate`;
-    const winning_res = await fetch(winning_api);
+    const winning_res = await fetch(winning_api, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
+    });
     if (winning_res.status != 200) {
       new ErrorPage({code: winning_res.status, msg: winning_res.statusText});
       return;
@@ -55,7 +72,7 @@ export default class UserStatistics extends Component {
       <div class="winning">
         <p class="title"data-detect='winning_rate'> Winning Rate </p>
         <div class="winning_chart">
-            <p class="title" 
+            <p class="title"
               data-detect='total_rounds' style='float: left;'></p>
             <p class="title">  : ${winning_data.total_round} R</p>
           <div class="progress">
@@ -70,8 +87,8 @@ export default class UserStatistics extends Component {
                 </p>
               </div>
             </div>
-            <div class="progress-bar bg-info" role="progressbar" 
-              style="width: ${winning_ratio.value2Ratio}%;" 
+            <div class="progress-bar bg-info" role="progressbar"
+              style="width: ${winning_ratio.value2Ratio}%;"
               aria-valuenow="${winning_ratio.value2Ratio}"
               aria-valuemin="0" aria-valuemax="100">
               <div style="display: flex;">
@@ -87,7 +104,12 @@ export default class UserStatistics extends Component {
     `;
     const goal_api =
       `${endpoint}/api/game/pong/score/${this._intra_id}/goals-against-average`;
-    const goal_res = await fetch(goal_api);
+    const goal_res = await fetch(goal_api, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
+    });
     if (goal_res.status != 200) {
       new ErrorPage({code: goal_res.status, msg: goal_res.statusText});
       return;
@@ -106,20 +128,20 @@ export default class UserStatistics extends Component {
     } else {
       html += `
         <div class="goal-against">
-          <p class="title" data-detect='goals_against_average'> 
+          <p class="title" data-detect='goals_against_average'>
             Goals Against Average
           </p>
           <div class="goal_chart">
             <div class="progress">
-              <div class="progress-bar" role="progressbar" 
+              <div class="progress-bar" role="progressbar"
                 style="width: ${goal_ratio.value1Ratio}%;"
-                aria-valuenow=${goal_ratio.value1Ratio} 
+                aria-valuenow=${goal_ratio.value1Ratio}
                 aria-valuemin="0" aria-valuemax="100">
                 ${goal_ratio.value1Ratio}%
               </div>
-              <div class="progress-bar bg-info" role="progressbar" 
+              <div class="progress-bar bg-info" role="progressbar"
                 style="width: ${goal_ratio.value2Ratio}%;"
-                aria-valuenow=${goal_ratio.value2Ratio} 
+                aria-valuenow=${goal_ratio.value2Ratio}
                 aria-valuemin="0" aria-valuemax="100">
                 ${goal_ratio.value2Ratio}%
               </div>
@@ -130,7 +152,12 @@ export default class UserStatistics extends Component {
     }
     const wp_api =
       `${endpoint}/api/game/pong/score/${this._intra_id}/winning-percentage`;
-    const wp_res = await fetch(wp_api);
+    const wp_res = await fetch(wp_api, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
+    });
     if (wp_res.status != 200) {
       new ErrorPage({code: wp_res.status, msg: wp_res.statusText});
       return;
@@ -157,7 +184,7 @@ export default class UserStatistics extends Component {
         style="width:${wp_data.average_winning_percentage}">
         <div style="display: flex;">
           <p data-detect='average' style='float: left;'></p>
-          <p style='width: 50%; margin: 2%;'> 
+          <p style='width: 50%; margin: 2%;'>
             ${wp_data.average_winning_percentage}%
           </p>
         </div>
@@ -221,4 +248,30 @@ function calculateRatio(value1, value2) {
     value1Ratio: ratio1.toFixed(2),
     value2Ratio: ratio2.toFixed(2),
   };
+}
+
+async function verifyCookie(intra_id) {
+  const verify_api = `${endpoint}/api/token/verify/`;
+  const access = Cookie.getCookie(access_token);
+  const refresh = Cookie.getCookie(refresh_token);
+  const res = await fetch(verify_api, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      access: `${access}`,
+      refresh: `${refresh}`,
+    }),
+  });
+  const res_data = await res.json();
+  if (res.status === 201) {
+    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.setToken(res_data);
+    Router.navigateTo(`/rank/${intra_id}`);
+    return;
+  } else if (res.status === 401) {
+    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Router.navigateTo('/');
+  }
 }
