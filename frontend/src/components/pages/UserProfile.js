@@ -21,7 +21,7 @@ export default class UserProfile extends Component {
   async template() {
     await verifyCookie(this._intra_id);
     const profile_api =
-      `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
+      `${endpoint}/api/game/pong/score/${this._intra_id}/profile/`;
     const access = Cookie.getCookie(access_token);
     const res = await fetch(profile_api, {
       method: 'GET',

@@ -87,7 +87,7 @@ export default class UserProfile extends Component {
     await verifyCookie(this._intra_id);
     if (this.state.photo_id > 8 || this.state.msg == 'error') return;
     const profile_api =
-      `${endpoint}/api/game/pong/score/${this._intra_id}/profile`;
+      `${endpoint}/api/game/pong/score/${this._intra_id}/profile/`;
     const access = Cookie.getCookie(access_token);
     const res = await fetch(profile_api, {
       method: 'GET',

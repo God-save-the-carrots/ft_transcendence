@@ -39,7 +39,7 @@ export default class Nav extends Component {
       await verifyCookie();
       const intra_id = Cookie.getCookie(intra_token);
       const profile_api =
-        `${endpoint}/api/game/pong/score/${intra_id}/profile`;
+        `${endpoint}/api/game/pong/score/${intra_id}/profile/`;
       const access = Cookie.getCookie(access_token);
       const res = await fetch(profile_api, {
         method: 'GET',
