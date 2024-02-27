@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+import jwt
 import json
 import asyncio
 from websockets.server import serve, WebSocketServerProtocol
 from game.Lobby import Lobby
 from game.User import User
+from django.conf import settings
 
 lobby = Lobby()
 users: 'list[User]' = []
@@ -14,8 +16,8 @@ async def accept(websocket: WebSocketServerProtocol):
     global users
     print(websocket.id, "accept:", websocket.request_headers.get("Origin"), websocket.path)
     try:
-        intra_id, game_type, alias = await auth(websocket)
-        user = User(websocket, intra_id, game_type, alias)
+        intra_id, game_type, alias, photo_id = await auth(websocket)
+        user = User(websocket, intra_id, game_type, alias, photo_id)
         for in_user in users:
             if in_user.intra_id != user.intra_id:
                 continue
@@ -39,16 +41,14 @@ async def auth(websocket):
         raise "err"
     if game_type == None or lobby.is_valid_game_type(game_type) == False:
         raise "err"
-    print(websocket.id, "token:", token) # TODO: jwt validate check
-    await websocket.send(json.dumps({"type":"auth", "status":"success"})) # TODO: response jwt check result
-    intra_id = token # TODO: get intra_id from jwt
-    return (intra_id, game_type, alias)
+    res = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+    await websocket.send(json.dumps({"type":"auth", "status":"success"}))
+    return (res["intra_id"], game_type, alias, res["photo_id"])
 
 async def listen_port(port):
     global lobby
     global users
     async with serve(accept, "backend", port):
-        print(f"open game server port:{port}")
         while True:
             await asyncio.sleep(1)
             await lobby.match()

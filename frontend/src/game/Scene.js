@@ -230,7 +230,7 @@ export class NetworkScene extends Scene {
    * @param {string} authToken
    * @param {string} gameType
    * @param {Object} data
-   * @return {boolean} 대기큐 등록 성공 여부 (인증 포함)
+   * @return {Promise<boolean>} 대기큐 등록 성공 여부 (인증 포함)
    */
   async waitQ(authToken, gameType, data) {
     if (this.waitingServer) {
