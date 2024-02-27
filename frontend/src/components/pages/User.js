@@ -7,8 +7,8 @@ import NewUser from './NewUser.js';
 import {pubEnv} from '../../const.js';
 import Cookie from '../../core/Cookie.js';
 import Router from '../../core/Router.js';
+import ErrorPage from './ErrorPage.js';
 
-const g_logined_test = true;
 const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
 const refresh_token = pubEnv.TOKEN_REFRESH;
@@ -46,7 +46,7 @@ export default class User extends Component {
   }
 
   async mounted() {
-    await verifyCookie();
+    await verifyCookie(this._params.intra_id);
     const endpoint = pubEnv.API_SERVER;
     const profile_api =
       `${endpoint}/api/game/pong/score/${this._params.intra_id}/play-time`;
@@ -72,7 +72,7 @@ export default class User extends Component {
     const _test_app2 = this.$target.querySelector(
         '[data-component="test-app2"]',
     );
-    if (g_logined_test == true) {
+    if (Cookie.getCookie(intra_token) === this._params.intra_id) {
       new UserProfileLogined(_test_app1, this._params.intra_id);
     } else {
       new UserProfile(_test_app1, this._params.intra_id);
@@ -94,20 +94,25 @@ export default class User extends Component {
         const href = e.target.getAttribute('href');
         const intra_id = this._params.intra_id;
         if (href === 'history') {
-          if (this._history == null) {
-            this._history = new UserHistory(_test_app2, intra_id);
-          } else this._history.render();
-        } else this._statistics.render();
+          this._history = this._history === null ?
+            new UserHistory(_test_app2, intra_id) :
+            this._history;
+          this._history.render();
+        } else {
+          this._statistics = this._statistics === null ?
+              new UserStatistics(_test_app2, this._params.intra_id) :
+            this._statistics;
+          this._statistics.render();
+        }
       }
     });
   }
 }
 
-async function verifyCookie() {
+async function verifyCookie(intra_id) {
   const verify_api = `${endpoint}/api/token/verify/`;
   const access = Cookie.getCookie(access_token);
   const refresh = Cookie.getCookie(refresh_token);
-  const intra_id = Cookie.getCookie(intra_token);
   const res = await fetch(verify_api, {
     method: 'POST',
     headers: {
@@ -119,10 +124,7 @@ async function verifyCookie() {
     }),
   });
   const res_data = await res.json();
-  console.log(res.status);
   if (res.status === 201) {
-    console.log('201 resetting data');
-    console.log(res_data);
     Cookie.setToken(res_data);
     Router.navigateTo(`/user/${intra_id}`);
   } else if (res.status === 401) {
