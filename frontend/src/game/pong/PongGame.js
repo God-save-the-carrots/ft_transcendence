@@ -74,8 +74,11 @@ export default class PongGame extends NetworkScene {
         this.loadMenu();
         return;
       }
-      this.intraId = 'yonshin';
+      this.intraId = Cookie.getCookie('intra_id');
       const wait = await this.waitQ(this.token, type, {alias: this.alias});
+      this.socket.onclose = () => {
+        this.loadMenu();
+      };
       if (wait == false) this.loadMenu();
     };
     this.addGameObject(this.#createObject('rectButton', {
@@ -245,6 +248,7 @@ export default class PongGame extends NetworkScene {
   }
 
   #netInit(data) {
+    this.socket.onclose = null;
     this.loadDefaultScene();
     this.cameraHolder.position.z = 30;
 

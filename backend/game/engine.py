@@ -29,7 +29,6 @@ async def accept(websocket: WebSocketServerProtocol):
         print(websocket.id, "timeout")
         return
     except:
-        await websocket.send(json.dumps({"type":"auth", "status":"fail"}))
         print(websocket.id, "invalid")
         return
     await user.loop()
