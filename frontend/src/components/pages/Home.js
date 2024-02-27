@@ -1,7 +1,13 @@
 import Component from '../../core/Component.js';
 import {pubEnv} from '../../const.js';
+import { isCookieExist } from '../../core/Utils.js';
+import Cookie from '../../core/Cookie.js';
+import Nav from '../Nav.js';
 
 const endpoint = pubEnv.API_SERVER;
+const access_token = pubEnv.TOKEN_ACCESS;
+const refresh_token = pubEnv.TOKEN_REFRESH;
+const intra_token = pubEnv.TOKEN_INTRA_ID;
 
 export default class Home extends Component {
   _title;
@@ -13,6 +19,10 @@ export default class Home extends Component {
     this._my_css = '../../public/assets/css/home.css';
   }
   async template() {
+    if (isCookieExist() === true) {
+      Cookie.deleteCookie(access_token, refresh_token, intra_token);
+      new Nav(document.querySelector('#nav'));
+    }
     return `
 <link rel="stylesheet" href="${this._my_css}" type="text/css">
 <div class="background">

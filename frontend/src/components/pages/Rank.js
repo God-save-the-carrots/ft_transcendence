@@ -5,6 +5,9 @@ import {pubEnv} from '../../const.js';
 import ErrorPage from './ErrorPage.js';
 
 const endpoint = pubEnv.API_SERVER;
+const access_token = pubEnv.TOKEN_ACCESS;
+const refresh_token = pubEnv.TOKEN_REFRESH;
+const intra_token = pubEnv.TOKEN_INTRA_ID;
 
 export default class Rank extends Component {
   _title;
@@ -23,31 +26,29 @@ export default class Rank extends Component {
   }
 
   async template() {
+    await verifyCookie();
     const rank_api = `${endpoint}/api/game/pong/rank/`;
     const _current_page = this.state.current_page;
-    const access = Cookie.getCookie('access');
-    if (access === undefined) {
-      // go to login page
-    }
-    const res = await fetch(rank_api + '?' + `page=${_current_page}&page_size=5`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${access}`,
-      },
-    });
+    const access = Cookie.getCookie(access_token);
+    const res = await fetch(
+        rank_api + '?' + `page=${_current_page}&page_size=5`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${access}`,
+          },
+        });
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});
       return;
     }
     const data = await res.json();
-      // .then((response) => response.json());
     // TODO: block mine 로그인 연동하면 바꿔야 함
     let html = '';
     html += `
       <link rel="stylesheet" href="${this._my_css}" type="text/css">
       <link rel="stylesheet" href="${this._pagination_css}" type="text/css">
       <div class="block-wrap">
-        ${createMyRanking()}
+        ${await createMyRanking()}
         ${createRakingContents(_current_page, data.data)}
       </div>
     `;
@@ -79,18 +80,36 @@ export default class Rank extends Component {
   }
 }
 
-function createMyRanking() {
+async function createMyRanking() {
+  const intra_id = Cookie.getCookie(intra_token);
+  const profile_api =
+      `${endpoint}/api/game/pong/score/${intra_id}/profile`;
+  const access = Cookie.getCookie(access_token);
+  const res = await fetch(profile_api, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${access}`,
+    },
+  });
+  if (res.status != 200) {
+    new ErrorPage({code: res.status, msg: res.statusText});
+    return;
+  }
+  const data = await res.json();
   const list_HTML = `
     <div class="title" data-detect='ranking'>RANKING</div>
     <li class="block mine">
-      <span class="rank">1</span>
-      <div class="space"></div>
-      <span class="profile">
-        <img src="/public/assets/profile/1.png" alt="profile-image">
-      </span>
-      <span class="username">1</span>
-      <span class="msg">하드코딩해서 바꿔야 함</span>
-      <span class="score">1111</span>
+      <a href="/user/${intra_id}" data-link>
+        <span class="rank">${data.rank}</span>
+        <div class="space"></div>
+        <span class="profile">
+          <img src="/public/assets/profile/${data.user.photo_id}.png"
+          alt="profile-image">
+        </span>
+        <span class="username">${data.user.intra_id}</span>
+        <span class="msg">${data.user.message}</span>
+        <span class="score">${data.user.rating}</span>
+      </a>
     </li>
   `;
   return list_HTML;
@@ -186,4 +205,30 @@ function createPagination(current, last) {
     </div>
     `;
   return list_HTML;
+}
+
+async function verifyCookie() {
+  const verify_api = `${endpoint}/api/token/verify/`;
+  const access = Cookie.getCookie(access_token);
+  const refresh = Cookie.getCookie(refresh_token);
+  const res = await fetch(verify_api, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      access: `${access}`,
+      refresh: `${refresh}`,
+    }),
+  });
+  const res_data = await res.json();
+  if (res.status === 201) {
+    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.setToken(res_data);
+    Router.navigateTo(`/rank`);
+    return;
+  } else if (res.status === 401) {
+    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Router.navigateTo('/');
+  }
 }

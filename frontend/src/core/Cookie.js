@@ -45,11 +45,13 @@ class Cookie {
     return res;
   }
 
-  deleteCookie(name) {
-    this.setCookie(name, '', {
-      'expires': new Date('Thu, 01 Jan 1970 00:00:00 UTC'),
-      'max-age': new Date('Thu, 01 Jan 1970 00:00:00 UTC'),
-    });
+  deleteCookie(...args) {
+    for (const name of args) {
+      this.setCookie(name, '', {
+        'expires': new Date('Thu, 01 Jan 1970 00:00:00 UTC'),
+        'max-age': new Date('Thu, 01 Jan 1970 00:00:00 UTC'),
+      });
+    }
   }
 
   setToken(data) {

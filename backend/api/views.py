@@ -54,6 +54,7 @@ class TokenVerifyAPIView(APIView):
                 new_refresh_token_model.save()
 
                 response = {
+                    "intra_id": user_instance_model.intra_id,
                     "access": str(new_access_token),
                     "refresh": str(new_refresh_token)
                 }

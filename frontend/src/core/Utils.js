@@ -3,6 +3,9 @@ import {pubEnv} from '../const.js';
 import Router from './Router.js';
 
 const endpoint = pubEnv.API_SERVER;
+const access_token = pubEnv.TOKEN_ACCESS;
+const refresh_token = pubEnv.TOKEN_REFRESH;
+const intra_token = pubEnv.TOKEN_INTRA_ID;
 
 export async function isValidIntra(intra) {
   const apiUrl = `${endpoint}/api/user/${intra}/`;
@@ -24,4 +27,14 @@ export async function isValidIntra(intra) {
   } catch (error) {
     return false;
   }
+}
+
+export function isCookieExist() {
+  const access = Cookie.getCookie(access_token);
+  const refresh = Cookie.getCookie(refresh_token);
+  const intra_id = Cookie.getCookie(intra_token);
+  if (access === undefined || refresh === undefined || intra_id === undefined) {
+    return false;
+  }
+  return true;
 }
