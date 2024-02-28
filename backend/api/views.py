@@ -33,7 +33,9 @@ class TokenVerifyAPIView(APIView):
         if not refresh_token_result and not access_token_result:
             return Response({"error": "not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
     
-        elif not access_token_result and refresh_token_result:
+        elif access_token_result and not refresh_token_result:
+            return Response({"error": "not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
+        else:
             try:
                 refresh_token = RefreshToken(refresh_token_str)
                 intra_id = refresh_token.payload.get('intra_id')
@@ -63,4 +65,3 @@ class TokenVerifyAPIView(APIView):
                 return Response({"error": "Invalid refresh_token"}, status=status.HTTP_401_UNAUTHORIZED)
             except Exception:
                 return Response({"error": "not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
-        return Response({"message": "Access granted"}, status=status.HTTP_200_OK)
