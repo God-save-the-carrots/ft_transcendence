@@ -1,5 +1,6 @@
 import Cookie from './core/Cookie.js';
 import {pubEnv} from './const.js';
+import Router from './core/Router.js';
 
 function apiServerEndPoint(uri) {
   return `${pubEnv.API_SERVER}${uri}`;
@@ -51,31 +52,44 @@ async function refreshToken() {
 }
 
 export async function authReq(method, uri, body = {}) {
-  if (method == null) throw new Error();
-  method = method.toUpperCase();
-  const endpoint = apiServerEndPoint(uri);
-  let access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
-  if (access == null) throw new RequireLoginError();
-  const req = {
-    method,
-    headers: {'Authorization': `Bearer ${access}`},
-  };
-  if (method !== 'GET') {
-    req.body = JSON.stringify(body);
-    req.headers['Content-Type'] = 'application/json';
+  try {
+    if (method == null) throw new Error();
+    method = method.toUpperCase();
+    const endpoint = apiServerEndPoint(uri);
+    let access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
+    if (access == null) throw new RequireLoginError();
+    const req = {
+      method,
+      headers: {'Authorization': `Bearer ${access}`},
+    };
+    if (method !== 'GET') {
+      req.body = JSON.stringify(body);
+      req.headers['Content-Type'] = 'application/json';
+    }
+    const expiredAt = parseJwt(access)['exp'];
+    if (expiredAt == null) throw new Error();
+    if (Date.now() < (expiredAt * 1000) - 10000) {
+      const [res, json] = await request(endpoint, req);
+      if (res.status != 401) return [res, json];
+    }
+    await refreshToken();
+    access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
+    return await request(endpoint, {
+      ...req,
+      headers: {...req.headers, 'Authorization': `Bearer ${access}`},
+    });
+  } catch(e) {
+    if (e instanceof RequireLoginError || e instanceof IssueTokenError) {
+      Cookie.deleteCookie(
+        pubEnv.TOKEN_ACCESS, 
+        pubEnv.TOKEN_REFRESH, 
+        pubEnv.TOKEN_INTRA_ID
+      );
+      Router.navigateTo('/');
+    }
+    else Router.navigateTo('/error/504');
+    throw e;
   }
-  const expiredAt = parseJwt(access)['exp'];
-  if (expiredAt == null) throw new Error();
-  if (Date.now() < (expiredAt * 1000) - 10000) {
-    const [res, json] = await request(endpoint, req);
-    if (res.status != 401) return [res, json];
-  }
-  await refreshToken();
-  access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
-  return await request(endpoint, {
-    ...req,
-    headers: {...req.headers, 'Authorization': `Bearer ${access}`},
-  });
 }
 
 export class IssueTokenError extends Error {

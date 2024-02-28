@@ -4,8 +4,8 @@ export default class UserStatistics extends Component {
   _title;
   _intra_id;
   _my_css = '../../../public/assets/css/userStatistics.css';
-  constructor(target, params = null) {
-    super(target);
+  constructor(parent, target, params = null) {
+    super(parent, target);
     this._title = 'User Statistics';
     this._intra_id = params;
   }
@@ -13,8 +13,8 @@ export default class UserStatistics extends Component {
     const playtime_api = `/api/game/pong/score/${this._intra_id}/play-time/`;
     const [play_res, play_data] = await this.authReq('get', playtime_api);
     if (play_res.status !== 200) {
-      // TODO: load error page;
-      return;
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     let html = `
       <link rel="stylesheet" href="${this._my_css}" type="text/css" />
@@ -38,8 +38,8 @@ export default class UserStatistics extends Component {
     const winning_api = `/api/game/pong/score/${this._intra_id}/winning-rate/`;
     const [winning_res, winning_data] = await this.authReq('get', winning_api);
     if (winning_res.status !== 200) {
-      // TODO: load error page;
-      return;
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     const winning_ratio =
         calculateRatio(winning_data.winning_round, winning_data.losing_round);
@@ -82,8 +82,8 @@ export default class UserStatistics extends Component {
       `/api/game/pong/score/${this._intra_id}/goals-against-average/`;
     const [goal_res, goal_data] = await this.authReq('get', goal_api);
     if (goal_res.status !== 200) {
-      // TODO: load error page;
-      return;
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     const goal_ratio =
         calculateRatio(goal_data.user_score, goal_data.enemy_score);
@@ -124,8 +124,8 @@ export default class UserStatistics extends Component {
       `/api/game/pong/score/${this._intra_id}/winning-percentage/`;
     const [wp_res, wp_data] = await this.authReq('get', wp_api);
     if (wp_res.status !== 200) {
-      // TODO: load error page;
-      return;
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     html += `
 <div class="winning-percent">

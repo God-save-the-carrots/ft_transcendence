@@ -9,24 +9,34 @@ export default class Component {
   $target;
   props;
   state = {};
-  constructor($target) {
+  constructor(parent, $target) {
     this.id = '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4)
           .toString(16),
     );
     this.$target = $target;
+    this.parent = parent;
     this.events = [];
     this.children = [];
+    this.onexception = (e) => {
+      if (this.parent) this.parent.onexception(e);
+      else console.log(e);
+    };
     this.setup();
   }
 
   async setup() {
     this.state = observable(await this.initState());
     observe(async () => {
-      this.unmounted();
-      await this.render();
-      this.setEvent();
-      await this.mounted();
+      try {
+        console.log(this, 'asdkasjdlkaskldjaslkdjas');
+        this.unmounted();
+        await this.render();
+        this.setEvent();
+        await this.mounted();
+      } catch(e) {
+        this.onexception(e);
+      }
     }, this.state);
   }
 

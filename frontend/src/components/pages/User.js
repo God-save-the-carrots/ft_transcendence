@@ -14,7 +14,7 @@ export default class User extends Component {
   _params;
   _myCss = '../../../public/assets/css/user.css';
   constructor($target, params = null) {
-    super($target);
+    super(null, $target);
     this._title = 'User';
     this._params = params;
   }
@@ -43,8 +43,8 @@ export default class User extends Component {
     const uri = `/api/game/pong/score/${this._params.intra_id}/play-time/`;
     const [res, data] = await this.authReq('get', uri);
     if (res.status !== 200) {
-      // TODO: load error page;
-      return;
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     if (data.play_time_rank == -1) {
       this.addComponent(new NewUser(this._params));
@@ -58,10 +58,11 @@ export default class User extends Component {
     );
     const isMyPage = Cookie.getCookie(intra_token) === this._params.intra_id;
     const child = isMyPage ?
-      new UserProfileLogined(_test_app1, this._params.intra_id):
-      new UserProfile(_test_app1, this._params.intra_id);
+      new UserProfileLogined(this, _test_app1, this._params.intra_id):
+      new UserProfile(this, _test_app1, this._params.intra_id);
     this.addComponent(child);
-    this.addComponent(new UserStatistics(_test_app2, this._params.intra_id));
+    this.addComponent(new UserStatistics(
+      this, _test_app2, this._params.intra_id));
   }
 
   setEvent() {
@@ -76,8 +77,8 @@ export default class User extends Component {
 
         this.popComponent();
         const child = href === 'history' ?
-          new UserHistory(_test_app2, intra_id):
-          new UserStatistics(_test_app2, this._params.intra_id);
+          new UserHistory(this, _test_app2, intra_id):
+          new UserStatistics(this, _test_app2, this._params.intra_id);
         this.addComponent(child);
       }
     });

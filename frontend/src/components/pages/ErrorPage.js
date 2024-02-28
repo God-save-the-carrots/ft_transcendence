@@ -3,8 +3,9 @@ import Component from '../../core/Component.js';
 export default class ErrorPage extends Component {
   _title;
   _params;
-  constructor(params = {}) {
-    super(document.querySelector('#app'));
+  constructor($target, params = {}) {
+    super(null, $target);
+    this.$target = $target;
     this._title = 'Error';
     this._params = {
       code: '404',

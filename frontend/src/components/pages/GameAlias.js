@@ -5,8 +5,8 @@ export default class GameAlias extends Component {
   _intra_id;
   _my_css = '../../../public/assets/css/gameAlias.css';
 
-  constructor(target) {
-    super(target);
+  constructor(parent, target) {
+    super(parent, target);
     this._title = 'GameAlias';
   }
 

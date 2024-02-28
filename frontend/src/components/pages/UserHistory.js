@@ -7,8 +7,8 @@ export default class UserHistory extends Component {
   _title;
   _intra_id;
   _my_css = '../../../public/assets/css/userHistory.css';
-  constructor(target, params = null) {
-    super(target);
+  constructor(parent, target, params = null) {
+    super(parent, target);
     this._title = 'User History';
     this._intra_id = params;
   }
@@ -24,8 +24,8 @@ export default class UserHistory extends Component {
     const paging_api = history_api + '?' + `page=${_current_page}&page_size=1`;
     const [res, data] = await this.authReq('get', paging_api);
     if (res.status !== 200) {
-      // TODO: load error page;
-      return;
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     const last_page_index = data.last_page_index;
     html += `
@@ -140,8 +140,8 @@ async function createHistoryContents(jsonData) {
     const history_api = `/api/game/pong/matches/${match_id}/`;
     const [res, data] = await authReq('get', history_api);
     if (res.status !== 200) {
-      // TODO: load error page;
-      return;
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     const r2 = data.game[0];
     const r1_1 = data.game[1];

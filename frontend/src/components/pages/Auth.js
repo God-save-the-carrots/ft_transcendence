@@ -8,7 +8,7 @@ export default class Auth extends Component {
   _title;
   _params;
   constructor(params = null) {
-    super(document.querySelector('#app'));
+    super(null, document.querySelector('#app'));
     this._title = 'Auth';
     this._params = params;
   }

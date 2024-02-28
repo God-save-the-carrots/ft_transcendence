@@ -13,7 +13,7 @@ export default class Rank extends Component {
   _my_css = '../../../public/assets/css/rank.css';
   _pagination_css = '../../../public/assets/css/Pagination.css';
   constructor($target, params = null) {
-    super($target);
+    super(null, $target);
     this._title = 'Rank';
     this._params = params;
   }
@@ -29,8 +29,9 @@ export default class Rank extends Component {
     const paging_uri = rank_api + '?' + `page=${_current_page}&page_size=5`;
     const [res, data] = await this.authReq('GET', paging_uri);
     if (res.status !== 200) {
-      // TODO: load error page
-      return;
+      console.log(this.id);
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     // TODO: block mine 로그인 연동하면 바꿔야 함
     let html = '';
@@ -72,11 +73,12 @@ export default class Rank extends Component {
 
 async function createMyRanking() {
   const intra_id = Cookie.getCookie(intra_token);
-  const profile_api = `/api/game/pong/score/${intra_id}/profile/`;
+  const profile_api = `/api/game/pong/scoresss/${intra_id}/profile/`;
   const [res, data] = await authReq('get', profile_api);
   if (res.status !== 200) {
-    // TODO: load error page
-    return;
+    console.log(this.id);
+    Router.navigateTo(`/error/${res.status}`);
+    throw new Error();
   }
   const list_HTML = `
     <div class="title" data-detect='ranking'>RANKING</div>

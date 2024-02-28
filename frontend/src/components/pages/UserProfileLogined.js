@@ -4,8 +4,8 @@ export default class UserProfile extends Component {
   _title;
   _intra_id;
   _my_css = '../../../public/assets/css/loginedUserProfile.css';
-  constructor(target, intra_id) {
-    super(target);
+  constructor(parent, target, intra_id) {
+    super(parent, target);
     this._intra_id = intra_id;
     this._title = 'UserProfile';
     this.state.photo_id;
@@ -33,8 +33,8 @@ export default class UserProfile extends Component {
             'photo_id': Number(photo_id),
           });
           if (res.status !== 200) {
-            // TODO: load error page;
-            return;
+            Router.navigateTo(`/error/${res.status}`);
+            throw new Error();
           }
           this.state.photo_id = photo_id;
         });
@@ -52,8 +52,8 @@ export default class UserProfile extends Component {
             'message': msg,
           });
           if (res.status !== 200) {
-            // TODO: load error page;
-            return;
+            Router.navigateTo(`/error/${res.status}`);
+            throw new Error();
           }
           this.state.msg = msg;
         });
@@ -64,8 +64,8 @@ export default class UserProfile extends Component {
     const profile_api = `/api/game/pong/score/${this._intra_id}/profile/`;
     const [res, data] = await this.authReq('get', profile_api);
     if (res.status !== 200) {
-      // TODO: load error page;
-      return;
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
     const img = `/public/assets/profile/${data.user.photo_id}.png`;
     return `

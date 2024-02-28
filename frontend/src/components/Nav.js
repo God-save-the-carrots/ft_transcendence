@@ -8,6 +8,9 @@ import {isCookieExist} from '../core/Utils.js';
 const intra_token = pubEnv.TOKEN_INTRA_ID;
 
 export default class Nav extends Component {
+  constructor($target) {
+    super(null, $target);
+  }
   async template() {
     if (isCookieExist() === false) {
       return `
