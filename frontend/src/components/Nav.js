@@ -98,6 +98,15 @@ export default class Nav extends Component {
     });
     this.addEvent('click', '[lang-link]', async (e) => {
       Lang.setLanguage(e.target.dataset.lang);
+      const intra_id = Cookie.getCookie(intra_token);
+      const change_api = `/api/user/${intra_id}/`;
+      const [res] = await this.authReq('PATCH', change_api, {
+        'lang_type': e.target.dataset.lang,
+      });
+      if (res.status !== 200) {
+        // TODO: load error page;
+        return;
+      }
     });
   }
 }

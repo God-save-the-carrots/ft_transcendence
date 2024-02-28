@@ -1,3 +1,7 @@
+import {pubEnv} from './const.js';
+import Cookie from './core/Cookie.js';
+import {isCookieExist} from './core/Utils.js';
+
 let base_lang = 'en';
 
 const multiLang = {
@@ -79,14 +83,29 @@ export function setLanguage(lang) {
   const change_node_list =
     Array.prototype.slice.call(document.querySelectorAll('[data-detect]'));
   change_node_list.map((v) => {
-    v.textContent = multiLang[lang][v.dataset.detect];
+    v.textContent = multiLang[base_lang][v.dataset.detect];
+    updateFont(base_lang, v);
   });
 }
 
 export function loadLanguage() {
+  if (isCookieExist()) {
+    base_lang = Cookie.getCookie(pubEnv.TOKEN_LANG);
+  }
   const change_node_list =
     Array.prototype.slice.call(document.querySelectorAll('[data-detect]'));
   change_node_list.map((v) => {
     v.textContent = multiLang[base_lang][v.dataset.detect];
+    updateFont(base_lang, v);
   });
+}
+
+function updateFont(lang, v) {
+  if (base_lang === 'en') {
+    v.style.fontFamily = 'Retro Gaming';
+  } else if (base_lang === 'ko') {
+    v.style.fontFamily = 'Galmuri9';
+  } else if (base_lang === 'cn') {
+    v.style.fontFamily = 'DOSPilgiMedium';
+  }
 }
