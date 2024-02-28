@@ -100,14 +100,18 @@ export default class Nav extends Component {
   setEvent() {
     this.addEvent('click', '[data-link]', async (e) => {
       const parent = e.target.parentElement;
+      let href = null;
       e.preventDefault();
       if (e.target.matches('[data-link]')) {
-        e.preventDefault();
-        const href = e.target.href;
-        await Router.navigateTo(href);
+        href = e.target.href;
+        if (e.target.innerText == 'Logout') {
+          Cookie.deleteCookie(
+              access_token, refresh_token, intra_token, lang_token);
+        }
       } else if (parent.matches('[data-link]')) {
-        e.preventDefault();
-        const href = parent.href;
+        href = parent.href;
+      }
+      if (href) {
         await Router.navigateTo(href);
       }
     });
