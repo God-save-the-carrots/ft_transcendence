@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User, UserRefreshToken, Profile
 from .serializers import *
@@ -67,8 +68,16 @@ class LoginAPIView(APIView):
 
 # logout
 class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            refresh_token = request.data['refresh']
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_200_OK)
+        except KeyError:
+            return Response({"error": "refresh_token field is required in the request data."}, status=status.HTTP_400_BAD_REQUEST)
 
 # user/<str:intra_id>/
 class UserAPIView(APIView):
