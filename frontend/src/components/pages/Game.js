@@ -59,12 +59,13 @@ export default class Game extends Component {
         document.getElementById('game-content').style.height = '550px';
       } else {
         const resultDiv = document.getElementById('game-info');
-        new GameRound(resultDiv, this.state.sessionResults);
+        this.addComponent(new GameRound(resultDiv, this.state.sessionResults));
       }
     } else {
       this.state.sessionResults = [];
       const aliasDiv = document.getElementById('game-alias');
       const child = new GameAlias(aliasDiv);
+      this.addComponent(child);
       const gameContentDiv = document.getElementById('game-content');
       gameContentDiv.remove();
       child.props = (text) => {
@@ -73,7 +74,8 @@ export default class Game extends Component {
       child.render();
     }
   }
-  async unmounted() {
+  unmounted() {
+    super.unmounted();
     if (this.game) {
       this.game.destroy();
       this.game.unsubscribeInfoAll();

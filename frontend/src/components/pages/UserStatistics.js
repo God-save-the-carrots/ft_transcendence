@@ -79,7 +79,7 @@ export default class UserStatistics extends Component {
       </div>
     `;
     const goal_api =
-      `/api/game/pong/score/${this._intra_id}/goals-against-average`;
+      `/api/game/pong/score/${this._intra_id}/goals-against-average/`;
     const [goal_res, goal_data] = await this.authReq('get', goal_api);
     if (goal_res.status !== 200) {
       // TODO: load error page;
@@ -121,7 +121,7 @@ export default class UserStatistics extends Component {
     `;
     }
     const wp_api =
-      `/api/game/pong/score/${this._intra_id}/winning-percentage`;
+      `/api/game/pong/score/${this._intra_id}/winning-percentage/`;
     const [wp_res, wp_data] = await this.authReq('get', wp_api);
     if (wp_res.status !== 200) {
       // TODO: load error page;

@@ -13,8 +13,6 @@ export default class User extends Component {
   _title;
   _params;
   _myCss = '../../../public/assets/css/user.css';
-  _statistics = null;
-  _history = null;
   constructor($target, params = null) {
     super($target);
     this._title = 'User';
@@ -27,6 +25,7 @@ export default class User extends Component {
         <div class="page-profile" data-component="test-app1"></div>
         <div class="user-menu">
           <div class="stats_test"> </div>
+
           <div class="stats_link">
             <a href="statistics" data-detect='statistics'
               userpage-link>statistics</a>
@@ -48,7 +47,7 @@ export default class User extends Component {
       return;
     }
     if (data.play_time_rank == -1) {
-      new NewUser(this._params);
+      this.addComponent(new NewUser(this._params));
       return;
     }
     const _test_app1 = this.$target.querySelector(
@@ -57,16 +56,12 @@ export default class User extends Component {
     const _test_app2 = this.$target.querySelector(
         '[data-component="test-app2"]',
     );
-    if (Cookie.getCookie(intra_token) === this._params.intra_id) {
-      new UserProfileLogined(_test_app1, this._params.intra_id);
-    } else {
+    const isMyPage = Cookie.getCookie(intra_token) === this._params.intra_id;
+    const child = isMyPage ?
+      new UserProfileLogined(_test_app1, this._params.intra_id):
       new UserProfile(_test_app1, this._params.intra_id);
-    }
-    if (this._statistics == null) {
-      this._statistics = new UserStatistics(_test_app2, this._params.intra_id);
-    } else {
-      this._statistics.render();
-    }
+    this.addComponent(child);
+    this.addComponent(new UserStatistics(_test_app2, this._params.intra_id));
   }
 
   setEvent() {
@@ -78,17 +73,12 @@ export default class User extends Component {
         e.preventDefault();
         const href = e.target.getAttribute('href');
         const intra_id = this._params.intra_id;
-        if (href === 'history') {
-          this._history = this._history === null ?
-            new UserHistory(_test_app2, intra_id) :
-            this._history;
-          this._history.render();
-        } else {
-          this._statistics = this._statistics === null ?
-              new UserStatistics(_test_app2, this._params.intra_id) :
-            this._statistics;
-          this._statistics.render();
-        }
+
+        this.popComponent();
+        const child = href === "history" ?
+          new UserHistory(_test_app2, intra_id):
+          new UserStatistics(_test_app2, this._params.intra_id);
+        this.addComponent(child);
       }
     });
   }

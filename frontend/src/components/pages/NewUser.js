@@ -32,11 +32,12 @@ export default class NewUser extends Component {
     const _test_app2 = this.$target.querySelector(
         '[data-component="test-app2"]',
     );
-    if (Cookie.getCookie(pubEnv.TOKEN_INTRA_ID) === this._params.intra_id) {
-      new UserProfileLogined(_test_app1, this._params.intra_id);
-    } else {
+    const cookieId = pubEnv.TOKEN_INTRA_ID;
+    const isMyProfile = Cookie.getCookie(cookieId) === this._params.intra_id;
+    const child = isMyProfile ? 
+      new UserProfileLogined(_test_app1, this._params.intra_id) :
       new UserProfile(_test_app1, this._params.intra_id);
-    }
-    new EmptyUserStatistics(_test_app2, this._params.intra_id);
+    this.addComponent(child);
+    this.addComponent(new EmptyUserStatistics(_test_app2, this._params.intra_id));
   }
 }

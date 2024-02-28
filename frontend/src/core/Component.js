@@ -11,13 +11,15 @@ export default class Component {
   state = {};
   constructor($target) {
     this.$target = $target;
+    this.events = [];
+    this.children = [];
     this.setup();
   }
 
   async setup() {
     this.state = observable(await this.initState());
     observe(async () => {
-      this.clearEvent();
+      this.unmounted();
       await this.render();
       this.setEvent();
       await this.mounted();
@@ -40,16 +42,37 @@ export default class Component {
 
   setEvent() {}
 
-  clearEvent() {}
+  clearEvent() {
+    for (const event of this.events) {
+      this.$target.removeEventListener(event.eventType, event.callback);
+    }
+    this.events = [];
+  }
 
   addEvent(eventType, selector, callback) {
+    this.events.push({eventType, callback});
     this.$target.addEventListener(eventType, (event) => {
       if (!event.target.closest(selector)) return false;
       callback(event);
     });
   }
 
-  async unmounted() {}
+  addComponent(component) {
+    this.children.push(component);
+  }
+
+  popComponent() {
+    const component = this.children.pop();
+    if (component) component.unmounted();
+  }
+
+  unmounted() {
+    for (const child of this.children) {
+      child.unmounted();
+    }
+    this.clearEvent();
+    this.children = [];
+  }
 }
 
 Component.prototype.authReq = authReq;
