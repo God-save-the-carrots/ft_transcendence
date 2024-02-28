@@ -34,10 +34,11 @@ export default class NewUser extends Component {
     );
     const cookieId = pubEnv.TOKEN_INTRA_ID;
     const isMyProfile = Cookie.getCookie(cookieId) === this._params.intra_id;
-    const child = isMyProfile ? 
+    const child = isMyProfile ?
       new UserProfileLogined(_test_app1, this._params.intra_id) :
       new UserProfile(_test_app1, this._params.intra_id);
     this.addComponent(child);
-    this.addComponent(new EmptyUserStatistics(_test_app2, this._params.intra_id));
+    const child2 = new EmptyUserStatistics(_test_app2, this._params.intra_id);
+    this.addComponent(child2);
   }
 }

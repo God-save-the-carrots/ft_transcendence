@@ -75,7 +75,7 @@ export default class User extends Component {
         const intra_id = this._params.intra_id;
 
         this.popComponent();
-        const child = href === "history" ?
+        const child = href === 'history' ?
           new UserHistory(_test_app2, intra_id):
           new UserStatistics(_test_app2, this._params.intra_id);
         this.addComponent(child);
