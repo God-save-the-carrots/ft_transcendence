@@ -2,7 +2,6 @@ let base_lang = 'en';
 
 const multiLang = {
   'ko': {
-    welcometolibft: '환영해 LIBFT',
     title: '테스트',
     ranking: '순위',
     statistics: '통계',
@@ -27,7 +26,6 @@ const multiLang = {
     '401': '쿠쿠루삥뽕',
   },
   'en': {
-    welcometolibft: 'Welcome to LIBFT',
     title: 'test',
     ranking: 'RANKING',
     statistics: 'statistics',
@@ -51,7 +49,6 @@ const multiLang = {
     empty: 'empty',
   },
   'cn': {
-    welcometolibft: '欢迎光临 LIBFT',
     title: '试验',
     ranking: '排行',
     statistics: '统计',

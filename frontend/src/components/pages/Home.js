@@ -37,7 +37,7 @@ export default class Home extends Component {
         <img src="../../public/assets/image/monster.svg" alt=""
           class="three" draggable="false">
       </div>
-      <p data-detect='welcometolibft'>
+      <p>
         <span>Welcome</span>
         <span>to</span>
         <span class="title">LIBFT!</span>
