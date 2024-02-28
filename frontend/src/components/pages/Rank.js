@@ -8,6 +8,7 @@ const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
 const refresh_token = pubEnv.TOKEN_REFRESH;
 const intra_token = pubEnv.TOKEN_INTRA_ID;
+const lang_token = pubEnv.TOKEN_LANG;
 
 export default class Rank extends Component {
   _title;
@@ -223,12 +224,12 @@ async function verifyCookie() {
   });
   const res_data = await res.json();
   if (res.status === 201) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.deleteCookie(access_token, refresh_token, intra_token, lang_token);
     Cookie.setToken(res_data);
     Router.navigateTo(`/rank`);
     return;
   } else if (res.status === 401) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.deleteCookie(access_token, refresh_token, intra_token, lang_token);
     Router.navigateTo('/');
   }
 }

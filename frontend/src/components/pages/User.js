@@ -13,6 +13,7 @@ const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
 const refresh_token = pubEnv.TOKEN_REFRESH;
 const intra_token = pubEnv.TOKEN_INTRA_ID;
+const lang_token = pubEnv.TOKEN_LANG;
 
 export default class User extends Component {
   _title;
@@ -128,7 +129,7 @@ async function verifyCookie(intra_id) {
     Cookie.setToken(res_data);
     Router.navigateTo(`/user/${intra_id}`);
   } else if (res.status === 401) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.deleteCookie(access_token, refresh_token, intra_token, lang_token);
     Router.navigateTo('/');
   }
 }

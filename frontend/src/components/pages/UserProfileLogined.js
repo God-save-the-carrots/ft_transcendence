@@ -6,6 +6,7 @@ import Cookie from '../../core/Cookie.js';
 const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
 const refresh_token = pubEnv.TOKEN_REFRESH;
+const lang_token = pubEnv.TOKEN_LANG;
 
 export default class UserProfile extends Component {
   _title;
@@ -264,7 +265,7 @@ async function verifyCookie(intra_id) {
     Cookie.setToken(res_data);
     Router.navigateTo(`/user/${intra_id}`);
   } else if (res.status === 401) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.deleteCookie(access_token, refresh_token, intra_token, lang_token);
     Router.navigateTo('/');
   }
 }
