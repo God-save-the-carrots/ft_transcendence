@@ -10,6 +10,7 @@ const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
 const refresh_token = pubEnv.TOKEN_REFRESH;
 const intra_token = pubEnv.TOKEN_INTRA_ID;
+const lang_token = pubEnv.TOKEN_LANG;
 
 export default class Nav extends Component {
   async template() {
@@ -112,6 +113,22 @@ export default class Nav extends Component {
     });
     this.addEvent('click', '[lang-link]', async (e) => {
       Lang.setLanguage(e.target.dataset.lang);
+      const access = Cookie.getCookie(access_token);
+      const intra_id = Cookie.getCookie(intra_token);
+      const change_api = `${endpoint}/api/user/${intra_id}/`;
+      const res = await fetch(change_api, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${access}`,
+        },
+        body: JSON.stringify({
+          'lang_type': e.target.dataset.lang}),
+      });
+      if (res.status != 200) {
+        new ErrorPage({code: res.status, msg: res.statusText});
+        return;
+      }
     });
   }
 }
@@ -133,12 +150,12 @@ async function verifyCookie() {
   });
   const res_data = await res.json();
   if (res.status === 201) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.deleteCookie(access_token, refresh_token, intra_token, lang_token);
     Cookie.setToken(res_data);
     Router.navigateTo(href);
     return;
   } else if (res.status === 401) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
+    Cookie.deleteCookie(access_token, refresh_token, intra_token, lang_token);
     Router.navigateTo('/');
   }
 }
