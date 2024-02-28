@@ -1,8 +1,11 @@
+import {pubEnv} from './const.js';
+import Cookie from './core/Cookie.js';
+import {isCookieExist} from './core/Utils.js';
+
 let base_lang = 'en';
 
 const multiLang = {
   'ko': {
-    welcometolibft: '환영해 LIBFT',
     title: '테스트',
     ranking: '순위',
     statistics: '통계',
@@ -26,7 +29,6 @@ const multiLang = {
     empty: '텅 빔',
   },
   'en': {
-    welcometolibft: 'Welcome to LIBFT',
     title: 'test',
     ranking: 'RANKING',
     statistics: 'statistics',
@@ -50,7 +52,6 @@ const multiLang = {
     empty: 'empty',
   },
   'cn': {
-    welcometolibft: '欢迎光临 LIBFT',
     title: '试验',
     ranking: '排行',
     statistics: '统计',
@@ -93,6 +94,9 @@ export function setLanguage(lang) {
 }
 
 export function loadLanguage() {
+  if (isCookieExist()) {
+    base_lang = Cookie.getCookie(pubEnv.TOKEN_LANG);
+  }
   const change_node_list =
   Array.prototype.slice.call(document.querySelectorAll('[data-detect]'));
   change_node_list.map((v) => {
