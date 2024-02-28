@@ -13,9 +13,6 @@ rule_files:
 
 scrape_configs:
   - job_name: 'prometheus'
-    scheme: https
-    tls_config:
-      insecure_skip_verify: true
     static_configs:
       - targets: ['localhost:9090']
     scheme: https
