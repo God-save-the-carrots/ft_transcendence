@@ -177,7 +177,6 @@ services:
       - ./logstash/data:/usr/share/logstash/data
       - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     environment:
-      - SERVERNAME=logstash
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
       - XPACK_MONITORING_ENABLED=false
       - MONITORING_ELASTICSEARCH_HOSTS=https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}
