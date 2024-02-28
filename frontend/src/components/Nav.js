@@ -72,7 +72,7 @@ export default class Nav extends Component {
             <li><a class="dropdown-item" href="/" nav-link>Logout</a></li>
             <li><a class="dropdown-item" data-lang=ko lang-link>KOREAN</a></li>
             <li><a class="dropdown-item" data-lang=en lang-link>ENGLISH</a></li>
-            <li><a class="dropdown-item" data-lang=cn lang-link>CHINA</a></li>
+            <li><a class="dropdown-item" data-lang=cn lang-link>CHINESE</a></li>
           </ul>
         </li>
       </ul>
