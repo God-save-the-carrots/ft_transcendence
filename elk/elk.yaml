@@ -76,6 +76,15 @@ services:
           -d "{\"password\":\"${ELASTIC_PASSWORD}\",\"roles\":[\"logstash_writer\"]}"; do sleep 10;
         done;
         echo ""
+        echo "geoip index template";
+        until curl -s -X PUT \
+          --cacert config/certs/ca/ca.crt \
+          -X PUT \
+          -u elastic:${ELASTIC_PASSWORD} \
+          -H "Content-Type: application/json" \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}/_index_template/geoip \
+          -d "{\"index_patterns\":[\"logstash-*\"],\"template\":{\"mappings\":{\"properties\":{\"geo\":{\"properties\":{\"location\":{\"type\":\"geo_point\"}}}}}}}"; do sleep 10;
+        done;
         echo "All done!";
       '
     healthcheck:
