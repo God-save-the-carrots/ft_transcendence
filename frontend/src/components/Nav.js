@@ -44,12 +44,12 @@ export default class Nav extends Component {
         data-link>LIBFT</a>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="/game" data-link>
+          <a class="nav-link" href="/game" nav-link>
             <img src="../../public/assets/image/game.svg" draggable="false"/>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/rank" data-link>
+          <a class="nav-link" href="/rank" nav-link>
             <img src="../../public/assets/image/crown.svg" draggable="false"/>
           </a>
         </li>
@@ -64,9 +64,9 @@ export default class Nav extends Component {
           <ul class="dropdown-menu dropdown-menu-lg-end"
             aria-labelledby="navbarDropdownMenuLink">
             <li><a class="dropdown-item"
-              href="/user/${data.user.intra_id}" data-link>
+              href="/user/${data.user.intra_id}" nav-link>
               Profile</a></li>
-            <li><a class="dropdown-item" href="/" data-link>Logout</a></li>
+            <li><a class="dropdown-item" href="/" nav-link>Logout</a></li>
             <li><a class="dropdown-item" data-lang=ko lang-link>KOREAN</a></li>
             <li><a class="dropdown-item" data-lang=en lang-link>ENGLISH</a></li>
             <li><a class="dropdown-item" data-lang=cn lang-link>CHINA</a></li>
@@ -80,14 +80,14 @@ export default class Nav extends Component {
     }
   }
   setEvent() {
-    this.addEvent('click', '[data-link]', async (e) => {
+    this.addEvent('click', '[nav-link]', async (e) => {
       const parent = e.target.parentElement;
       e.preventDefault();
-      if (e.target.matches('[data-link]')) {
+      if (e.target.matches('[nav-link]')) {
         e.preventDefault();
         const href = e.target.href;
         await Router.navigateTo(href);
-      } else if (parent.matches('[data-link]')) {
+      } else if (parent.matches('[nav-link]')) {
         e.preventDefault();
         const href = parent.href;
         await Router.navigateTo(href);

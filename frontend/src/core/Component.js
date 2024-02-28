@@ -10,6 +10,9 @@ export default class Component {
   props;
   state = {};
   constructor($target) {
+    this.id = "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
     this.$target = $target;
     this.events = [];
     this.children = [];
@@ -50,11 +53,12 @@ export default class Component {
   }
 
   addEvent(eventType, selector, callback) {
-    this.events.push({eventType, callback});
-    this.$target.addEventListener(eventType, (event) => {
+    const e = (event) => {
       if (!event.target.closest(selector)) return false;
       callback(event);
-    });
+    };
+    this.events.push({eventType, callback: e});
+    this.$target.addEventListener(eventType, e);
   }
 
   addComponent(component) {

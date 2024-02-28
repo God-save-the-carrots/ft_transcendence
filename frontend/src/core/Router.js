@@ -44,6 +44,7 @@ class Router {
   }
 
   async backNavi() {
+    if (this.#view != null) this.#view.unmounted();
     const view = await this.router();
     return view;
   }
