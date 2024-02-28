@@ -8,7 +8,7 @@ export default class CircleButton extends GameObject {
     params = {
       color: 0xff0000,
       segments: 100,
-      size: {radius:8},
+      size: {radius: 8},
       buttonParam: null,
       ...params,
     };

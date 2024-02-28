@@ -2,7 +2,7 @@ import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
 import Cookie from '../../core/Cookie.js';
 import ErrorPage from './ErrorPage.js';
-import Router from '../../core/Router.js'
+import Router from '../../core/Router.js';
 
 const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
@@ -25,9 +25,9 @@ export default class UserProfile extends Component {
     const access = Cookie.getCookie(access_token);
     const res = await fetch(profile_api, {
       method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${access}`,
-        },
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
     });
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});

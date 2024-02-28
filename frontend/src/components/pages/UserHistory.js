@@ -30,12 +30,12 @@ export default class UserHistory extends Component {
     const history_api = `${endpoint}/api/game/pong/score/${this._intra_id}`;
     const access = Cookie.getCookie('access');
     const res = await fetch(
-      history_api + '?' + `page=${_current_page}&page_size=1`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${access}`,
+        history_api + '?' + `page=${_current_page}&page_size=1`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${access}`,
+          },
         },
-      }
     );
     if (res.status != 200) {
       new ErrorPage({code: res.status, msg: res.statusText});

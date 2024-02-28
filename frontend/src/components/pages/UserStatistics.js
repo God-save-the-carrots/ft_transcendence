@@ -24,9 +24,9 @@ export default class UserStatistics extends Component {
     const access = Cookie.getCookie(access_token);
     const playtime_res = await fetch(playtime_api, {
       method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${access}`,
-        },
+      headers: {
+        'Authorization': `Bearer ${access}`,
+      },
     });
     if (playtime_res.status != 200) {
       new ErrorPage({code: playtime_res.status, msg: playtime_res.statusText});

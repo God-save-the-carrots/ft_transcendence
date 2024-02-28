@@ -1,6 +1,6 @@
 import Component from '../../core/Component.js';
 import {pubEnv} from '../../const.js';
-import { isCookieExist } from '../../core/Utils.js';
+import {isCookieExist} from '../../core/Utils.js';
 import Cookie from '../../core/Cookie.js';
 import Nav from '../Nav.js';
 
