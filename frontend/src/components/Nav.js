@@ -107,6 +107,7 @@ export default class Nav extends Component {
         // TODO: load error page;
         return;
       }
+      Cookie.setCookie(pubEnv.TOKEN_LANG, e.target.dataset.lang);
     });
   }
 }
