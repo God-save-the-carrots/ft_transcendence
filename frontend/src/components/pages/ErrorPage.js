@@ -14,6 +14,9 @@ export default class ErrorPage extends Component {
     };
   }
   async template() {
+    if (this._params.code > 599 || this._params.code < 200) {
+      this._params.code = 404;
+    }
     return `
 <link rel="stylesheet" type="text/css" href="/public/assets/css/error.css">
   <div class="background">
