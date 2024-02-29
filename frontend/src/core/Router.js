@@ -14,7 +14,6 @@ class Router {
       {path: '/rank', view: 'Rank'},
       {path: '/login', view: 'Login'},
       {path: '/auth/ft/redirection', view: 'Auth'},
-      {path: '/test', view: 'Test'},
       {path: '/error/:code', view: 'ErrorPage'},
     ];
   }
