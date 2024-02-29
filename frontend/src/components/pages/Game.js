@@ -2,6 +2,11 @@ import Component from '../../core/Component.js';
 import PongGame from '../../game/pong/PongGame.js';
 import GameRound from './GameRound.js';
 import GameAlias from './GameAlias.js';
+import Cookie from '../../core/Cookie.js';
+import {pubEnv} from '../../const.js';
+import {parseJwt} from '../../connect.js';
+import Router from '../../core/Router.js';
+
 
 export default class Game extends Component {
   _title;
@@ -9,6 +14,7 @@ export default class Game extends Component {
   _my_css = '../../../public/assets/css/game.css';
   _tournamentData = {};
   constructor($target, params = null) {
+
     super(null, $target);
     this.game = null;
     this._title = 'Game';
@@ -36,6 +42,17 @@ export default class Game extends Component {
     `;
   }
   async mounted() {
+    const access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
+    console.log(access);
+    if (!access) {
+      Router.navigateTo('/error/401');
+      throw new Error();
+    }
+    const expiredAt = parseJwt(access)['exp'];
+    if (access && (Date.now() >= (expiredAt * 1000) - 10000)) {
+      Router.navigateTo('/error/401');
+      throw new Error();
+    }
     const gameDiv = document.getElementById('game-body');
     if (this.state._alias !== null) {
 
