@@ -6,15 +6,11 @@ $(error .env not found)
 endif
 include .env
 
-# **************************************************************************** #
-# pre-defined environment in docker-compose
-# **************************************************************************** #
-
-COMPOSE_PROJECT_NAME	:= ft_transcendence
-COMPOSE_FILE			:= compose-dev.yaml
-COMPOSE_PROFILES		:=
-
-export COMPOSE_PROJECT_NAME COMPOSE_FILE COMPOSE_PROFILES
+COMPOSE = \
+	docker compose \
+	-p ft_transcendence \
+	-f compose-dev.yaml \
+	-f elk/elk.yaml \
 
 # **************************************************************************** #
 # custom rules
@@ -61,11 +57,11 @@ prune:
 
 .PHONY: version # Show the Docker Compose version information
 version:
-	docker compose version
+	${COMPOSE} version
 
 .PHONY: config # Converts the compose file to platform's canonical form
 config:
-	docker compose config
+	${COMPOSE} config
 
 # **************************************************************************** #
 # for network, volume, image
@@ -85,21 +81,21 @@ volumes:
 
 .PHONY: images # List images used by the created containers
 images:
-	docker compose images
+	${COMPOSE} images
 	@echo
 	@echo For more detail, run: docker image inspect ${image}
 
 .PHONY: build # Build or rebuild services
 build:
-	docker compose build
+	${COMPOSE} build
 
 .PHONY: pull # Pull service images
 pull:
-	docker compose pull ${service}
+	${COMPOSE} pull ${service}
 
 .PHONY: push # Push service images
 push:
-	docker compose push ${service}
+	${COMPOSE} push ${service}
 
 # **************************************************************************** #
 # for monitoring
@@ -107,19 +103,19 @@ push:
 
 .PHONY: ls # List compose projects
 ls:
-	docker compose ls --all
+	${COMPOSE} ls --all
 
 .PHONY: ps # List containers
 ps:
-	docker compose ps --all
+	${COMPOSE} ps --all
 
 .PHONY: top # Display the running processes
 top:
-	docker compose top
+	${COMPOSE} top
 
 .PHONY: events # Receive real time events from containers.
 events:
-	docker compose events
+	${COMPOSE} events
 
 # **************************************************************************** #
 # for container
@@ -127,22 +123,22 @@ events:
 
 .PHONY: create # Creates containers for a service.
 create:
-	@mkdir -p ${DATABASE_VOLUME}
-	docker compose create --build
+	@mkdir -p ${DATABASE_VOLUME} ./elk/certs ./elk/elasticsearch ./elk/kibana ./elk/logstash/data
+	${COMPOSE} create --build
 
 .PHONY: up # Create and start containers
 up:
-	@mkdir -p ${DATABASE_VOLUME}
+	@mkdir -p ${DATABASE_VOLUME} ./elk/certs ./elk/elasticsearch ./elk/kibana ./elk/logstash/data
 	@./create_certificate.sh
-	docker compose up -d --build
+	${COMPOSE} up -d --build
 
 .PHONY: down # Stop and remove containers, networks
 down:
-	docker compose down --volumes
+	${COMPOSE} down --volumes
 
 .PHONY: rm # Removes stopped service containers
 rm:
-	docker compose rm --volumes ${servcie}
+	${COMPOSE} rm --volumes ${servcie}
 
 # **************************************************************************** #
 # for process
@@ -150,31 +146,31 @@ rm:
 
 .PHONY: logs # View output from containers
 logs:
-	docker compose logs ${service} -f
+	${COMPOSE} logs ${service} -f
 
 .PHONY: stop # Stop services
 stop:
-	docker compose stop ${service}
+	${COMPOSE} stop ${service}
 
 .PHONY: start # Start services
 start:
-	docker compose start ${service}
+	${COMPOSE} start ${service}
 
 .PHONY: restart # Restart service containers
 restart:
-	docker compose restart ${service}
+	${COMPOSE} restart ${service}
 
 .PHONY: pause # Pause services
 pause:
-	docker compose pause ${service}
+	${COMPOSE} pause ${service}
 
 .PHONY: unpause # Unpause services
 unpause:
-	docker compose unpause ${service}
+	${COMPOSE} unpause ${service}
 
 .PHONY: kill # Force stop service containers.
 kill:
-	docker compose kill ${service}
+	${COMPOSE} kill ${service}
 
 # **************************************************************************** #
 # for service
@@ -182,20 +178,20 @@ kill:
 
 .PHONY: port # Print the public port for a port binding.
 port:
-	docker compose port --help
+	${COMPOSE} port --help
 
 .PHONY: cp # Copy files/folders between a service container and the local filesystem
 cp:
-	docker compose cp --help
+	${COMPOSE} cp --help
 
 .PHONY: run # Run a one-off command on a service.
 run:
 	@[ -z "$(service)" ] && { echo "Usage: make run service=example"; exit 1; } || true
 	$(eval command := $(or $(command),/bin/sh))
-	docker compose run ${options} ${service} ${command} ${args}
+	${COMPOSE} run ${options} ${service} ${command} ${args}
 
 .PHONY: exec # Execute a command in a running container.
 exec:
 	@[ -z "$(service)" ] && { echo "Usage: make exec service=example"; exit 1; } || true
 	$(eval command := $(or $(command),/bin/sh))
-	docker compose exec ${options} ${service} ${command} ${args}
+	${COMPOSE} exec ${options} ${service} ${command} ${args}
