@@ -1,4 +1,4 @@
-import { IssueTokenError, RequestError, RequireLoginError } from '../connect.js';
+import {IssueTokenError, RequestError, RequireLoginError} from '../connect.js';
 import * as Utils from './Utils.js';
 
 class Router {
@@ -48,12 +48,13 @@ class Router {
   async backNavi() {
     if (this.#view != null) this.#view.unmounted();
     const view = await this.router();
-        return view;
+    return view;
   }
 
   async router() {
     if (this.#view != null) {
       this.#view.unmounted();
+      if (this.#view._title == 'Game') this.#view.game_unmounted();
     }
     const potentialMatches = this.#routes.map((route) => {
       return {
@@ -70,10 +71,9 @@ class Router {
         result: [location.pathname],
       };
     }
-    let params = this.getParams(match);
+    const params = this.getParams(match);
     if (match.route.view === 'User' &&
       await Utils.isValidIntra(params.intra_id) === false) {
-
       this.#view = await import(`../components/pages/${this.#errorPage.view}.js`)
           .then(async ({default: Page}) => {
             return new Page(document.querySelector('#app'), {code: 404});
