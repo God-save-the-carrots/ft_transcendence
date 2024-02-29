@@ -32,7 +32,6 @@ export default class Rank extends Component {
       Router.navigateTo(`/error/${res.status}`);
       throw new Error();
     }
-    // TODO: block mine 로그인 연동하면 바꿔야 함
     let html = '';
     html += `
       <link rel="stylesheet" href="${this._my_css}" type="text/css">

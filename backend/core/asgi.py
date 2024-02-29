@@ -17,4 +17,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 application = get_asgi_application()
 
-threading.Thread(target=start_server, args=(4444,)).start() # TODO: game port move to env
+threading.Thread(target=start_server, args=(4444,)).start()

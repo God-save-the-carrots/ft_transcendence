@@ -68,7 +68,6 @@ export class NetworkObject extends GameObject {
     this.position.x = this.position.x * d + this.to.position.x * this.dense;
     this.position.y = this.position.y * d + this.to.position.y * this.dense;
 
-    // TODO: change to this.to.color
     if (this.material.color.b > 0) this.material.color.b -= 1 / 60;
     if (this.material.color.g > 0) this.material.color.g -= 1 / 60;
   }
