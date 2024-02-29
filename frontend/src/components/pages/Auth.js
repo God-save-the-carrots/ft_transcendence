@@ -25,9 +25,14 @@ export default class Auth extends Component {
       body: JSON.stringify({code}),
     });
     if (res.ok == false) {
+      if (res.status >= 500)
+      {
+        await Router.navigateTo('/error/500');
+        throw new Error();
+      }
       alert('login failure');
       await Router.navigateTo('/');
-      return;
+      throw new Error();
     }
     const json = await res.json();
     Cookie.setToken(json);

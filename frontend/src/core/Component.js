@@ -20,7 +20,7 @@ export default class Component {
     this.children = [];
     this.onexception = (e) => {
       if (this.parent) this.parent.onexception(e);
-      else console.log(e);
+      else this.unmounted();
     };
     this.setup();
   }
@@ -29,7 +29,6 @@ export default class Component {
     this.state = observable(await this.initState());
     observe(async () => {
       try {
-        console.log(this, 'asdkasjdlkaskldjaslkdjas');
         this.unmounted();
         await this.render();
         this.setEvent();

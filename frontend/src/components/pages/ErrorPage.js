@@ -27,9 +27,6 @@ export default class ErrorPage extends Component {
         <img src="/public/assets/image/ghost3.png" alt="" class="two">
         <img src="/public/assets/image/ghost4.png" alt="" class="two">
       </div>
-      <p>
-        <span>${this._params.msg}</span>
-      </p>
     </div>
   </div>
     `;

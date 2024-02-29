@@ -7,12 +7,14 @@ function apiServerEndPoint(uri) {
 }
 
 async function request(uri, options) {
+  let res;
+  let json;
   try {
-    const res = await fetch(uri, options);
-    const json = await res.json();
+    res = await fetch(uri, options);
+    json = await res.json();
     return [res, json];
   } catch (e) {
-    throw new RequestError(e);
+    throw new RequestError(e, res.status);
   }
 };
 
@@ -74,10 +76,11 @@ export async function authReq(method, uri, body = {}) {
     }
     await refreshToken();
     access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
-    return await request(endpoint, {
+    let ret = await request(endpoint, {
       ...req,
       headers: {...req.headers, 'Authorization': `Bearer ${access}`},
     });
+    return ret;
   } catch(e) {
     if (e instanceof RequireLoginError || e instanceof IssueTokenError) {
       Cookie.deleteCookie(
@@ -87,7 +90,9 @@ export async function authReq(method, uri, body = {}) {
       );
       Router.navigateTo('/');
     }
-    else Router.navigateTo('/error/504');
+    else {
+      Router.navigateTo(`/error/${e.code}`);
+    }
     throw e;
   }
 }
@@ -109,9 +114,10 @@ export class RequireLoginError extends Error {
 }
 
 export class RequestError extends Error {
-  constructor(e) {
+  constructor(e, code) {
     super();
     this.type = 'requestError';
+    this.code = code;
     this.e = e;
   }
 }

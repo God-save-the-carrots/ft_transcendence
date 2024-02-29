@@ -29,7 +29,6 @@ export default class Rank extends Component {
     const paging_uri = rank_api + '?' + `page=${_current_page}&page_size=5`;
     const [res, data] = await this.authReq('GET', paging_uri);
     if (res.status !== 200) {
-      console.log(this.id);
       Router.navigateTo(`/error/${res.status}`);
       throw new Error();
     }
@@ -73,10 +72,9 @@ export default class Rank extends Component {
 
 async function createMyRanking() {
   const intra_id = Cookie.getCookie(intra_token);
-  const profile_api = `/api/game/pong/scoresss/${intra_id}/profile/`;
+  const profile_api = `/api/game/pong/score/${intra_id}/profile/`;
   const [res, data] = await authReq('get', profile_api);
   if (res.status !== 200) {
-    console.log(this.id);
     Router.navigateTo(`/error/${res.status}`);
     throw new Error();
   }
