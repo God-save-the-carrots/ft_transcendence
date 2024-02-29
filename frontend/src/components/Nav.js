@@ -104,8 +104,8 @@ export default class Nav extends Component {
         'lang_type': e.target.dataset.lang,
       });
       if (res.status !== 200) {
-        // TODO: load error page;
-        return;
+        Router.navigateTo(`/error/${res.status}`);
+        throw new Error();
       }
       Cookie.setCookie(pubEnv.TOKEN_LANG, e.target.dataset.lang);
     });
