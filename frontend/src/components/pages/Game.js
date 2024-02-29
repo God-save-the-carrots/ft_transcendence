@@ -17,6 +17,18 @@ export default class Game extends Component {
     super(null, $target);
     this.game = null;
     this._title = 'Game';
+
+    const randomUserToken = Math.random().toString(36).substring(2, 7);
+    const width = 960;
+    const height = 530;
+    this.game = new PongGame(width, height, randomUserToken);
+    this.game.subscribeInfo((result) => {
+      if (result.cause == 'end_game_confirm') {
+        this.state._alias = null;
+        return;
+      }
+      this.state.sessionResults = [...this.state.sessionResults, result];
+    });
   }
   async initState() {
     return {
@@ -54,18 +66,6 @@ export default class Game extends Component {
     }
     const gameDiv = document.getElementById('game-body');
     if (this.state._alias !== null) {
-      const randomUserToken = Math.random().toString(36).substring(2, 7);
-      const width = 960;
-      const height = 530;
-      this.game = new PongGame(width, height, randomUserToken);
-      this.game.subscribeInfo((result) => {
-        if (result.cause == 'end_game_confirm') {
-          this.state._alias = null;
-          return;
-        }
-        this.state.sessionResults = [...this.state.sessionResults, result];
-      });
-
       this.game.setAlias(this.state._alias);
       gameDiv.appendChild(this.game.getRenderer().domElement);
       if (this.state.sessionResults.length == 0) {
@@ -92,8 +92,7 @@ export default class Game extends Component {
       child.render();
     }
   }
-  unmounted() {
-    super.unmounted();
+  game_unmounted() {
     if (this.game) {
       this.game.destroy();
       this.game.unsubscribeInfoAll();

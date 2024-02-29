@@ -208,7 +208,7 @@ export class Scene extends THREE.Scene {
     for (const type in this.domEvents) {
       if (Object.hasOwn(this.domEvents, type) == false) continue;
       const delegator = this.domEvents[type].delegator;
-      this.renderer.domElement.removeEventListener(type, delegator);
+      this.renderer?.domElement.removeEventListener(type, delegator);
       delete this.domEvents[type];
     }
   }
