@@ -38,7 +38,7 @@ export default class UserProfile extends Component {
             throw new Error();
           }
           this.state.photo_id = photo_id;
-          new Nav(document.querySelector('#nav'));
+          Nav.render();
         });
     // msg
     this.$target.querySelector('.msg-form')
