@@ -33,8 +33,6 @@ services:
     stdin_open: true
     tty: true
     working_dir: /src
-    ports:
-      - 8000:8000
     volumes:
       - ./backend:/src
       - run_vol:/var/run
