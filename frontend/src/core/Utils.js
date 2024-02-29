@@ -1,6 +1,5 @@
 import Cookie from './Cookie.js';
 import {pubEnv} from '../const.js';
-import Router from './Router.js';
 import {authReq} from '../connect.js';
 
 const access_token = pubEnv.TOKEN_ACCESS;
@@ -10,10 +9,11 @@ const intra_token = pubEnv.TOKEN_INTRA_ID;
 export async function isValidIntra(intra) {
   const apiUrl = `/api/user/${intra}/`;
   const [response] = await authReq('get', apiUrl);
-  if (response.status == 200)
+  if (response.status == 200) {
     return true;
-  else 
+  } else {
     return false;
+  }
 }
 
 export function isCookieExist() {
