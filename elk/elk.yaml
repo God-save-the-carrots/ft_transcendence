@@ -183,6 +183,7 @@ services:
     container_name: ${LOGSTASH_CONTAINER_NAME?Logstash container name is required}
     image: logstash:${ELK_VERSION:-8.12.2}
     ports:
+      - 514:514/udp
       - ${LOGSTASH_PORT}:5044
     volumes:
       - ./elk/certs:/usr/share/logstash/config/certs

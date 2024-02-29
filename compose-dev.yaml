@@ -21,6 +21,7 @@ services:
     depends_on:
       - db
       - backend
+      - logstash
 
   backend:
     init: true
