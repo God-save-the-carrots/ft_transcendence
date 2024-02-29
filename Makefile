@@ -134,7 +134,6 @@ create:
 up:
 	@mkdir -p ${DATABASE_VOLUME}
 	@./create_certificate.sh
-	@./gp_certificate.sh
 	docker compose up -d --build
 
 .PHONY: down # Stop and remove containers, networks
