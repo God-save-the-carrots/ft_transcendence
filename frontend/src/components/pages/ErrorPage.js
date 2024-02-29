@@ -14,7 +14,7 @@ export default class ErrorPage extends Component {
     };
   }
   async template() {
-    if (isNumber(this._params.code == false)) this._params.code = 404;
+    if (isNumber(this._params.code) == false) this._params.code = 404;
     if (this._params.code > 599 || this._params.code < 200) {
       this._params.code = 404;
     }
