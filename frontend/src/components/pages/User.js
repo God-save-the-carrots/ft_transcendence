@@ -1,4 +1,5 @@
 import Component from '../../core/Component.js';
+import {NoError} from '../../core/Component.js';
 import UserProfile from './UserProfile.js';
 import UserProfileLogined from './UserProfileLogined.js';
 import UserStatistics from './UserStatistics.js';
@@ -48,7 +49,7 @@ export default class User extends Component {
     }
     if (data.play_time_rank == -1) {
       this.addComponent(new NewUser(this._params));
-      return;
+      throw new NoError();
     }
     const _test_app1 = this.$target.querySelector(
         '[data-component="test-app1"]',
