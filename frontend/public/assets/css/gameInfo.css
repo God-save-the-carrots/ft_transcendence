@@ -1,0 +1,85 @@
+.info-card {
+  margin: auto;
+  /* margin-top: 1%; */
+  width: 95%;
+  height: 100%;
+  /* background-color: red; */
+}
+
+.info-head {
+  margin: auto;
+  width: 100%;
+  height: 90px;
+  /* background-color: #e0e0e0; */
+}
+
+.avatar-group {
+  padding-top: 1%;
+  padding-bottom: 1%;
+  display: flex;
+  justify-content: space-evenly;
+  background-color: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.avatar {
+  vertical-align: middle;
+  width: 60px;
+  height: 60px;
+  border-radius: 20%;
+}
+
+.card {
+  display: inline-grid;
+  color: white;
+  transition: transform 0.5s;
+  transform: perspective(500px) rotateY(0deg);
+  transform-style: preserve-3d;
+  border-radius: 20% !important;
+  background-color: rgba(191, 85, 236, 0.5)!important;
+  border-color: rgba(255, 150, 255, 0.3)!important;
+  /* border-color: rgba(255, 255, 255, 0.8)!important; */
+}
+
+.card > h {
+  padding-top: 25%;
+}
+
+.card:active {
+  border: 1px solid rgba(255,255,255,0) !important;
+  background-color: rgba(255,255,255,0) !important;
+  transform: perspective(500px) rotateY(180deg);
+}
+
+.card > * {
+  grid-area: 1 / 1 / 1 / 1;
+  padding: 5px;
+  border-radius: 8px;
+  backface-visibility: hidden;
+}
+
+.card-front {
+  border-radius: 20%;
+  backface-visibility: hidden;
+}
+
+.card-back {
+  margin: auto;
+  width: 60px;
+  height: 60px;
+  transform: rotateY(180deg);
+  overflow: visible;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.item-card {
+  background-color: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.item-time > div {
+  background-color: rgba(191, 85, 236, 0.8)!important;
+}

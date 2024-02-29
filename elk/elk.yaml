@@ -1,0 +1,205 @@
+version: "3.8"
+
+services:
+  certs:
+    image: elasticsearch:${ELK_VERSION:-8.12.2}
+    volumes:
+      - ./elk/certs:/usr/share/elasticsearch/config/certs
+    environment:
+      - ELASTIC_PORT=${ELASTIC_PORT?Elasticsearch port is required}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
+    command: >
+      bash -c '
+        if [ ! -f config/certs/ca.zip ]; then
+          echo "Creating CA";
+          bin/elasticsearch-certutil ca --silent --pem -out config/certs/ca.zip;
+          unzip config/certs/ca.zip -d config/certs;
+        fi;
+        if [ ! -f config/certs/certs.zip ]; then
+          echo "Creating certs";
+          echo -ne \
+          "instances:\n"\
+          "  - name: elasticsearch\n"\
+          "    dns:\n"\
+          "      - elasticsearch\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          "  - name: kibana\n"\
+          "    dns:\n"\
+          "      - kibana\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          "  - name: logstash\n"\
+          "    dns:\n"\
+          "      - logstash\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          > config/certs/instances.yml;
+          bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
+          unzip config/certs/certs.zip -d config/certs;
+        fi;
+        echo "Setting file permissions"
+        chown -R root:root config/certs;
+        find . -type d -exec chmod 750 \{\} \;;
+        find . -type f -exec chmod 640 \{\} \;;
+        echo "Waiting for Elasticsearch availability";
+        until curl -s \
+          --cacert config/certs/ca/ca.crt \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT} | grep -q "missing authentication credentials"; do sleep 10;
+        done;
+        echo "Setting kibana_system password";
+        until curl -s -X POST \
+          --cacert config/certs/ca/ca.crt \
+          -u elastic:${ELASTIC_PASSWORD} \
+          -H "Content-Type: application/json" \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}/_security/user/kibana_system/_password \
+          -d "{\"password\":\"${ELASTIC_PASSWORD}\"}" | grep -q "^{}"; do sleep 10;
+        done;
+        echo "Setting logstash_writer role"
+        until curl -s -X POST \
+          --cacert config/certs/ca/ca.crt \
+          -u elastic:${ELASTIC_PASSWORD} \
+          -H "Content-Type: application/json" \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}/_security/role/logstash_writer \
+          -d "{\"cluster\":[\"manage_index_templates\",\"monitor\",\"manage_ilm\"],\"indices\":[{\"names\":[\"logstash-*\"],\"privileges\":[\"write\",\"create\",\"create_index\",\"manage\",\"manage_ilm\"]}]}"; do sleep 10;
+        done;
+        echo ""
+        echo "Setting logstash_internal user";
+        until curl -s -X POST \
+          --cacert config/certs/ca/ca.crt \
+          -u elastic:${ELASTIC_PASSWORD} \
+          -H "Content-Type: application/json" \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}/_security/user/logstash_internal \
+          -d "{\"password\":\"${ELASTIC_PASSWORD}\",\"roles\":[\"logstash_writer\"]}"; do sleep 10;
+        done;
+        echo ""
+        echo "geoip index template";
+        until curl -s -X PUT \
+          --cacert config/certs/ca/ca.crt \
+          -X PUT \
+          -u elastic:${ELASTIC_PASSWORD} \
+          -H "Content-Type: application/json" \
+          https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}/_index_template/geoip \
+          -d "{\"index_patterns\":[\"logstash-*\"],\"template\":{\"mappings\":{\"properties\":{\"geo\":{\"properties\":{\"location\":{\"type\":\"geo_point\"}}}}}}}"; do sleep 10;
+        done;
+        echo "All done!";
+      '
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/elasticsearch/elasticsearch.crt ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+  elasticsearch:
+    init: true
+    depends_on:
+      certs:
+        condition: service_healthy
+    container_name: ${ELASTIC_CONTAINER_NAME?Elatic container name is required}
+    image: elasticsearch:${ELK_VERSION:-8.12.2}
+    ports:
+      - ${ELASTIC_PORT}:9200
+    volumes:
+      - ./elk/certs:/usr/share/elasticsearch/config/certs
+      - ./elk/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+        - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
+        - discovery.type=single-node
+        - bootstrap.memory_lock=true
+        - xpack.security.enabled=true
+        - xpack.security.transport.ssl.enabled=true
+        - xpack.security.transport.ssl.key=certs/elasticsearch/elasticsearch.key
+        - xpack.security.transport.ssl.certificate=certs/elasticsearch/elasticsearch.crt
+        - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
+        - xpack.security.transport.ssl.verification_mode=certificate
+        - xpack.security.http.ssl.enabled=true
+        - xpack.security.http.ssl.key=certs/elasticsearch/elasticsearch.key
+        - xpack.security.http.ssl.certificate=certs/elasticsearch/elasticsearch.crt
+        - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
+        - xpack.security.http.ssl.verification_mode=certificate
+        - xpack.license.self_generated.type=${ELK_LICENSE}
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  kibana:
+    init: true
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+      elasticsearch:
+        condition: service_healthy
+    container_name: ${KIBANA_CONTAINER_NAME?Kibana container name is required}
+    image: kibana:${ELK_VERSION:-8.12.2}
+    ports:
+      - ${KIBANA_PORT}:5601
+    volumes:
+      - ./elk/certs:/usr/share/kibana/config/certs
+      - ./elk/kibana:/usr/share/kibana/data
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/certs/ca/ca.crt
+      - MONITORING_UI_CONTAINER_ELASTICSEARCH_ENABLED=true
+      - SERVER_SSL_ENABLED=true
+      - SERVER_SSL_KEY=/usr/share/kibana/config/certs/kibana/kibana.key
+      - SERVER_SSL_CERTIFICATE=/usr/share/kibana/config/certs/kibana/kibana.crt
+      - SERVER_SSL_CERTIFICATEAUTHORITIES=/usr/share/kibana/config/certs/ca/ca.crt
+      - XPACK_REPORTING_ROLES_ENABLED=false
+    mem_limit: ${MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:5601",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  logstash:
+    init: true
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+      elasticsearch:
+        condition: service_healthy
+    container_name: ${LOGSTASH_CONTAINER_NAME?Logstash container name is required}
+    image: logstash:${ELK_VERSION:-8.12.2}
+    ports:
+      - 514:514/udp
+      - ${LOGSTASH_PORT}:5044
+    volumes:
+      - ./elk/certs:/usr/share/logstash/config/certs
+      - ./elk/logstash/data:/usr/share/logstash/data
+      - ./elk/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
+      - XPACK_MONITORING_ENABLED=false
+      - MONITORING_ELASTICSEARCH_HOSTS=https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}
+    mem_limit: ${MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s http://localhost:9600",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 10

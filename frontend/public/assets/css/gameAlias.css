@@ -1,0 +1,37 @@
+.inputbox {
+  padding-top: 10%;
+  padding-left: 20%;
+  width : 60%;
+  height : 20%;
+  position: absolute;
+  left: 40%;
+  top: 20%;
+  transform: translate(-50%, -50%);
+}
+.typewriter {
+  width : 750px;
+  margin-bottom: 20px;
+}
+.typewriter h1 {
+  color: white;
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .35em solid orange; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+  letter-spacing: .15em; /* Adjust as needed */
+  animation: 
+    typing 1.5s steps(40, end),
+    blink-caret .75s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: orange; }
+}

@@ -1,0 +1,11 @@
+.env
+pgdata/
+.DS_Store
+.clang-format
+jsconfig.json
+node_modules
+backend/api/migrations/
+tmp.html
+*.pem
+*.crt
+*.key
