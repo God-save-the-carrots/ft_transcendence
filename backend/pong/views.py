@@ -56,6 +56,19 @@ class PongAPIView(APIView):
                     rank=rank,
                     score=score
                 )
+        for intra_id, grade in player_dict.items():
+            user_instance = User.objects.get(intra_id=intra_id)
+            user_profile = Profile.objects.get(user_id=user_instance)
+            if grade == 1:
+                user_profile.rating += 100
+            elif grade == 2:
+                user_profile.rating += -20
+            elif grade == 3:
+                user_profile.rating += -40
+            elif grade == 4:
+                user_profile.rating += -60
+            user_profile.save()
+
         response_data = {
             'tournament_id': tournament.id
         }
