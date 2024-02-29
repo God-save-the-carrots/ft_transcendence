@@ -73,8 +73,12 @@ class Router {
     let params = this.getParams(match);
     if (match.route.view === 'User' &&
       await Utils.isValidIntra(params.intra_id) === false) {
-      match.route.view = 'ErrorPage';
-      params.code = 404;
+
+      this.#view = await import(`../components/pages/${this.#errorPage.view}.js`)
+          .then(async ({default: Page}) => {
+            return new Page(document.querySelector('#app'), {code: 404});
+          });
+      return this.#view;
     }
     this.#view = await import(`../components/pages/${match.route.view}.js`)
         .then(async ({default: Page}) => {

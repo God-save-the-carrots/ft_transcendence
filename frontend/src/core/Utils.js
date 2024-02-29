@@ -9,18 +9,11 @@ const intra_token = pubEnv.TOKEN_INTRA_ID;
 
 export async function isValidIntra(intra) {
   const apiUrl = `/api/user/${intra}/`;
-  try {
-    const [response] = await authReq('get', apiUrl);
-    if (response.ok) {
-      return true;
-    } else if (response.status === 401) {
-      Router.navigateTo('/');
-    } else {
-      return false;
-    }
-  } catch (error) {
+  const [response] = await authReq('get', apiUrl);
+  if (response.status == 200)
+    return true;
+  else 
     return false;
-  }
 }
 
 export function isCookieExist() {
