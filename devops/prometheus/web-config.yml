@@ -1,3 +1,0 @@
-tls_server_config:
-  cert_file: prometheus.crt
-  key_file: prometheus.key

@@ -1,7 +1,0 @@
-*.zip
-*.key
-*.crt
-
-elasticsearch
-kibana
-logstash/data
