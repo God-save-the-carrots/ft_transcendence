@@ -5,4 +5,5 @@ export const pubEnv = {
   TOKEN_ACCESS: 'access',
   TOKEN_REFRESH: 'refresh',
   TOKEN_INTRA_ID: 'intra_id',
+  TOKEN_LANG: 'lang_type',
 };

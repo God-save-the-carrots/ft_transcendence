@@ -8,6 +8,7 @@ const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
 const refresh_token = pubEnv.TOKEN_REFRESH;
 const intra_token = pubEnv.TOKEN_INTRA_ID;
+const lang_token = pubEnv.TOKEN_LANG;
 
 export default class Home extends Component {
   _title;
@@ -20,7 +21,7 @@ export default class Home extends Component {
   }
   async template() {
     if (isCookieExist() === true) {
-      Cookie.deleteCookie(access_token, refresh_token, intra_token);
+      Cookie.deleteCookie(access_token, refresh_token, intra_token, lang_token);
       new Nav(document.querySelector('#nav'));
     }
     return `
@@ -37,7 +38,7 @@ export default class Home extends Component {
         <img src="../../public/assets/image/monster.svg" alt=""
           class="three" draggable="false">
       </div>
-      <p data-detect='welcometolibft'>
+      <p>
         <span>Welcome</span>
         <span>to</span>
         <span class="title">LIBFT!</span>

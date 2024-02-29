@@ -1,8 +1,11 @@
+import {pubEnv} from './const.js';
+import Cookie from './core/Cookie.js';
+import {isCookieExist} from './core/Utils.js';
+
 let base_lang = 'en';
 
 const multiLang = {
   'ko': {
-    welcometolibft: '환영해 LIBFT',
     title: '테스트',
     ranking: '순위',
     statistics: '통계',
@@ -27,7 +30,6 @@ const multiLang = {
     '401': '쿠쿠루삥뽕',
   },
   'en': {
-    welcometolibft: 'Welcome to LIBFT',
     title: 'test',
     ranking: 'RANKING',
     statistics: 'statistics',
@@ -38,7 +40,6 @@ const multiLang = {
     change_my_avatar: 'change my avatar',
     save_changes: 'Save changes',
     close: 'close',
-
     winning_rate: 'winning rate',
     total_rounds: 'total rounds',
     lose: 'lose',
@@ -52,29 +53,27 @@ const multiLang = {
     empty: 'empty',
   },
   'cn': {
-    welcometolibft: '어쩌구 저쩌구 LIBFT',
-    title: 'test',
-    ranking: '어쩌구',
-    statistics: '캬캬',
-    rank: '몇등?',
-    history: '낄낄',
-    playtime: '과연?',
-    change_my_message: '응 돌아가 안해',
-    change_my_avatar: '안돼 안바꿔줘',
-    save_changes: '메롱',
-    close: '미친',
-
-    winning_rate: '빵빵',
-    total_rounds: '띠띠',
-    lose: '하하',
-    win: '흑마법',
-    goals_against_average: '슉슉',
-    winning_percentage: '흑흑',
-    average: '피신',
-    highest: '크크',
-    time: '삥',
-    input_your_nick: '쿠쿠루삥뽕삥뽕....!',
-    empty: '이소라최고',
+    title: '试验',
+    ranking: '排行',
+    statistics: '统计',
+    rank: '等级',
+    history: '游戏历史',
+    playtime: '游戏时间',
+    change_my_message: '更改我的消息',
+    change_my_avatar: '更改我的头像',
+    save_changes: '保存变更',
+    close: '闭',
+    winning_rate: '胜率',
+    total_rounds: '总轮次',
+    lose: '输',
+    win: '赢',
+    goals_against_average: '失点',
+    winning_percentage: '胜率',
+    average: '平均',
+    highest: '最高',
+    time: '时间',
+    input_your_nick: '输入您的昵称',
+    empty: '空',
   },
 
 };
@@ -84,14 +83,29 @@ export function setLanguage(lang) {
   const change_node_list =
     Array.prototype.slice.call(document.querySelectorAll('[data-detect]'));
   change_node_list.map((v) => {
-    v.textContent = multiLang[lang][v.dataset.detect];
+    v.textContent = multiLang[base_lang][v.dataset.detect];
+    updateFont(base_lang, v);
   });
 }
 
 export function loadLanguage() {
+  if (isCookieExist()) {
+    base_lang = Cookie.getCookie(pubEnv.TOKEN_LANG);
+  }
   const change_node_list =
     Array.prototype.slice.call(document.querySelectorAll('[data-detect]'));
   change_node_list.map((v) => {
     v.textContent = multiLang[base_lang][v.dataset.detect];
+    updateFont(base_lang, v);
   });
+}
+
+function updateFont(lang, v) {
+  if (base_lang === 'en') {
+    v.style.fontFamily = 'Retro Gaming';
+  } else if (base_lang === 'ko') {
+    v.style.fontFamily = 'Galmuri9';
+  } else if (base_lang === 'cn') {
+    v.style.fontFamily = 'DOSPilgiMedium';
+  }
 }

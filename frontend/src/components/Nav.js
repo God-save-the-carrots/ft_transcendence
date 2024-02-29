@@ -72,7 +72,7 @@ export default class Nav extends Component {
             <li><a class="dropdown-item" href="/" nav-link>Logout</a></li>
             <li><a class="dropdown-item" data-lang=ko lang-link>KOREAN</a></li>
             <li><a class="dropdown-item" data-lang=en lang-link>ENGLISH</a></li>
-            <li><a class="dropdown-item" data-lang=cn lang-link>CHINA</a></li>
+            <li><a class="dropdown-item" data-lang=cn lang-link>CHINESE</a></li>
           </ul>
         </li>
       </ul>
@@ -98,6 +98,16 @@ export default class Nav extends Component {
     });
     this.addEvent('click', '[lang-link]', async (e) => {
       Lang.setLanguage(e.target.dataset.lang);
+      const intra_id = Cookie.getCookie(intra_token);
+      const change_api = `/api/user/${intra_id}/`;
+      const [res] = await this.authReq('PATCH', change_api, {
+        'lang_type': e.target.dataset.lang,
+      });
+      if (res.status !== 200) {
+        Router.navigateTo(`/error/${res.status}`);
+        throw new Error();
+      }
+      Cookie.setCookie(pubEnv.TOKEN_LANG, e.target.dataset.lang);
     });
   }
 }
