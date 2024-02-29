@@ -18,7 +18,7 @@ async function request(uri, options) {
   }
 };
 
-function parseJwt(token) {
+export function parseJwt(token) {
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   const payload = decodeURIComponent(window.atob(base64).split('').map((c) => {
