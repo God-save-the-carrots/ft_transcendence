@@ -7,7 +7,7 @@ import {isCookieExist} from '../core/Utils.js';
 
 const intra_token = pubEnv.TOKEN_INTRA_ID;
 
-export default class Nav extends Component {
+class Nav extends Component {
   constructor($target) {
     super(null, $target);
   }
@@ -111,3 +111,5 @@ export default class Nav extends Component {
     });
   }
 }
+
+export default new Nav(document.querySelector('#nav'));

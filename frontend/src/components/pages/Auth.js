@@ -37,7 +37,7 @@ export default class Auth extends Component {
     const json = await res.json();
     Cookie.setToken(json);
 
-    new Nav(document.querySelector('#nav'));
+    Nav.render();
     const intraId = Cookie.getCookie(pubEnv.TOKEN_INTRA_ID);
     Router.navigateTo(`/user/${intraId}`);
 

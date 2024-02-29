@@ -22,7 +22,7 @@ export default class Home extends Component {
   async template() {
     if (isCookieExist() === true) {
       Cookie.deleteCookie(access_token, refresh_token, intra_token, lang_token);
-      new Nav(document.querySelector('#nav'));
+      Nav.render();
     }
     return `
 <link rel="stylesheet" href="${this._my_css}" type="text/css">
