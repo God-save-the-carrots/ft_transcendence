@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   frontend:
+    init: true
     image: ${FRONTEND_IMAGE_NAME}:${FRONTEND_IMAGE_TAG}
     container_name: ${FRONTEND_CONTAINER_NAME}
     build:
@@ -22,6 +23,7 @@ services:
       - backend
 
   backend:
+    init: true
     image: ${BACKEND_IMAGE_NAME}:${BACKEND_IMAGE_TAG}
     container_name: ${BACKEND_CONTAINER_NAME}
     build:
@@ -46,6 +48,7 @@ services:
         condition: service_healthy
 
   db:
+    init: true
     image: postgres:16.1-alpine3.19
     container_name: ${DATABASE_CONTAINER_NAME}
     env_file:
@@ -67,6 +70,7 @@ services:
       retries: 3
 
   grafana:
+    init: true
     image: grafana/grafana:latest
     container_name: ${GRAFANA_CONTAINER_NAME}
     env_file:
@@ -92,6 +96,7 @@ services:
       - ./devops/grafana/grafana.key:/etc/grafana/grafana.key
 
   prometheus:
+    init: true
     image: prom/prometheus:latest
     container_name: ${PROMETHEUS_CONTAINER_NAME}
     command:

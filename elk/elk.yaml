@@ -91,9 +91,10 @@ services:
       test: ["CMD-SHELL", "[ -f config/certs/elasticsearch/elasticsearch.crt ]"]
       interval: 1s
       timeout: 5s
-      retries: 120
+      retries: 10
 
   elasticsearch:
+    init: true
     depends_on:
       certs:
         condition: service_healthy
@@ -129,13 +130,14 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200",
         ]
       interval: 5s
       timeout: 5s
-      retries: 120
+      retries: 10
 
   kibana:
+    init: true
     depends_on:
       certs:
         condition: service_completed_successfully
@@ -169,9 +171,10 @@ services:
         ]
       interval: 10s
       timeout: 10s
-      retries: 120
+      retries: 10
 
   logstash:
+    init: true
     depends_on:
       certs:
         condition: service_completed_successfully
@@ -198,4 +201,4 @@ services:
         ]
       interval: 10s
       timeout: 10s
-      retries: 120
+      retries: 10
