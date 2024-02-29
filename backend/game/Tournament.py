@@ -129,6 +129,6 @@ class Tournament(Rule):
             "games": sorted_games,
             "players": sorted_players,
         })
-        url = "http://localhost:8000/api/game/pong/" # TODO: use env
+        url = "http://localhost:8000/api/game/pong/"
         if await post_data(url, save_data) is None:
             print("failed to store game result")

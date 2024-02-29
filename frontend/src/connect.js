@@ -27,9 +27,6 @@ function parseJwt(token) {
   return JSON.parse(payload);
 };
 
-/**
- * @return {Promise<string>} 대기큐 등록 성공 여부 (인증 포함)
- */
 async function refreshToken() {
   const refresh = Cookie.getCookie(pubEnv.TOKEN_REFRESH);
   const access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
@@ -76,21 +73,20 @@ export async function authReq(method, uri, body = {}) {
     }
     await refreshToken();
     access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
-    let ret = await request(endpoint, {
+    const ret = await request(endpoint, {
       ...req,
       headers: {...req.headers, 'Authorization': `Bearer ${access}`},
     });
     return ret;
-  } catch(e) {
+  } catch (e) {
     if (e instanceof RequireLoginError || e instanceof IssueTokenError) {
       Cookie.deleteCookie(
-        pubEnv.TOKEN_ACCESS, 
-        pubEnv.TOKEN_REFRESH, 
-        pubEnv.TOKEN_INTRA_ID
+          pubEnv.TOKEN_ACCESS,
+          pubEnv.TOKEN_REFRESH,
+          pubEnv.TOKEN_INTRA_ID,
       );
       Router.navigateTo('/');
-    }
-    else {
+    } else {
       Router.navigateTo(`/error/${e.code}`);
     }
     throw e;
