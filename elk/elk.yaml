@@ -4,7 +4,7 @@ services:
   certs:
     image: elasticsearch:${ELK_VERSION:-8.12.2}
     volumes:
-      - ./certs:/usr/share/elasticsearch/config/certs
+      - ./elk/certs:/usr/share/elasticsearch/config/certs
     environment:
       - ELASTIC_PORT=${ELASTIC_PORT?Elasticsearch port is required}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
@@ -102,8 +102,8 @@ services:
     ports:
       - ${ELASTIC_PORT}:9200
     volumes:
-      - ./certs:/usr/share/elasticsearch/config/certs
-      - ./elasticsearch:/usr/share/elasticsearch/data
+      - ./elk/certs:/usr/share/elasticsearch/config/certs
+      - ./elk/elasticsearch:/usr/share/elasticsearch/data
     environment:
         - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
         - discovery.type=single-node
@@ -146,8 +146,8 @@ services:
     ports:
       - ${KIBANA_PORT}:5601
     volumes:
-      - ./certs:/usr/share/kibana/config/certs
-      - ./kibana:/usr/share/kibana/data
+      - ./elk/certs:/usr/share/kibana/config/certs
+      - ./elk/kibana:/usr/share/kibana/data
     environment:
       - SERVERNAME=kibana
       - ELASTICSEARCH_HOSTS=https://${ELASTIC_CONTAINER_NAME}:${ELASTIC_PORT}
@@ -182,9 +182,9 @@ services:
     ports:
       - ${LOGSTASH_PORT}:5044
     volumes:
-      - ./certs:/usr/share/logstash/config/certs
-      - ./logstash/data:/usr/share/logstash/data
-      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./elk/certs:/usr/share/logstash/config/certs
+      - ./elk/logstash/data:/usr/share/logstash/data
+      - ./elk/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD?ELastic password is required}
       - XPACK_MONITORING_ENABLED=false
