@@ -14,7 +14,6 @@ export default class Game extends Component {
   _my_css = '../../../public/assets/css/game.css';
   _tournamentData = {};
   constructor($target, params = null) {
-
     super(null, $target);
     this.game = null;
     this._title = 'Game';
@@ -45,17 +44,16 @@ export default class Game extends Component {
     const access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
     console.log(access);
     if (!access) {
-      Router.navigateTo('/error/401');
+      Router.navigateTo('/');
       throw new Error();
     }
     const expiredAt = parseJwt(access)['exp'];
     if (access && (Date.now() >= (expiredAt * 1000) - 10000)) {
-      Router.navigateTo('/error/401');
+      Router.navigateTo('/');
       throw new Error();
     }
     const gameDiv = document.getElementById('game-body');
     if (this.state._alias !== null) {
-
       const randomUserToken = Math.random().toString(36).substring(2, 7);
       const width = 960;
       const height = 530;
@@ -78,7 +76,8 @@ export default class Game extends Component {
         document.getElementById('game-content').style.height = '550px';
       } else {
         const resultDiv = document.getElementById('game-info');
-        this.addComponent(new GameRound(this, resultDiv, this.state.sessionResults));
+        this.addComponent(
+            new GameRound(this, resultDiv, this.state.sessionResults));
       }
     } else {
       this.state.sessionResults = [];
