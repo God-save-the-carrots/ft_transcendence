@@ -164,7 +164,7 @@ REST_FRAMEWORK = {
 
 CLIENT_ID = os.environ.get('CLIENT_ID')
 CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
-REDIRECT_URI = 'https://localhost/auth/ft/redirection'
+REDIRECT_URI = '/auth/ft/redirection'
 
 SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
