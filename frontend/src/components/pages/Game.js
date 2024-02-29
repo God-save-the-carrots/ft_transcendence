@@ -54,7 +54,6 @@ export default class Game extends Component {
   }
   async mounted() {
     const access = Cookie.getCookie(pubEnv.TOKEN_ACCESS);
-    console.log(access);
     if (!access) {
       Router.navigateTo('/');
       throw new Error();
