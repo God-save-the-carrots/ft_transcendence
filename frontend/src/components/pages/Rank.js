@@ -11,7 +11,6 @@ export default class Rank extends Component {
   _title;
   _params;
   _my_css = '../../../public/assets/css/rank.css';
-  _pagination_css = '../../../public/assets/css/Pagination.css';
   constructor($target, params = null) {
     super(null, $target);
     this._title = 'Rank';
@@ -35,7 +34,6 @@ export default class Rank extends Component {
     let html = '';
     html += `
       <link rel="stylesheet" href="${this._my_css}" type="text/css">
-      <link rel="stylesheet" href="${this._pagination_css}" type="text/css">
       <div class="block-wrap">
         ${await createMyRanking()}
         ${createRakingContents(_current_page, data.data)}
