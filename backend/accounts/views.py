@@ -33,7 +33,7 @@ class LoginAPIView(APIView):
         token = requests.post('https://api.intra.42.fr/oauth/token', data={
             'client_id': client_id,
             'client_secret': client_secret,
-            'redirect_uri': redirect_uri,
+            'redirect_uri': f"https://{request.META['HTTP_HOST']}{redirect_uri}",
             'grant_type': 'authorization_code',
             'code': code,
         })
