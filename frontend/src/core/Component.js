@@ -34,6 +34,9 @@ export default class Component {
         this.setEvent();
         await this.mounted();
       } catch(e) {
+        if (e instanceof NoError) {
+          // do nothing
+        }
         this.onexception(e);
       }
     }, this.state);
@@ -90,3 +93,6 @@ export default class Component {
 }
 
 Component.prototype.authReq = authReq;
+
+export class NoError extends Error {
+}
