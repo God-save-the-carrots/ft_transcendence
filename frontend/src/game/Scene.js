@@ -184,7 +184,7 @@ export class Scene extends THREE.Scene {
     });
     this.objects = new Map();
     this.networkObjects = new Map();
-    this.renderer.dispose();
+    this.renderer?.dispose();
     delete this.renderer;
   }
 

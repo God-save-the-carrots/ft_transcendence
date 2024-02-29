@@ -1,6 +1,6 @@
 import Component from '../../core/Component.js';
 import {pubEnv} from '../../const.js';
-import { isCookieExist } from '../../core/Utils.js';
+import {isCookieExist} from '../../core/Utils.js';
 import Cookie from '../../core/Cookie.js';
 import Nav from '../Nav.js';
 
@@ -13,7 +13,7 @@ export default class Home extends Component {
   _title;
   _params;
   constructor($target, params = null) {
-    super($target);
+    super(null, $target);
     this._title = 'Home';
     this._params = params;
     this._my_css = '../../public/assets/css/home.css';

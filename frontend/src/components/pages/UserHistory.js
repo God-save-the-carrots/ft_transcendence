@@ -1,20 +1,14 @@
-import {pubEnv} from '../../const.js';
 import Component from '../../core/Component.js';
-import ErrorPage from './ErrorPage.js';
 import Router from '../../core/Router.js';
-import Cookie from '../../core/Cookie.js';
 
-const endpoint = pubEnv.API_SERVER;
-const access_token = pubEnv.TOKEN_ACCESS;
-const refresh_token = pubEnv.TOKEN_REFRESH;
-const intra_token = pubEnv.TOKEN_INTRA_ID;
+const authReq = Component.prototype.authReq;
 
 export default class UserHistory extends Component {
   _title;
   _intra_id;
   _my_css = '../../../public/assets/css/userHistory.css';
-  constructor(target, params = null) {
-    super(target);
+  constructor(parent, target, params = null) {
+    super(parent, target);
     this._title = 'User History';
     this._intra_id = params;
   }
@@ -24,24 +18,15 @@ export default class UserHistory extends Component {
     };
   }
   async template() {
-    await verifyCookie(this._intra_id);
     const _current_page = this.state.current_page;
     let html = '';
-    const history_api = `${endpoint}/api/game/pong/score/${this._intra_id}`;
-    const access = Cookie.getCookie('access');
-    const res = await fetch(
-      history_api + '?' + `page=${_current_page}&page_size=1`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${access}`,
-        },
-      }
-    );
-    if (res.status != 200) {
-      new ErrorPage({code: res.status, msg: res.statusText});
-      return;
+    const history_api = `/api/game/pong/score/${this._intra_id}`;
+    const paging_api = history_api + '?' + `page=${_current_page}&page_size=1`;
+    const [res, data] = await this.authReq('get', paging_api);
+    if (res.status !== 200) {
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
-    const data = await res.json();
     const last_page_index = data.last_page_index;
     html += `
      <link rel="stylesheet" href="${this._my_css}" type="text/css" />
@@ -152,19 +137,12 @@ async function createHistoryContents(jsonData) {
           <div class="card-body body-history">
             <div class="item">
 `;
-    const history_api = `${endpoint}/api/game/pong/matches/${match_id}`;
-    const access = Cookie.getCookie('access');
-    const res = await fetch(history_api, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${access}`,
-      },
-    });
-    if (res.status != 200) {
-      new ErrorPage({code: res.status, msg: res.statusText});
-      return;
+    const history_api = `/api/game/pong/matches/${match_id}/`;
+    const [res, data] = await authReq('get', history_api);
+    if (res.status !== 200) {
+      Router.navigateTo(`/error/${res.status}`);
+      throw new Error();
     }
-    const data = await res.json();
     const r2 = data.game[0];
     const r1_1 = data.game[1];
     const r1_2 = data.game[2];
@@ -243,28 +221,3 @@ function convertSecondsToMMSS(seconds) {
   return minutes + ':' + second;
 }
 
-async function verifyCookie(intra_id) {
-  const verify_api = `${endpoint}/api/token/verify/`;
-  const access = Cookie.getCookie(access_token);
-  const refresh = Cookie.getCookie(refresh_token);
-  const res = await fetch(verify_api, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      access: `${access}`,
-      refresh: `${refresh}`,
-    }),
-  });
-  const res_data = await res.json();
-  if (res.status === 201) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
-    Cookie.setToken(res_data);
-    Router.navigateTo(`/user/${intra_id}`);
-    return;
-  } else if (res.status === 401) {
-    Cookie.deleteCookie(access_token, refresh_token, intra_token);
-    Router.navigateTo('/');
-  }
-}

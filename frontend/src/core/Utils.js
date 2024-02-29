@@ -1,22 +1,16 @@
 import Cookie from './Cookie.js';
 import {pubEnv} from '../const.js';
 import Router from './Router.js';
+import {authReq} from '../connect.js';
 
-const endpoint = pubEnv.API_SERVER;
 const access_token = pubEnv.TOKEN_ACCESS;
 const refresh_token = pubEnv.TOKEN_REFRESH;
 const intra_token = pubEnv.TOKEN_INTRA_ID;
 
 export async function isValidIntra(intra) {
-  const apiUrl = `${endpoint}/api/user/${intra}/`;
-  const access = Cookie.getCookie('access');
+  const apiUrl = `/api/user/${intra}/`;
   try {
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${access}`,
-      },
-    });
+    const [response] = await authReq('get', apiUrl);
     if (response.ok) {
       return true;
     } else if (response.status === 401) {

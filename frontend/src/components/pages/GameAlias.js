@@ -5,8 +5,8 @@ export default class GameAlias extends Component {
   _intra_id;
   _my_css = '../../../public/assets/css/gameAlias.css';
 
-  constructor(target) {
-    super(target);
+  constructor(parent, target) {
+    super(parent, target);
     this._title = 'GameAlias';
   }
 
@@ -23,7 +23,7 @@ export default class GameAlias extends Component {
         <h1 data-detect='input_your_nick'>Input your nickname....!</h1>
       </div>
       <div class="nickname-box">
-        <input type="text" id='textInput' class="form-control form-control-lg"
+        <input type="text" maxlength='10' id='textInput' class="form-control form-control-lg"
           placeholder="NickName" aria-label=".form-control-lg example">
       </div>
     </div>

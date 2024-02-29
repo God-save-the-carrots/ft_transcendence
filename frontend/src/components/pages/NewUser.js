@@ -11,7 +11,7 @@ export default class NewUser extends Component {
   _params;
   _myCss = '../../../public/assets/css/user.css';
   constructor(params = null) {
-    super(document.querySelector('#app'));
+    super(null, document.querySelector('#app'));
     this._title = 'User';
     this._params = params;
   }
@@ -32,11 +32,14 @@ export default class NewUser extends Component {
     const _test_app2 = this.$target.querySelector(
         '[data-component="test-app2"]',
     );
-    if (Cookie.getCookie(pubEnv.TOKEN_INTRA_ID) === this._params.intra_id) {
-      new UserProfileLogined(_test_app1, this._params.intra_id);
-    } else {
-      new UserProfile(_test_app1, this._params.intra_id);
-    }
-    new EmptyUserStatistics(_test_app2, this._params.intra_id);
+    const cookieId = pubEnv.TOKEN_INTRA_ID;
+    const isMyProfile = Cookie.getCookie(cookieId) === this._params.intra_id;
+    const child = isMyProfile ?
+      new UserProfileLogined(this, _test_app1, this._params.intra_id) :
+      new UserProfile(this, _test_app1, this._params.intra_id);
+    this.addComponent(child);
+    const child2 = new EmptyUserStatistics(
+      this, _test_app2, this._params.intra_id);
+    this.addComponent(child2);
   }
 }

@@ -4,8 +4,8 @@ export default class GameRound extends Component {
   _title;
   _params;
   _my_css = '../../../public/assets/css/gameInfo.css';
-  constructor(target, params = null) {
-    super(target);
+  constructor(parent, target, params = null) {
+    super(parent, target);
     this._params = params;
   }
   async template() {

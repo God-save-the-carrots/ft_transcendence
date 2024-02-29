@@ -1,5 +1,6 @@
 import {observable, observe} from './observer.js';
 import * as Lang from '../Lang.js';
+import {authReq} from '../connect.js';
 
 export default class Component {
   /**
@@ -8,18 +9,33 @@ export default class Component {
   $target;
   props;
   state = {};
-  constructor($target) {
+  constructor(parent, $target) {
+    this.id = '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4)
+          .toString(16),
+    );
     this.$target = $target;
+    this.parent = parent;
+    this.events = [];
+    this.children = [];
+    this.onexception = (e) => {
+      if (this.parent) this.parent.onexception(e);
+      else this.unmounted();
+    };
     this.setup();
   }
 
   async setup() {
     this.state = observable(await this.initState());
     observe(async () => {
-      this.clearEvent();
-      await this.render();
-      this.setEvent();
-      await this.mounted();
+      try {
+        this.unmounted();
+        await this.render();
+        this.setEvent();
+        await this.mounted();
+      } catch(e) {
+        this.onexception(e);
+      }
     }, this.state);
   }
 
@@ -39,14 +55,38 @@ export default class Component {
 
   setEvent() {}
 
-  clearEvent() {}
-
-  addEvent(eventType, selector, callback) {
-    this.$target.addEventListener(eventType, (event) => {
-      if (!event.target.closest(selector)) return false;
-      callback(event);
-    });
+  clearEvent() {
+    for (const event of this.events) {
+      this.$target.removeEventListener(event.eventType, event.callback);
+    }
+    this.events = [];
   }
 
-  async unmounted() {}
+  addEvent(eventType, selector, callback) {
+    const e = (event) => {
+      if (!event.target.closest(selector)) return false;
+      callback(event);
+    };
+    this.events.push({eventType, callback: e});
+    this.$target.addEventListener(eventType, e);
+  }
+
+  addComponent(component) {
+    this.children.push(component);
+  }
+
+  popComponent() {
+    const component = this.children.pop();
+    if (component) component.unmounted();
+  }
+
+  unmounted() {
+    for (const child of this.children) {
+      child.unmounted();
+    }
+    this.clearEvent();
+    this.children = [];
+  }
 }
+
+Component.prototype.authReq = authReq;

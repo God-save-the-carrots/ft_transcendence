@@ -3,8 +3,8 @@ export default class EmptyUserStatistics extends Component {
   _title;
   _intra_id;
   _my_css = '../../../public/assets/css/userStatistics.css';
-  constructor(target, params = null) {
-    super(target);
+  constructor(parent, target, params = null) {
+    super(parent, target);
     this._title = 'User Statistics';
     this._intra_id = params;
   }

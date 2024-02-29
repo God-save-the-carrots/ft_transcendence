@@ -24,6 +24,7 @@ const multiLang = {
     time: '시간',
     input_your_nick: '닉네임 입력해..!',
     empty: '텅 빔',
+    '401': '쿠쿠루삥뽕',
   },
   'en': {
     welcometolibft: 'Welcome to LIBFT',

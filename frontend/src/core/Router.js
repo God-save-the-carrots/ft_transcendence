@@ -1,3 +1,4 @@
+import { IssueTokenError, RequestError, RequireLoginError } from '../connect.js';
 import * as Utils from './Utils.js';
 
 class Router {
@@ -14,6 +15,7 @@ class Router {
       {path: '/login', view: 'Login'},
       {path: '/auth/ft/redirection', view: 'Auth'},
       {path: '/test', view: 'Test'},
+      {path: '/error/:code', view: 'ErrorPage'},
     ];
   }
   pathToRegex(path) {
@@ -44,8 +46,9 @@ class Router {
   }
 
   async backNavi() {
+    if (this.#view != null) this.#view.unmounted();
     const view = await this.router();
-    return view;
+        return view;
   }
 
   async router() {
@@ -67,13 +70,11 @@ class Router {
         result: [location.pathname],
       };
     }
-    let params = null;
-    if (match.route.view !== 'ErrorPage') params = this.getParams(match);
+    let params = this.getParams(match);
     if (match.route.view === 'User' &&
       await Utils.isValidIntra(params.intra_id) === false) {
       match.route.view = 'ErrorPage';
       params.code = 404;
-      params.msg = 'User not found';
     }
     this.#view = await import(`../components/pages/${match.route.view}.js`)
         .then(async ({default: Page}) => {
