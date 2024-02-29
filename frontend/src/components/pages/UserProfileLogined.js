@@ -1,4 +1,5 @@
 import Component from '../../core/Component.js';
+import Nav from '../Nav.js';
 
 export default class UserProfile extends Component {
   _title;
@@ -37,6 +38,7 @@ export default class UserProfile extends Component {
             throw new Error();
           }
           this.state.photo_id = photo_id;
+          new Nav(document.querySelector('#nav'));
         });
     // msg
     this.$target.querySelector('.msg-form')
